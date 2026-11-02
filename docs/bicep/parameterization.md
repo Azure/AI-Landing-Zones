@@ -155,8 +155,10 @@ Each toggle controls whether a specific service is provisioned. Set to `true` to
 
 Agent Application selects its optional server through
 `DEPLOY_AGENT_APP_MCP=false` (default) in the azd environment. Selecting `true`
-requires application Cosmos automatically; it does not enable Search or require
-a second NL2SQL flag. See the
+adds server compute/authentication only. Application/runtime setting
+`MCP_TOOLSETS` defaults to `[]`; explicitly selecting `["nl2sql"]` requires the
+application Cosmos catalog and declared model/secret access. Neither setting
+is a new tool-specific Bicep parameter, and neither enables Search. See the
 [MCP selector reference](../agent-landing-zone/configuration.md#agent-app-mcp-server-selection).
 An explicit conflicting `DEPLOY_COSMOS_DB=false` must be unset for automatic
 selection. Generic Cosmos can be selected independently without MCP or the
@@ -483,10 +485,12 @@ The `storageAccountContainersList` parameter defines blob containers to create i
 
 The `databaseContainersList` parameter defines containers to create in the Cosmos DB database.
 
-The Agent Application composition owns its UI and MCP catalog-container
-contracts. Selecting MCP automatically creates its source and vector-metadata
-containers/policies; do not manually duplicate those entries here.
-Generic serverless Cosmos without MCP does not require vector policies.
+The application composition owns its UI and toolset catalog-container
+contracts. Selecting the NL2SQL toolset creates its source and vector-metadata
+containers/policies; an empty MCP server does not. Do not manually duplicate
+those entries here. Generic serverless Cosmos does not require vector policies;
+custom applications can select generic vector capability independently of the
+reference catalog.
 See [application Cosmos ownership](../agent-landing-zone/configuration.md#application-cosmos-db).
 
 ```json

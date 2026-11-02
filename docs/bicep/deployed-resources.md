@@ -106,15 +106,17 @@ If regional processing is required, explicitly set the embedding entry's
 |---|---|---|---|
 | Workload AI Search | ✅ | `deploySearchService` | Standard SKU, **1 partition × 1 replica**; `aiSearchResourceId` belongs to the separate Foundry backing path |
 | Workload Storage | ✅ | `deployStorageAccount` | Standard_LRS, Hot |
-| Workload Cosmos DB | 🟧 | `deployCosmosDb`; Agent azd requires it for selected consumers | NoSQL, **serverless** (`EnableServerless`); MCP adds vector capability/policies to its separate catalog |
+| Workload Cosmos DB | 🟧 | `deployCosmosDb`; Agent azd requires it for selected consumers | NoSQL, **serverless** (`EnableServerless`); selected NL2SQL adds vector capability/policies to its separate catalog |
 | Workload Key Vault | ✅ 🔧 | `deployKeyVault` / `keyVaultResourceId` | Standard tier |
 | Azure Speech | 🟧 | `deploySpeechService` | S0 (off by default) |
 
 ### Common platform services
 
-For Agent Application, `DEPLOY_AGENT_APP_MCP=true` adds a separate Container App
-with its own identity and the application Cosmos catalog, on either consuming
-host. It reuses compatible selected infrastructure; it does not create another
+For Agent Application, `DEPLOY_AGENT_APP_MCP=true` adds a separate **Agent App
+MCP Server** Container App and its identity, on either consuming host.
+`MCP_TOOLSETS=[]` is the default: no tools or NL2SQL catalog/model/secret grants.
+Explicit `MCP_TOOLSETS=["nl2sql"]` adds the application-owned catalog dependency.
+It reuses compatible selected infrastructure; it does not create another
 Search service or use Foundry backing Cosmos. Provisioning creates dependencies;
 application deployment supplies the image. SQL databases, read principals and
 approved metadata remain operator-owned onboarding.

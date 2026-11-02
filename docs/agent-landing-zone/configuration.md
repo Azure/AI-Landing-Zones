@@ -284,7 +284,7 @@ The UI consumes
 (default `native-ui-metadata`, partition key `/principal_id`, owner `tid:oid`), with its grant
 assigned only to the frontend. Existing `COSMOS_DB_ENDPOINT` and
 `COSMOS_DB_ACCOUNT_RESOURCE_ID` outputs remain conditional; no separate native
-endpoint key is introduced. Agent App MCP Server selects the same application
+endpoint key is introduced. The explicitly selected NL2SQL toolset uses the same application
 account for its separate approved-source and vector-metadata containers,
 with grants assigned to the MCP identity, not the orchestrator.
 A custom component may declare another application storage
@@ -310,8 +310,11 @@ This selection also works for generic storage without MCP or the reference
 orchestrator, including a custom `AGENTLZ_APP_DEFINITION`.
 Custom Cosmos capabilities can declare the dependency directly.
 Enabling Cosmos alone does not deploy MCP or enable vector search.
-Normal application Cosmos is serverless. Vector policies are selected only
-for MCP or a retained MCP catalog, not for generic Cosmos by itself.
+Normal application Cosmos is serverless. NL2SQL selects vector capability and
+its catalog policies; a retained catalog preserves them.
+Custom applications may explicitly select generic vector capability with
+`COSMOS_VECTOR_SEARCH_ENABLED` without injecting the reference catalog.
+Generic Cosmos by itself does not enable vector search.
 
 Direct foundation-template deployments also default `deployCosmosDb` to `false`;
 set it to `true` when application storage is needed. For an existing deployment,
@@ -322,14 +325,31 @@ data-retention requirements have been reviewed.
 
 | Variable | Default | Effect |
 | --- | --- | --- |
-| `DEPLOY_AGENT_APP_MCP` | `false` | Adds the optional Agent App MCP Server Container App and requires application Cosmos for its NL2SQL catalog. |
+| `DEPLOY_AGENT_APP_MCP` | `false` | Adds optional Agent App MCP Server compute and authentication only; does not select SQL or catalog/model/secret access. |
 
 Set this selector before provision. It is independent of
 `ORCHESTRATION_HOST=hosted|container_apps` and
-`APPLICATION_MODE=conversational|workflow|both`. Do not add a second NL2SQL
-enable flag or manually copy generated endpoint/authentication settings.
+`APPLICATION_MODE=conversational|workflow|both`.
+Select tools explicitly with application/runtime setting `MCP_TOOLSETS`,
+published under label `agent-lz`, not new tool-specific Bicep/Terraform
+parameters. The default `[]` registers zero tools and initializes no NL2SQL
+clients or dependencies. The only supported nonempty value is `["nl2sql"]`:
 
-Both Bicep and Terraform create the dependency when absent or reuse the
+```bash
+azd env set DEPLOY_AGENT_APP_MCP true
+azd env set MCP_TOOLSETS '["nl2sql"]'
+```
+
+Set both before provision/deploy for SQL. Unknown names, duplicates and invalid
+values fail closed. In the reference application, nonempty toolsets require
+server compute selection.
+`DEPLOY_AGENT_APP_MCP` is rejected for custom definitions before Azure calls.
+Custom applications may explicitly supply `MCP_TOOLSETS` as runtime
+configuration and declare their own compute, dependencies and permissions;
+this adds no automatic reference catalog or model resources.
+Do not manually copy generated endpoint/authentication settings.
+
+Only when NL2SQL is selected, Bicep and Terraform create the dependency when absent or reuse the
 compatible application account managed by this deployment. Provision captures
 and preserves the exact existing capability set and data, adds
 `EnableNoSQLVectorSearch` and provisions
@@ -354,13 +374,19 @@ The deployer must have directory
 rights for registration and application-role assignments, separate from ARM
 permissions; there is no broad ARM-token authentication fallback.
 
+An empty server retains mandatory tenant/audience/app-role/client restrictions
+but receives no NL2SQL catalog, model or secret grants.
 Selection does not enable `DEPLOY_SEARCH_SERVICE`, create Search indexes or
 grant Search access. Other retrieval consumers keep their independent Search
 requirements. Generated settings are published under `agent-lz`; see the
 [MCP contract](application-settings.md#agent-app-mcp-contract).
 Use the [MCP component guide](agent-app-mcp.md#select-and-deploy) for fresh and
-existing-installation steps. Setting the selector to `false` disables the
-runtime tools and does not delete metadata or grants. The catalog account,
+existing-installation steps. Toolsets are startup-only: changes require
+restart/redeployment. Setting `MCP_TOOLSETS=[]` stops NL2SQL
+registration and dependency initialization; it does not automatically revoke
+old roles. Disabling server compute likewise does not delete catalog metadata.
+The retained `COSMOS_VECTOR_SEARCH_ENABLED` marker preserves vector capability.
+The catalog account,
 container declarations and vector policies are retained for owner-reviewed
 safe cleanup.
 
@@ -374,8 +400,8 @@ safe cleanup.
 
 The boolean is persisted by pre-provision and published under label `agent-lz`.
 Existing environments retain their selection rather than silently adopting the
-fresh default. Custom definitions retain their declared components and additive
-infrastructure composition.
+fresh default. Custom definitions retain only their declared components and
+resource requirements; this reference selector does not add ingestion to them.
 
 | Selection | Effect |
 | --- | --- |
@@ -1055,8 +1081,9 @@ See [Agent hosting](hosted-agents.md),
 `ENABLE_CHAT_HISTORY` and `ENABLE_USER_FEEDBACK` default to `false`;
 workflow mode, `both` or enabled history, feedback or attachments declares UI metadata
 storage directly. `DEPLOY_AGENT_APP_MCP=false` keeps the optional MCP server
-unselected. Selecting it requires application Cosmos and derives the consuming
-MCP connection and registration. Catalog and SQL access belong to the MCP
+unselected. Selecting it derives the consuming MCP connection and registration,
+not SQL. Explicit `MCP_TOOLSETS=["nl2sql"]` requires the application catalog.
+Catalog and SQL access belong to the MCP
 identity, not the native execution host.
 Declare actual tool secret names through `NATIVE_TOOL_SECRET_NAMES` (default
 `[]`), a JSON array of names rather than values, and grant only the consuming
@@ -1190,7 +1217,7 @@ These are not freely editable provisioning controls.
 | `RETRIEVAL_AUTH_MODE` | Platform-published `native_search` authorization contract, not an operator permission bypass. See [delegated retrieval](foundry-iq.md#delegated-native-retrieval). |
 | `KEY_VAULT_URI` | Infrastructure output for the deployed vault, empty when absent. Use the actual URI for bootstrap rather than constructing a cloud DNS suffix. |
 | Local binding records | Preserve the original application, provider, group and backend bindings for updates, recovery and removal. Refreshing outputs does not recreate immutable bindings. |
-| `COSMOS_VECTOR_SEARCH_ENABLED` | Internal azd-only marker for selected or retained MCP vector resources, not a new foundation output or operator enable flag. Preserve the owning lifecycle's state rather than editing it to force compatibility. |
+| `COSMOS_VECTOR_SEARCH_ENABLED` | Application-layer vector capability/retention state, not a new foundation output. Custom applications can explicitly select generic vector capability independently of the reference catalog. The lifecycle preserves the marker for retained NL2SQL catalogs. |
 
 ### Search shared private links
 

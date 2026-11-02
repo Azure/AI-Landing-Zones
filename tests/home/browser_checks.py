@@ -87,6 +87,8 @@ def check_lifecycle_navigation(page, base, screenshots):
         ("agent-landing-zone/troubleshooting/", ("Agent Landing Zone", "Operate")),
         ("agent-landing-zone/application/", ("Agent Landing Zone", "Agent Application")),
         ("agent-landing-zone/agent-app-mcp/", ("Agent Landing Zone", "Agent Application", "Agents")),
+        ("agent-landing-zone/build-your-own-app/",
+         ("Agent Landing Zone", "Agent Application", "Development & customization")),
         ("agent-landing-zone/agentops/", ("Agent Landing Zone", "Agent Application")),
         ("agent-landing-zone/operations/", ("Agent Landing Zone", "Agent Application", "Operations")),
         ("ai-gateway-landing-zone/deploy/bicep-quick-deployment/",
@@ -212,6 +214,7 @@ def check_application_mcp_documentation(page, base):
             ("agent-app-mcp/", "Agent App MCP Server"),
             ("nl2sql/", "Ask questions about SQL data"),
             ("application-settings/", "Application settings"),
+            ("build-your-own-app/", "Bring your own app"),
         ):
             response = page.goto(base + "agent-landing-zone/" + path)
             assert response.status == 200, path
@@ -239,24 +242,43 @@ def check_application_mcp_documentation(page, base):
     page.goto(base + "agent-landing-zone/agent-app-mcp/")
     content = page.locator(".md-content__inner")
     for heading in (
-        "What you choose and what is automatic", "Fresh application",
-        "Add to an existing installation", "Why application Cosmos DB is required",
-        "Onboard SQL before inviting users",
+        "Deploy Agent App MCP Server", "Authentication and endpoint", "Select toolsets",
+        "Operate the server", "Configure NL2SQL", "Custom applications",
+        "Fresh application", "Add to an existing installation", "Onboard sources",
     ):
         expect(content.get_by_role("heading", name=heading, exact=True)).to_have_count(1)
+    assert content.locator(":scope > h2").all_text_contents() == [
+        "Deploy Agent App MCP Server", "Authentication and endpoint", "Select toolsets",
+        "Operate the server", "Configure NL2SQL", "Custom applications",
+    ]
     blocks = content.locator("pre").all_text_contents()
-    assert any("git clone --branch develop" in block for block in blocks)
+    assert any(
+        "git clone https://github.com/Azure/agent-landing-zone.git" in block
+        for block in blocks
+    )
+    assert not any("--branch develop" in block for block in blocks)
     assert any("azd env set DEPLOY_AGENT_APP_MCP true" in block and "azd provision" in block for block in blocks)
+    assert any("""azd env set MCP_TOOLSETS '[]'""" in block for block in blocks)
     assert any(
         block.index("azd provision") < block.index("azd deploy")
         for block in blocks if "azd provision" in block and "azd deploy" in block
     )
-    expect(content.get_by_role("heading", name="Start here: from deployment to the first question", exact=True)).to_have_count(1)
+    expect(content.locator("#start-here-from-deployment-to-the-first-question")).to_have_count(1)
     assert "MCP.Invoke" in content.inner_text()
     assert "rather than automatically destroyed" in content.inner_text()
     assert "restarts every active MCP revision" in content.inner_text()
     assert "startup-only" in content.inner_text()
-    assert "MCP is the communication protocol, not a SQL feature." in content.inner_text()
+    text = content.inner_text()
+    for value in (
+        "zero tools", "optional server compute", "no hot reload",
+        "Unknown names, duplicates", "previously granted roles",
+        "tenant's v2 issuer", "MCP_TOOLSETS",
+        "exposes application tools over Model Context Protocol",
+        "official Python MCP SDK",
+    ):
+        assert value in text, value
+    assert "explicitly selected NL2SQL toolset" in diagram.text()
+    assert "An empty server still requires authentication" in diagram.text()
 
     page.goto(base + "agent-landing-zone/application-settings/")
     content = page.locator(".md-content__inner")
@@ -267,9 +289,12 @@ def check_application_mcp_documentation(page, base):
         "MCP_SOURCES_CONTAINER", "MCP_METADATA_CONTAINER", "MCP_EMBEDDING_DIMENSIONS",
         "MCP_QUERY_TIMEOUT_SECONDS", "MCP_CLIENT_TIMEOUT", "MCP_METADATA_TOP_K",
         "AI_FOUNDRY_OPENAI_ENDPOINT", "CHAT_DEPLOYMENT_NAME", "EMBEDDING_DEPLOYMENT_NAME",
-        "KEY_VAULT_ENDPOINT", "MCP_SQL_SECRET_NAMES",
+        "KEY_VAULT_ENDPOINT", "MCP_SQL_SECRET_NAMES", "MCP_TOOLSETS",
     ):
         assert key in mcp_table.inner_text(), key
+    assert "1..75" in mcp_table.inner_text()
+    assert "when NL2SQL is selected" in mcp_table.inner_text()
+    assert "does not validate NL2SQL settings" in content.inner_text()
 
     page.goto(base + "agent-landing-zone/nl2sql/")
     text = content.inner_text()
@@ -297,10 +322,67 @@ def check_application_mcp_documentation(page, base):
     expect(content.get_by_role("heading", name="How an NL2SQL request is answered", exact=True)).to_have_count(1)
     expect(content.get_by_role("heading", name="How an MCP question is answered", exact=True)).to_have_count(0)
     assert "Azure CLI login is not an importer credential fallback" in text
+    assert any("--branch <manifest-mcp-tag>" in block for block in imports)
+
+    selection = """azd env set MCP_TOOLSETS '["nl2sql"]'"""
+    for path in ("agent-app-mcp/", "nl2sql/", "deploy-full-stack/",
+                 "deploy-terraform-full-stack/"):
+        page.goto(base + "agent-landing-zone/" + path)
+        assert selection in "\n".join(content.locator("pre").all_text_contents()), path
+
+    page.goto(base + "agent-landing-zone/")
+    expect(content.locator('a[href$="build-your-own-app/#application-binding-and-selection"]')).to_have_count(1)
+    text = content.inner_text()
+    for value in ("azd provision", "azd deploy", "Reprovisioning preserves", "generic compute"):
+        assert value in text, value
+
+    page.goto(base + "agent-landing-zone/build-your-own-app/")
+    text = content.inner_text()
+    for value in (
+        "above the reusable", "AGENTLZ_APP_DEFINITION",
+        "only its declared components", "before Azure calls",
+        "COSMOS_VECTOR_SEARCH_ENABLED", "own explicit component",
+        "A custom app can explicitly pass MCP_TOOLSETS",
+    ):
+        assert value in text, value
+    assert "definition is additive" not in text
+    assert "retrieval is independently selected and defaults to off" in text
 
     page.goto(base + "agent-landing-zone/configuration/")
-    assert "Internal azd-only marker" in content.inner_text()
+    assert "Application-layer vector capability/retention state" in content.inner_text()
     assert "not a new foundation output" in content.inner_text()
+    assert "DEPLOY_AGENT_APP_MCP is rejected for custom definitions" in content.inner_text()
+    assert "Custom applications may explicitly supply MCP_TOOLSETS" in content.inner_text()
+    assert "no NL2SQL catalog, model or secret grants" in content.inner_text()
+
+
+def check_agent_page_inventory(page, base):
+    """Every central Agent page must build, including linked compatibility pages."""
+    sources = sorted((ROOT / "docs" / "agent-landing-zone").glob("*.md"))
+    assert sources
+    for source in sources:
+        route = "" if source.stem == "index" else source.stem + "/"
+        response = page.request.get(base + "agent-landing-zone/" + route)
+        assert response.status == 200, source.name
+        html = response.text()
+        assert "<h1" in html and 'class="md-content' in html, source.name
+        for misleading_name in ("MCP / NL2SQL", "NL2SQL MCP component"):
+            assert misleading_name not in html, (source.name, misleading_name)
+    print(f"PASS: all {len(sources)} Agent Landing Zone pages render, including compatibility routes")
+
+
+def run_agent_docs(base, screenshots):
+    """Focused documentation check; no service, Azure or deployment calls."""
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch(ignore_default_args=["--hide-scrollbars"])
+        try:
+            page = browser.new_page(viewport={"width": 1440, "height": 1000})
+            check_lifecycle_navigation(page, base, screenshots)
+            check_application_mcp_documentation(page, base)
+            check_agent_page_inventory(page, base)
+        finally:
+            browser.close()
+    print("PASS: MCP server/toolset separation, explicit install, importer, custom-app journey and navigation")
 
 
 def check_prose_wrapping(page, base, screenshots):
@@ -569,6 +651,7 @@ def run(base, screenshots):
         check_documentation_roles(page, base)
         check_application_navigation(page, base, screenshots)
         check_application_mcp_documentation(page, base)
+        check_agent_page_inventory(page, base)
         check_prose_wrapping(page, base, screenshots)
         page.set_viewport_size({"width": 1440, "height": 500})
         for path in ("", "agent-landing-zone/application/"):
@@ -650,12 +733,15 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--site-dir", type=Path, default=ROOT / "site")
     parser.add_argument("--screenshots", type=Path)
+    parser.add_argument("--agent-docs-only", action="store_true",
+                        help="Check Agent documentation/navigation without the unrelated homepage suite")
     args = parser.parse_args()
     server = ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(Handler, directory=str(args.site_dir)))
     worker = threading.Thread(target=server.serve_forever, daemon=True)
     worker.start()
     try:
-        run(f"http://127.0.0.1:{server.server_port}/", args.screenshots)
+        runner = run_agent_docs if args.agent_docs_only else run
+        runner(f"http://127.0.0.1:{server.server_port}/", args.screenshots)
     finally:
         server.shutdown()
         server.server_close()

@@ -20,8 +20,10 @@ network and tool contracts are configured. The multimodal tool flag is
 different from custom ingestion `MULTIMODAL` and inline private attachments.
 See [Application settings](application-settings.md#native-application-contract).
 For the integrated server, select `DEPLOY_AGENT_APP_MCP=true` before provision.
-The lifecycle derives MCP registration and connection settings; do not enable
-NL2SQL with a second runtime flag.
+The lifecycle derives MCP connection and caller authorization settings.
+Select tools separately with `MCP_TOOLSETS`: default `[]` registers zero tools;
+`["nl2sql"]` selects the current SQL toolset. This application/runtime setting
+uses label `agent-lz`, not new tool-specific foundation parameters.
 
 <span id="choose-the-extension-point"></span>
 
@@ -43,21 +45,17 @@ control source planning, output parsing and query credentials.
 
 ### Optional Agent App MCP Server
 
-The separate MCP Container App works with either consuming host and any
-application mode. It hosts tools over MCP. Its currently supplied toolset is
-NL2SQL: `nl2sql.list_sources()` and `nl2sql.query(source_id, question)`.
-MCP is not synonymous with this toolset. Other tools require reviewed
-implementation, permissions, dependency wiring and consumer registration.
-The official Python MCP SDK hosts the
-server; MAF remains in the consuming orchestrator.
+Agent App MCP Server exposes explicitly selected toolsets for Agents and
+Workflows. Its available NL2SQL toolset provides `nl2sql.list_sources()` and
+`nl2sql.query(source_id, question)`.
 
-Selecting `DEPLOY_AGENT_APP_MCP=true` deploys the current server and adds its
-NL2SQL application Cosmos catalog,
-identity and deployment. It does not enable Search or require ingestion.
+`DEPLOY_AGENT_APP_MCP=true` selects server compute and authentication.
+`MCP_TOOLSETS=["nl2sql"]` selects the application Cosmos catalog and
+model/declared-secret access. Search and document ingestion remain independent.
 The operator still approves SQL destinations, read permissions and metadata.
 The server's NL2SQL implementation—not the orchestrator—owns SQL connectivity,
-metadata retrieval and generated-query validation. There are no individually registered SQL helpers,
-arbitrary-SQL arguments, catalog write tools or DAX operations.
+metadata retrieval and generated-query validation. Operators import approved
+metadata through the separate administrative importer.
 
 The configured read-only principal queries the application's approved dataset,
 without automatic per-user SQL delegation. This differs from a Foundry IQ
@@ -161,6 +159,10 @@ the absence of invented results when a required tool fails. A successful
 deployment or portal registration is not this evidence.
 Correlate operations without retaining secrets or sensitive tool arguments.
 See [Monitoring & audit](application-monitoring.md).
+
+Toolset selection is startup-scoped: provision matching dependencies and
+restart/redeploy after a change. See the [server selection and lifecycle](agent-app-mcp.md#select-and-deploy)
+for validation, extension and retention requirements.
 
 <span id="recover-or-undo"></span>
 

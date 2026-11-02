@@ -68,8 +68,9 @@ enabled history, feedback or attachments also selects it. The UI reads
 Only the frontend receives its metadata grant. The container holds owner/run
 mappings, references, feedback and attachment descriptors, not bytes,
 transcripts, tokens or Foundry/DTS execution checkpoints.
-Optional Agent App MCP Server can reuse the same application Cosmos account
-with separate source/vector-metadata containers and grants. Selecting MCP does
+The optional NL2SQL toolset on Agent App MCP Server can reuse the same application
+Cosmos account with separate source/vector-metadata containers and grants.
+An empty MCP server does not select those containers. Selecting MCP does
 not enable history, feedback or attachments, and its catalog is not a UI
 session store. See [Cosmos ownership](application.md#what-cosmos-means-in-this-application).
 In conversational mode with every product flag off, the UI uses bounded

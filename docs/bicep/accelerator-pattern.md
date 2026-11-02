@@ -30,11 +30,11 @@ See the [template overview](../agent-landing-zone/index.md#how-the-template-work
 
 <a id="boolean-rewrite-edge-case"></a>
 
-Use `azd env set` for documented environment variables that take one value,
-such as `NETWORK_ISOLATION`. Settings containing lists (`[...]`) or groups of
-named fields (`{...}`) belong in the reviewed root `main.parameters.json` file.
-Parameters without a documented environment-variable equivalent also go in
-that file.
+Use `azd env set` for documented environment inputs, such as
+`NETWORK_ISOLATION` or the application's JSON-array setting `MCP_TOOLSETS`.
+Native structured foundation parameters, including lists (`[...]`) and groups
+of named fields (`{...}`), belong in the reviewed root `main.parameters.json`.
+Parameters without a documented environment-variable equivalent also go there.
 
 Keep the JSON value types shown in the parameter examples: for instance, use
 `true` for a boolean, not the text `"true"`, and keep lists and objects in their

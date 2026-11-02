@@ -1,130 +1,61 @@
 # Agent App MCP Server
 
-**Agent App MCP Server** hosts tools that an Agent or Workflow calls through
-Model Context Protocol (MCP). It is an optional application
-component in a **separate Azure Container App**, whether the consuming
-orchestrator runs in Foundry Hosted Agents or Azure Container Apps.
+**Agent App MCP Server** exposes application tools over Model Context Protocol
+(MCP). It runs in its own Azure Container App and uses the official Python MCP
+SDK. Agents and Workflows on either supported host can consume its tools.
 
-MCP is the communication protocol, not a SQL feature. Agent App MCP is the
-server component. **NL2SQL is the toolset currently supplied by that server**,
-with operations for listing approved sources and asking questions about SQL
-data. Other reviewed toolsets can be added to the server without redefining
-MCP as NL2SQL.
+Configure the server below, then select the toolsets your application needs
+through `MCP_TOOLSETS`. The available **NL2SQL** toolset lists approved sources
+and answers questions over SQL data.
 
-The server uses the official Python MCP SDK, not Microsoft Agent Framework.
-It performs a bounded operation for each request; it does not host conversations,
-workflows, a scheduler or a UI.
+<span id="select-and-deploy"></span>
 
-## Start here: from deployment to the first question
+## Deploy Agent App MCP Server
 
-The steps below deploy the server and onboard its current **NL2SQL toolset**.
-SQL permissions and catalog import belong to that toolset, not to the MCP
-protocol or every possible MCP tool.
-Follow these steps in order. **Deploying the component does not connect a SQL
-source or populate its catalog.**
+For the reference application, `DEPLOY_AGENT_APP_MCP` selects optional server
+compute and defaults to `false`. Its Container App has its own managed identity,
+independently of `ORCHESTRATION_HOST` and `APPLICATION_MODE`.
+Application composition coordinates its image, caller authorization and connection.
 
-| Step | What you do | Ready when |
-| --- | --- | --- |
-| 1. Deploy | Select `DEPLOY_AGENT_APP_MCP=true` and run the [platform lifecycle](#select-and-deploy) | The MCP Container App and its generated connection are available |
-| 2. Authorize SQL | Have the database owner approve the objects and grant the MCP identity read access | The server can reach and read only the approved database objects |
-| 3. Describe the data | Prepare an [approved source file](nl2sql.md#example-approved-source-file) with schemas and useful question/query examples | Every approved table or view has matching schema context |
-| 4. Import metadata | Run the [administrative importer](nl2sql.md#import-the-approved-file) using a separately authorized managed identity | It reports `Activated metadata_version:` |
-| 5. Ask and verify | Sign in to the application and ask a question about that source | A real MCP query returns a known result, and unauthorized access is denied |
+<span id="use-the-coordinated-platform-source"></span>
 
-You do not add a connection string or an MCP token to the browser. The platform
-connects the consuming application to the server. You supply SQL authorization
-and approved metadata separately.
-
-## What the component provides
-
-| NL2SQL tool exposed over MCP | Purpose |
-| --- | --- |
-| `nl2sql.list_sources()` | List approved, enabled sources available to the authenticated application. |
-| `nl2sql.query(source_id, question)` | Find approved metadata, generate and validate read-only SQL, execute it and return typed results. |
-
-These are the currently supplied tools, not a fixed limit of MCP or the
-server's intended tool catalog. This release does not provide additional
-toolsets or automatic plugin installation.
-Through the NL2SQL tools, the model cannot submit arbitrary SQL,
-change the catalog or pass identities and credentials as tool arguments.
-The current NL2SQL toolset supports Azure SQL and SQL Server, not Fabric SQL
-endpoints, semantic models or DAX.
-
-The server listens on port `8080` inside its container. The Azure HTTPS
-endpoint uses stateless Streamable HTTP at `/mcp`.
-`/healthz` checks liveness, not successful authentication, catalog readiness or
-SQL connectivity. See [NL2SQL](nl2sql.md) for source onboarding and result limits.
-
-## What you choose and what is automatic
-
-| You choose or approve | The platform coordinates |
-| --- | --- |
-| Whether to include the component | Container App, its own managed identity and compatible image deployment |
-| Application host and mode, independently | The selected consuming Agent/Workflow and its MCP connection |
-| Generation and embedding models, including vector dimensions | Reuse of compatible model deployments and matching catalog policies |
-| SQL destination, approved objects and a read-only database principal | Application Cosmos resources, container-scoped access and generated settings |
-| Approved schemas, descriptions, relationships and query examples | Endpoint, audience, client authorization and activation through the application lifecycle |
-| Required network routes and SQL-owner authorization | Declared platform-owned network and access reconciliation |
-
-You do **not** need a second NL2SQL enable flag, a Cosmos connection string,
-manual catalog-container creation or an Azure AI Search index for MCP.
-Selecting the component does not create a SQL database, database users or
-database grants, discover unknown schemas, or import business rows.
-
-The deployment helper creates/configures the dedicated Entra API registration,
-service principal and `MCP.Invoke` app role, then authorizes the actual callers.
-It reuses the registration by its exact application object ID recorded in
-App Configuration, not by approximate name.
-The deployer needs directory rights to manage those registrations and assign
-application roles, **in addition to** Azure resource/RBAC permissions.
-Runtime identities do not need those directory administration rights.
-
-## Select and deploy
-
-The public selector is `DEPLOY_AGENT_APP_MCP`, default `false`. It selects the
-server, not the Agent's host or application mode.
-
-### Use the coordinated platform source
-
-The MCP-enabled full-stack integration is available on the platform's
-`develop` branch. Use that checkout and its complete `manifest.json` and
-application definition together:
+Use the stable platform source with its complete manifest and application definition:
 
 ```bash
-git clone --branch develop https://github.com/Azure/agent-landing-zone.git
+git clone https://github.com/Azure/agent-landing-zone.git
 cd agent-landing-zone
 ```
 
-The MCP component has its own release, but installing that component alone
-does not add the foundation selector, caller authorization or consumer
-integration to another platform checkout. Do not copy only its version into
-an unrelated manifest. For an existing installation, review and approve the
-complete platform update before changing its selected source.
+The manifest binds compatible server and consumer releases. For an existing
+installation, review the complete platform update before changing source.
 
 ### Fresh application
 
-Follow the full-stack guide's target, identity, model and network preparation
+Complete the full-stack prerequisites and identity/network preparation
 [with Bicep](deploy-full-stack.md#procedure) or
 [with Terraform](deploy-terraform-full-stack.md#procedure).
-Before first provision, from the platform root:
+From the platform root, select an authenticated server with an empty toolset list:
 
 ```bash
 azd env set DEPLOY_AGENT_APP_MCP true
+azd env set MCP_TOOLSETS '[]'
 azd provision
 ```
 
-After provision, complete the full-stack guide's UI callback, credentials and
-admission setup, then run `azd deploy` from the same platform root.
-Provisioning creates or reuses dependencies and prepares their configuration.
-Deployment builds the selected images and publishes the consuming application.
-Use `azd up` to combine both stages only when the required login configuration
-is already prepared. SQL onboarding is a separate step, described below.
+Provisioning prepares compute, configuration and access. Complete the full-stack
+guide's UI callback, credentials and admission setup, then run `azd deploy`
+from the same root. Deployment builds the selected images and publishes the
+application. Use `azd up` to combine both stages when login configuration is
+already prepared.
+
+To include SQL tools in the first deployment, use the selection in
+[Configure NL2SQL](#configure-nl2sql) before provision.
 
 ### Add to an existing installation
 
-Use the same compatible platform/component line and the environment's recorded
-provider, application ID and resource destinations. Review the infrastructure
-changes, select the existing environment, then run from the platform root:
+Retain the environment's recorded provider, application ID and resource
+destinations. Review the infrastructure changes and desired
+[toolset selection](#select-toolsets), then run from the platform root:
 
 ```bash
 azd env select <environment-name>
@@ -133,136 +64,184 @@ azd provision
 azd deploy
 ```
 
-Do not skip provision: the new component needs resources, identity, catalog
-policies and grants. Do not run these commands from the MCP repository;
-its scripts deploy an image to an already provisioned Container App and do not
-create the foundation.
+Provision resolves the selected resources, policies and grants.
+Component-repository deployment scripts target an already provisioned Container App.
 
-The lifecycle deploys the MCP image, obtains the actual consuming identities,
-grants `MCP.Invoke` and publishes the allowlist and connection settings.
-Because server authentication settings are startup-only, it automatically
-restarts every active MCP revision after publishing the allowlist, checks
-authenticated discovery, then activates the consumers. No manual MCP restart
-is required during normal `azd deploy`.
+## Authentication and endpoint
+
+The platform helper configures a dedicated Entra API registration, service
+principal and `MCP.Invoke` app role. It reuses the exact application object ID
+recorded in App Configuration and authorizes the actual consuming identities.
 Hosted `both` has separate conversation and workflow callers.
-An existing external MCP endpoint conflict must be resolved explicitly;
-selection does not silently replace it or create a multi-endpoint integration.
 
-## Why application Cosmos DB is required
+The deployer needs directory rights for registrations and application-role
+assignments, in addition to Azure resource and scoped RBAC permissions.
+Runtime identities use their assigned invocation and dependency permissions.
 
-The supplied NL2SQL toolset uses the **application-owned Cosmos DB for NoSQL
-account**, never Foundry's
-backing Cosmos account. The platform reuses the account managed by this
-deployment when compatible, or creates it during `azd provision` if absent.
-Selecting MCP automatically requires this dependency. Normal application
-Cosmos uses serverless throughput.
+Clients use an Entra token for the dedicated MCP API. The server validates the
+tenant's v2 issuer, signature, audience, token validity, allowed application
+client ID and `MCP.Invoke` role. These checks also apply to an empty server.
+Credentials stay server-side; API keys and browser-supplied user context are
+not accepted as authentication.
+
+The container listens on port `8080`. Its Azure HTTPS endpoint serves stateless
+Streamable HTTP at `/mcp`. The lifecycle publishes endpoint, audience, scope and
+caller settings under the `agent-lz` App Configuration label.
+See the [MCP settings contract](application-settings.md#agent-app-mcp-contract).
+
+## Select toolsets
+
+`MCP_TOOLSETS` is application/runtime configuration, published under `agent-lz`.
+Application composition translates selected dependencies into generic foundation
+inputs for Bicep or Terraform.
+
+| Selection | Server behavior |
+| --- | --- |
+| `[]` — default | Registers zero tools and initializes no NL2SQL clients or dependencies. New empty-server selection adds no NL2SQL catalog, model, SQL or secret grants. |
+| `["nl2sql"]` | Registers `nl2sql.list_sources` and `nl2sql.query`; requires the [NL2SQL configuration](#configure-nl2sql). |
+
+Unknown names, duplicates, malformed JSON and invalid array values fail closed
+before dependency initialization. In the reference application, a nonempty
+selection requires `DEPLOY_AGENT_APP_MCP=true`.
+For custom definitions, use the [custom application contract](#custom-applications).
+
+Selection is **startup-only**. Provision matching dependencies and
+restart/redeploy after a change; there is no hot reload.
+
+<span id="operate-and-extend-safely"></span>
+
+## Operate the server
+
+Use the normal root `azd deploy` lifecycle. It deploys the server image, resolves
+actual callers, grants `MCP.Invoke`, publishes the allowlist and connection,
+restarts every active MCP revision to load startup-only authentication settings,
+and verifies authenticated discovery before activating consumers.
+
+Check `/healthz` for liveness and authenticated discovery for the selected tool
+list. Test denied callers as well. A healthy process alone does not establish
+tool dependency readiness. Resolve an existing external MCP endpoint conflict
+explicitly before selecting the integrated server.
+
+Inspect individual nonsecret settings and safe correlation fields through
+[Monitoring & audit](application-monitoring.md) and
+[MCP troubleshooting](troubleshooting.md#agent-app-mcp-failures).
+Authentication and configuration changes follow the owning lifecycle.
+
+To disable reference server compute, clear `MCP_TOOLSETS` to `[]`, set
+`DEPLOY_AGENT_APP_MCP=false`, then provision/deploy. The lifecycle publishes
+`MCP_ENABLED=false`, clears the caller allowlist and restarts remaining serving
+revisions to load the revoked authorization. Terraform removes deselected
+compute through its managed deployment; Bicep incremental deployments can
+leave the Container App present. After verifying disablement, an operator
+may explicitly retire unused compute.
+
+Catalog data and previously granted dependency roles require separate owner
+review. See [catalog retention](#catalog-operation-and-retention) before cleanup.
+
+<span id="start-here-from-deployment-to-the-first-question"></span>
+
+## Configure NL2SQL
+
+### Activate the toolset
+
+For the reference application, set both selections before provision/deploy:
+
+```bash
+azd env set DEPLOY_AGENT_APP_MCP true
+azd env set MCP_TOOLSETS '["nl2sql"]'
+azd provision
+azd deploy
+```
+
+For a fresh installation, complete the [post-provision login setup](application-auth.md#3-register-the-final-https-callback)
+before deploy. Existing SQL installations also select `["nl2sql"]` explicitly.
+
+| Operation | Purpose |
+| --- | --- |
+| `nl2sql.list_sources()` | Lists approved, enabled sources available to the authenticated application. |
+| `nl2sql.query(source_id, question)` | Retrieves approved metadata, generates and validates read-only SQL, executes it and returns typed results. |
+
+The toolset supports Azure SQL and SQL Server. For Fabric analytical sources,
+use the separate [Fabric data-agent route](nl2sql.md#fabric-data-agent-route).
+
+<span id="why-application-cosmos-db-is-required"></span>
+<span id="when-nl2sql-requires-application-cosmos-db"></span>
+
+### Dependencies and permissions
+
+NL2SQL uses application-owned Cosmos DB for NoSQL, generation/embedding models,
+approved read-only SQL access and network connectivity. The platform reuses a
+compatible application account or creates it during provision. Normal application
+Cosmos is serverless; Foundry backing Cosmos has separate ownership.
 
 | Container | Contents | Partition key |
 | --- | --- | --- |
-| `mcp-sources` | Approved source bindings, allowed objects and active metadata version | `/source_id` |
-| `mcp-nl2sql-metadata` | Approved schemas and examples with their embeddings | `/source_id` |
+| `mcp-sources` | Approved bindings, allowed objects and active metadata version | `/source_id` |
+| `mcp-nl2sql-metadata` | Approved schemas/examples and their embeddings | `/source_id` |
 
-Credentials stay in Key Vault; source records contain only secret references.
-Business rows stay in SQL. UI metadata uses its own containers and permissions;
-neither catalog nor UI storage owns native execution state.
+Provision preserves existing capabilities, including `EnableServerless` where
+present, and adds `EnableNoSQLVectorSearch`. The metadata policy uses
+`/embedding`, `float32`, cosine distance and `quantizedFlat`, with the selected
+embedding dimensions (default `3072`). Resolve model selection/dimensions
+before provision. Shared-throughput accounts and incompatible policies fail
+explicitly; existing catalog-name/dimension changes require migration/reindexing.
+An explicit `DEPLOY_COSMOS_DB=false` conflict must be unset for automatic
+selection or set to `true`.
 
-The platform adds `EnableNoSQLVectorSearch` while preserving existing account
-capabilities captured during provision, including `EnableServerless` where
-present. New metadata-container
-policies use `/embedding`, `float32`, cosine distance and a `quantizedFlat`
-index with the selected embedding dimensions (default `3072`).
-It does not recreate the account, replace existing containers or convert
-throughput to force compatibility. Shared-throughput accounts are incompatible
-with this vector-search path; incompatible selections or policies produce an
-explicit error for operator review.
-If `DEPLOY_COSMOS_DB=false` was deliberately set or persisted, selection fails
-explicitly. Unset that input for automatic selection or explicitly set it to
-`true`; the lifecycle does not silently override it.
-Existing catalog names or embedding dimensions cannot be changed in place.
-Those changes are rejected and require an explicit migration/reindexing plan.
+The MCP identity receives catalog read and selected model access. The SQL
+owner grants read access to approved views/tables. SQL-password sources use
+Key Vault references; declare exact secret names in `MCP_SQL_SECRET_NAMES`
+(default `[]`) before provision for secret-scoped grants. The administrative
+importer has separately authorized catalog-write and embedding-model access.
+The consuming Agent/Workflow receives MCP invocation access.
 
-MCP selection does not enable `DEPLOY_SEARCH_SERVICE`, create Search indexes
-or grant Search access. Search used by Foundry IQ or other retrieval is
-independent. Application Cosmos can also be selected **without MCP or the
-orchestrator** through `DEPLOY_COSMOS_DB=true` or a custom application capability.
-Generic Cosmos does not need vector policies; they are selected for MCP or a
-retained MCP catalog.
-See [Application Cosmos DB](configuration.md#application-cosmos-db).
+Business rows stay in SQL; the catalog holds approved metadata. Search and
+document ingestion are independent capabilities.
 
-## Onboard SQL before inviting users
+<span id="onboard-sql-before-inviting-users"></span>
 
-1. **Approve the exposure.** Select the SQL hostname, database and tables/views.
-   Prefer approved views that expose only the application's permitted data.
-2. **Authorize the server.** Ask the SQL owner to grant the MCP managed identity
-   read access for Azure SQL. For SQL Server without managed-identity support,
-   use a dedicated read-only SQL credential referenced from Key Vault.
-   Declare the actual password-secret names in `MCP_SQL_SECRET_NAMES` for
-   scoped vault grants; leave the default `[]` for managed-identity sources.
-   Declare secret consumers before provision, or reprovision and redeploy
-   if you add one after the initial installation.
-   Arrange DNS, TLS and network access from the MCP Container App.
-3. **Supply approved metadata.** Prepare source bindings, schemas,
-   relationships, descriptions and query examples using the
-   [catalog contract](nl2sql.md#approved-source-and-metadata-contract).
-4. **Import administratively.** Run the
-   [approved-file importer](nl2sql.md#import-the-approved-file) from the MCP
-   repository on an authorized managed-identity runner. It generates schema/example
-   embeddings and activates a version only after the complete import succeeds.
-   The importer needs catalog write and embedding-model access; the running
-   server has catalog read access only.
-5. **Check a known result and denials.** Discover the two tools as an authorized
-   application, list sources and query a known aggregate. Confirm unauthorized
-   callers, sources and objects are denied before admitting users.
+### Onboard sources
 
-For a complete source file and the matching first question, follow
-[the NL2SQL walkthrough](nl2sql.md#example-approved-source-file).
+1. Approve the SQL destination and objects with their owner, preferably
+   views exposing the application's permitted dataset.
+2. Grant the MCP identity read access, or configure the approved password-secret
+   reference. Arrange DNS, TLS and routes from the server to SQL and its dependencies.
+3. Prepare the [approved source JSON](nl2sql.md#example-approved-source-file)
+   with schemas, relationships, descriptions and question/query examples.
+4. Run the [administrative importer](nl2sql.md#import-the-approved-file) on a
+   separately authorized managed-identity runner. It generates embeddings and
+   activates a metadata version after the complete import succeeds.
+5. Verify a known result through the application and check denied callers,
+   sources and objects before admitting users.
 
-No persistent ingestion Container App is required for this import. If you use
-an independent metadata pipeline, it must honor the same Cosmos schema, model
-dimensions and complete-version activation contract. Import is not an MCP
-write tool, startup action or unrestricted database crawl.
+All authorized application users share the approved SQL dataset. MCP invocation
+authorization does not delegate each user's SQL identity or apply Foundry IQ
+document permissions to database rows.
+The [NL2SQL reference](nl2sql.md) contains the complete JSON/importer walkthrough,
+typed results, query limits and error handling.
 
-All authorized application users share the approved SQL dataset. MCP
-authentication does not delegate each user's SQL identity or enforce
-Foundry IQ document-level permissions on database rows.
+### Catalog operation and retention
 
-## Operate and extend safely
+Setting `MCP_TOOLSETS=[]` stops NL2SQL registration and client initialization
+after restart/redeployment. Catalog account/container declarations and vector
+policies are retained for safe cleanup rather than automatically destroyed.
+Deselection does not automatically revoke previously granted roles.
 
-Inspect generated nonsecret values under the `agent-lz` App Configuration label
-using the [MCP settings reference](application-settings.md#agent-app-mcp-contract).
-The client uses an Entra token for the dedicated MCP API, with the
-`MCP.Invoke` application role and an allowed application client ID.
-There is no API-key fallback or authorization from browser-supplied context.
-The orchestrator receives MCP invocation access, not catalog or SQL grants.
+Retain active metadata versions and review data/grant retirement with owners.
+Embedding-model, dimension or vector-policy changes require explicit reindexing.
+Below 1,000 vectors, Cosmos can use a vector full scan; measure RU consumption
+and latency. Correlate queries with `query_id` and `metadata_version`; tokens,
+generated SQL, returned rows and internal reasoning stay out of default logs.
+Recover through a compatible image/configuration or controlled deactivation.
 
-Use query IDs and metadata versions for correlation. Tokens, generated SQL,
-returned rows and internal reasoning are not logged by default.
-Changing an embedding model, dimensions or vector policy requires an explicit
-reindexing plan; changing a runtime key alone does not rebuild the catalog.
-Small catalogs can use a Cosmos vector full scan below the quantization
-threshold of 1,000 vectors. Measure RU consumption and latency rather than
-assuming index savings.
+## Custom applications
 
-When `DEPLOY_AGENT_APP_MCP=false` is applied through the platform lifecycle,
-both providers preserve application Cosmos, catalog-container declarations and
-vector policies. These resources are retained for safe cleanup rather than
-automatically destroyed.
-The parent publishes `MCP_ENABLED=false` and an empty caller allowlist;
-the shared helper restarts any remaining MCP serving revisions to revoke
-callers. Terraform removes deselected MCP compute from its managed state,
-whereas Bicep incremental deployments can leave the Container App resource
-present. Do not assume Bicep automatically deletes that compute. After
-confirming disablement has taken effect, the operator may explicitly remove
-an unused MCP Container App if desired, but must not delete the Cosmos account
-or catalog as part of that compute cleanup. Sources, data and other grants
-still need explicit owner review. Recovery uses a compatible image/configuration
-or controlled deactivation, never direct SQL inside the orchestrator as a fallback.
+A custom application definition owns its server compute, runtime configuration,
+dependency declarations and permissions. It can explicitly supply `MCP_TOOLSETS`
+as an application runtime setting without the reference `DEPLOY_AGENT_APP_MCP`
+switch or automatic reference catalog/model resources. That compute switch is
+reserved for the reference application and is rejected with custom definitions.
 
-The server's transport, authentication, configuration and observability can
-be reused for other reviewed tool modules. Adding a tool is development work
-with its own schema, permissions, dependencies and tests, plus explicit
-registration in the consuming application.
-The current startup initializes NL2SQL's Cosmos/model/SQL services. A future
-toolset that does not need those services must have its initialization and
-deployment dependencies separated accordingly. The current component is not
-an automatic, independently configurable plugin platform.
+Declare and authorize each custom consumer/dependency explicitly. Generic
+Cosmos and `COSMOS_VECTOR_SEARCH_ENABLED` can be selected independently of the
+reference catalog. Follow [Bring your own app](build-your-own-app.md#application-binding-and-selection).

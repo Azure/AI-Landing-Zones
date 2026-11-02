@@ -180,9 +180,11 @@ partition key `/principal_id` with owner `tid:oid`; only the frontend receives
 its metadata grant. Records contain descriptors/references, not bytes,
 transcripts or tokens. With conversational mode and all product flags off,
 bounded volatile owner maps are lost on UI restart.
-Selecting Agent App MCP Server requires a separate source/vector-metadata
-catalog in application Cosmos, without making Cosmos the native execution
-backend. The MCP server always runs in a separate Container App, including
+Selecting the NL2SQL toolset on Agent App MCP Server requires a separate
+source/vector-metadata catalog in application Cosmos, without making Cosmos
+the native execution backend. Server compute alone, with `MCP_TOOLSETS=[]`,
+does not require that catalog or NL2SQL model/secret access.
+The MCP server always runs in a separate Container App, including
 when its consumers use Hosted. The lifecycle authorizes the actual consuming
 identities; Hosted `both` has separate conversation and workflow callers.
 Catalog and SQL grants belong to the MCP identity, not the Hosted runtime.

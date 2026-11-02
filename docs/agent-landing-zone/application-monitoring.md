@@ -37,6 +37,10 @@ without claiming complete remote-call coverage.
 
 ## MCP query correlation
 
+Authenticated discovery with `MCP_TOOLSETS=[]` returns zero tools by design,
+not a catalog failure. Verify denied callers for empty servers too.
+SQL query evidence below applies only when `nl2sql` is selected.
+
 SQL generation, catalog retrieval and execution occur in the separate
 Agent App MCP Server, not as local orchestrator SQL helpers. Correlate the
 application request with the returned `query_id`, `source_id` and

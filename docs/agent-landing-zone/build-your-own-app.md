@@ -3,8 +3,12 @@
 ## Objective
 
 Customize the Agent Application or deploy a different, customer-owned application
-with pinned deployment inputs. A different application must implement the
-authentication, UI and ingestion API contracts for any components it reuses.
+with pinned deployment inputs. The application sits **above the reusable
+foundation**: its definition/composition owns names, tool selection and
+dependencies; foundation inputs describe generic compute, data, capabilities
+and roles. The supplied UI/orchestrator are one usable application, not
+mandatory foundation components. A different application implements only the
+authentication, UI and ingestion API contracts for components it actually reuses.
 
 ## When to use
 
@@ -21,7 +25,8 @@ different application. Choose the branch that matches your change:
 For the Agent Application orchestrator hosted in Foundry, use [Foundry IQ](foundry-iq.md) for
 knowledge base retrieval. Custom agent/workflow definitions and tools must use
 and test the selected native host integration and authorization path before
-deployment. The default is a conversational MAF Agent with Foundry IQ.
+deployment. The reference default is a conversational MAF Agent; Foundry IQ
+retrieval is independently selected and defaults to off.
 Hosted conversation and workflow are separate publications when both are selected;
 the Container Apps alternative uses the official Durable Extension and DTS.
 
@@ -131,7 +136,8 @@ Select it **before first provision**.
 Custom-only applications remain supported without forcing bundled tools.
 Generic Cosmos can be selected with `DEPLOY_COSMOS_DB=true` or a declared Cosmos
 capability without the bundled orchestrator or MCP. That storage selection
-does not require vector policies; MCP or a retained MCP catalog does.
+does not require vector policies. `COSMOS_VECTOR_SEARCH_ENABLED` can explicitly
+select generic vector capability without adding reference catalog containers.
 See [Application Cosmos DB](configuration.md#application-cosmos-db).
 
 The `preup` lifecycle hook rejects invalid definitions and changed application IDs
@@ -140,23 +146,24 @@ before Azure resource creation. The `preprovision` hook repeats validation for s
 resource group. Run `azd hooks run preup` first for that safeguard.
 Do not edit a binding to force another application into an existing environment.
 
-<details markdown="1">
-<summary>Optional components and additive composition</summary>
+### Reference components and custom applications
 
 `DEPLOY_INGESTION_CONTAINER_APP` selects Agent Application composition, not components in
-an explicit custom definition. Foundation composition remains additive:
-Agent Application Container App placeholders can remain alongside custom resources.
+an explicit custom definition. A custom-only definition contributes only its
+declared components, profiles and resource requirements.
 Published ingestion capability describes the platform's ingestion selection;
 your application must implement uploads if it needs them.
-`DEPLOY_AGENT_APP_MCP` likewise selects the reference application's optional
-server, not implicit tools in a custom-only definition. Declare and test the
-components and access your custom application actually consumes.
+`DEPLOY_AGENT_APP_MCP` is reserved for the reference application and is
+rejected for custom definitions before Azure calls.
+A custom app can explicitly pass `MCP_TOOLSETS` as its own runtime setting.
+Its definition/composition owns compute, configuration, dependencies and
+permissions; the setting adds no automatic reference server, catalog, model
+resources or SQL grants. To reuse or consume MCP, declare and test the app's
+own explicit component, runtime configuration, dependency and permission contracts.
 If reusing Agent App UI, preserve its
 [inline attachment contract](conversations.md#private-attachments), including
 owner mappings, exact byte/serialized limits and no corporate ingestion
 fallback. Workflow attachments are not supported by that native UI path.
-
-</details>
 
 ### Deploy a different application
 
@@ -283,8 +290,8 @@ removes its ownership, not another component's shared dependency.
 
 Review the exact source's fixed downloads and configured integrations when
 editing these declarations. The bundled UI declares `[]`; both orchestrator
-and ingestion declare the tiktoken asset host over HTTPS/443. A custom
-definition is additive, so its plan can also include bundled workloads.
+and ingestion declare the tiktoken asset host over HTTPS/443. A custom-only
+definition's plan follows its own declared workloads, not implicit bundled ones.
 Follow [runtime egress review and reconciliation](configuration.md#outbound-access)
 before provisioning. Build registries and package feeds are configured
 [separately](configuration.md#application-specific-package-feeds).
@@ -342,9 +349,8 @@ the platform ACR receive registry wiring to their sole attached identity;
 other registries need separate access configuration. Hosted agents use the
 project identity's declarative platform-ACR pull grant.
 
-Custom hosted components receive hosted foundation prerequisites even with a
-Container App layout for the bundled orchestrator; this does not deploy the
-bundled hosted orchestrator.
+Custom hosted components receive their declared hosted foundation prerequisites;
+this does not deploy the reference hosted orchestrator.
 Reapplying foundation can repair its declared pull grant; refreshing outputs
 alone cannot. Follow the recovery link above.
 

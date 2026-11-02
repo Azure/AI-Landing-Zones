@@ -59,6 +59,7 @@ ordinary unavailability or becoming a success-shaped result.
 | Host or application mode | Deployment composition; not a per-message or UI strategy switch |
 | Workflow graph/executor identifiers, native registration names | Reviewed application definition and compatible publication |
 | Identity, persistence backend, endpoints or process bootstrap | Matching resources, permissions and deployment/restart |
+| MCP toolset selection | Startup-only; provision declared dependencies and restart/redeploy, no hot reload |
 
 Do not assume arbitrary configuration changes can safely mutate an in-flight
 workflow. A run uses the functional values captured when it started, while a
@@ -100,7 +101,7 @@ An unavailable required store is a readiness failure, not an offline mode.
 | `DURABLE_TASK_SCHEDULER_CONNECTION_STRING` | Native managed-identity binding using the actual scheduler output and configured task hub |
 | `SEARCH_RETRIEVAL_ENABLED` | `false`; native Search tool capability |
 | `FOUNDRY_IQ_ENABLED` | `false`; native Foundry IQ capability |
-| `MCP_ENABLED` | `false`; native MCP registration, derived automatically when the integrated MCP component is selected |
+| `MCP_ENABLED` | `false`; native MCP connection/registration, derived by the integrated server lifecycle; does not select server toolsets |
 | `MULTIMODAL_ENABLED` | `false`; native multimodal tool capability, separate from ingestion `MULTIMODAL` and private attachments |
 | `ENABLE_CHAT_HISTORY` | `false`; explicitly selects saved-history discovery |
 | `ENABLE_USER_FEEDBACK` | `false`; explicitly selects user feedback |
@@ -136,9 +137,11 @@ Transport is implemented; model PDF/image understanding remains unverified.
 See [Conversations & files](conversations.md#private-attachments).
 
 Native Hosted and DTS execution do not require application Cosmos.
-Selecting Agent App MCP Server automatically requires application Cosmos for
-its separate source and vector-metadata containers. The MCP identity receives
-catalog and SQL access; the orchestrator receives MCP invocation access only.
+Selecting its `nl2sql` toolset requires application Cosmos for
+separate source and vector-metadata containers. An empty Agent App MCP server
+does not require that catalog or NL2SQL model/secret access.
+The MCP identity receives declared catalog/model access and SQL-owner-approved
+read access only for NL2SQL; the orchestrator receives MCP invocation access only.
 Generic application Cosmos and custom Cosmos capabilities remain independent
 of MCP selection. See [Application Cosmos DB](configuration.md#application-cosmos-db).
 
@@ -156,7 +159,21 @@ receives `ENABLE_PRIVATE_ATTACHMENTS=false`; it does not support attachments.
 Select the component with `DEPLOY_AGENT_APP_MCP=true` in the azd environment
 before provisioning; the default is `false`.
 This is a deployment selector, not another native runtime feature key.
-There is no second NL2SQL enable flag.
+Select tools explicitly before provision/deploy:
+
+```bash
+azd env set DEPLOY_AGENT_APP_MCP true
+azd env set MCP_TOOLSETS '["nl2sql"]'
+```
+
+`MCP_TOOLSETS` is a JSON array, default `[]`. Empty means zero tools and no
+NL2SQL client/dependency initialization, not unauthenticated access.
+The only supported nonempty value is `["nl2sql"]`. Unknown names, duplicates
+and invalid values fail closed. In the reference application, a nonempty
+selection requires `DEPLOY_AGENT_APP_MCP=true`.
+Custom applications may explicitly supply `MCP_TOOLSETS` with their own
+compute, dependency and permission declarations. This is application/runtime configuration under
+`agent-lz`, not a new tool-specific Bicep or Terraform parameter.
 
 The platform publishes the following values under `agent-lz` from the selected
 resources, models and identities. Do not copy endpoints between components,
@@ -165,28 +182,29 @@ After MCP and the actual native consumers deploy, the lifecycle grants
 `MCP.Invoke`, publishes the allowlist and `MCP_ENABLED`, and verifies the
 effective authenticated connection. An accepted key write alone does not prove
 that the MCP process loaded new authorization settings.
-Server authentication settings are **startup-only**, not dynamically refreshed.
+Server authentication and toolset settings are **startup-only**, not dynamically refreshed.
 The platform automatically restarts every active MCP revision after allowlist
 publication and before consumer activation. Use the normal `azd deploy`
 lifecycle; a manual operator restart is not part of that procedure.
 
 | Setting | Value or requirement | Ownership |
 | --- | --- | --- |
+| `MCP_TOOLSETS` | `[]`; explicitly select `["nl2sql"]` to register the two supplied SQL tools | Reviewed application configuration, published under `agent-lz`; restart/redeploy required |
 | `MCP_AUTH_TENANT_ID` | Entra tenant GUID | Generated identity configuration |
 | `MCP_AUTH_AUDIENCE` | Dedicated MCP API application client ID; JWT v2 audience | Generated identity configuration |
 | `MCP_AUTH_RESOURCE_SCOPE` | `api://<MCP API client ID>/.default` | Generated client token scope |
 | `MCP_ALLOWED_CLIENT_IDS` | JSON array of permitted application client IDs | Lifecycle resolves actual callers, including both Hosted publications when selected |
-| `MCP_COSMOS_ENDPOINT` | Application Cosmos endpoint | Provisioning output |
-| `MCP_COSMOS_DATABASE` | Application Cosmos database | Provisioning output |
-| `MCP_SOURCES_CONTAINER` | `mcp-sources` | Provisioned source catalog |
-| `MCP_METADATA_CONTAINER` | `mcp-nl2sql-metadata` | Provisioned vector-metadata catalog |
-| `MCP_EMBEDDING_DIMENSIONS` | `3072` by default; must match model, import and vector policy | Reviewed model selection, resolved before provision |
-| `MCP_METADATA_TOP_K` | `8` by default | Bounded metadata retrieval |
-| `MCP_QUERY_TIMEOUT_SECONDS` | `75` by default | Complete server-query deadline |
-| `MCP_CLIENT_TIMEOUT` | `90` by default; greater than the server deadline | Consuming orchestrator |
-| `AI_FOUNDRY_OPENAI_ENDPOINT` | Existing selected platform model endpoint | Provisioning output |
-| `CHAT_DEPLOYMENT_NAME` | Selected generation deployment | Reviewed model selection |
-| `EMBEDDING_DEPLOYMENT_NAME` | Selected embedding deployment | Reviewed model selection |
+| `MCP_COSMOS_ENDPOINT` | Application Cosmos endpoint; NL2SQL only | Conditional provisioning output |
+| `MCP_COSMOS_DATABASE` | Application Cosmos database; NL2SQL only | Conditional provisioning output |
+| `MCP_SOURCES_CONTAINER` | `mcp-sources`; NL2SQL only | Provisioned source catalog |
+| `MCP_METADATA_CONTAINER` | `mcp-nl2sql-metadata`; NL2SQL only | Provisioned vector-metadata catalog |
+| `MCP_EMBEDDING_DIMENSIONS` | `3072` by default; NL2SQL model, import and vector policy must match | Reviewed model selection, resolved before provision |
+| `MCP_METADATA_TOP_K` | `8` by default; NL2SQL only | Bounded metadata retrieval |
+| `MCP_QUERY_TIMEOUT_SECONDS` | `75` by default, accepted range `1..75`; NL2SQL only | Complete server-query deadline |
+| `MCP_CLIENT_TIMEOUT` | `90` by default, positive; must exceed the whole-query deadline when NL2SQL is selected | Consuming orchestrator |
+| `AI_FOUNDRY_OPENAI_ENDPOINT` | Selected model endpoint for NL2SQL | Conditional provisioning output |
+| `CHAT_DEPLOYMENT_NAME` | Selected NL2SQL generation deployment | Reviewed model selection |
+| `EMBEDDING_DEPLOYMENT_NAME` | Selected NL2SQL embedding deployment | Reviewed model selection |
 | `KEY_VAULT_ENDPOINT` | Selected vault endpoint when a SQL-password source needs it | Conditional output and secret-scoped grant |
 | `MCP_SQL_SECRET_NAMES` | `[]` by default; optional JSON array of SQL password-secret **names**, never values | Operator declaration for scoped MCP vault grants |
 
@@ -194,6 +212,10 @@ Declare password-secret names through the reviewed deployment inputs before
 provisioning their scoped grants. This is a grant declaration, not a tool
 enable switch or a replacement for a source's `password_secret_name`.
 Adding a secret consumer later requires matching provision/deploy steps.
+With `MCP_TOOLSETS=[]`, the server does not validate NL2SQL settings or open
+its Cosmos, model, SQL or Key Vault clients. Deselecting NL2SQL stops
+registration/initialization after restart/redeployment; retained catalog data
+and previously granted roles are not automatically deleted or revoked.
 
 `APP_CONFIG_ENDPOINT` is the process bootstrap environment variable.
 `AZURE_CLIENT_ID` is optional when selecting an assigned managed identity;

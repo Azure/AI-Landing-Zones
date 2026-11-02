@@ -78,6 +78,11 @@ for defaults, permissions and provider-specific removal rules.
 
 ## Choose application behavior and execution host
 
+The foundation can host the reference application **or another application**.
+Choose an [application definition](build-your-own-app.md#application-binding-and-selection)
+before first provision. Custom definitions supply their own components and
+requirements, not implicit reference UI/orchestrator or SQL tooling.
+
 For the reference application, choose conversation, a published workflow or
 both with `APPLICATION_MODE`. Select `ORCHESTRATION_HOST` independently:
 

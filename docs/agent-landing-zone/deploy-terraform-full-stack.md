@@ -99,14 +99,22 @@ distinct endpoints to the UI. The Container Apps alternative uses the
 official Durable Extension worker/client and provisioned DTS binding.
 Do not treat every canonical runtime key as an implied `azd env` input.
 
-For optional SQL tools, set `DEPLOY_AGENT_APP_MCP=true` before provision.
+For optional SQL tools, explicitly select both server and toolset before provision:
+
+```bash
+azd env set DEPLOY_AGENT_APP_MCP true
+azd env set MCP_TOOLSETS '["nl2sql"]'
+```
+
 Use the [coordinated MCP platform source](agent-app-mcp.md#use-the-coordinated-platform-source)
 and its complete manifest/application definition, not an isolated component
 version change in another checkout.
-The default is `false`. Terraform provisions the separate MCP Container App,
-its identity and application Cosmos dependency with the same policies and
-scoped access contract as Bicep. The shared lifecycle generates the consuming
-MCP connection and authorization; no second NL2SQL enable flag is required.
+The server default is `false`; toolsets default to `[]`. Empty server compute
+does not require the NL2SQL catalog, models or secret grants.
+With NL2SQL selected, Terraform projects the application's declared catalog
+policies and scoped grants into generic foundation inputs, as Bicep does.
+The shared application lifecycle publishes `MCP_TOOLSETS` under `agent-lz`
+and generates the consuming MCP connection and authorization.
 Search and document ingestion remain independent.
 See [Agent App MCP Server](agent-app-mcp.md) for what is automatic and for
 operator-owned SQL permissions and approved metadata import.

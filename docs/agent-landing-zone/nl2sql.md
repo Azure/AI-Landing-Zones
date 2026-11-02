@@ -3,13 +3,25 @@
 Natural-language-to-SQL (NL2SQL) turns a question into a validated, read-only
 database query. In Agent Application, an Agent or Workflow calls
 the **NL2SQL tools hosted by [Agent App MCP Server](agent-app-mcp.md)** to query
-an approved Azure SQL or SQL Server source. The orchestrator does not connect
-directly to SQL. MCP is the tool-call protocol, the server hosts the tools,
-and NL2SQL is the capability described on this page.
+an approved Azure SQL or SQL Server source. The server owns query generation,
+validation and read-only database execution.
 
 NL2SQL is optional. It does not change `APPLICATION_MODE` or
 `ORCHESTRATION_HOST`, and applications without it do not need its SQL
 connectivity or metadata catalog.
+For the reference application, select it explicitly before provision/deploy:
+
+```bash
+azd env set DEPLOY_AGENT_APP_MCP true
+azd env set MCP_TOOLSETS '["nl2sql"]'
+```
+
+`MCP_TOOLSETS` defaults to `[]`; choose `["nl2sql"]` for this walkthrough.
+Tool registration is startup-scoped; changes require restart/redeployment.
+Disabling NL2SQL stops registration and client initialization, not deletion
+of retained catalogs or automatic revocation of previously granted roles.
+Custom apps follow the [MCP custom application contract](agent-app-mcp.md#custom-applications)
+for their own runtime settings, compute and permission declarations.
 
 ## Choose the structured-data route
 
@@ -161,10 +173,10 @@ Azure CLI login is not an importer credential fallback.
 
 Keep the identities distinct:
 
-| Identity | Access needed | Granted automatically by MCP selection? |
+| Identity | Access needed | Provisioning responsibility |
 | --- | --- | --- |
 | Consuming Agent/Workflow | Authenticated MCP invocation | Yes, for the selected application callers |
-| MCP server | Catalog read, selected models and approved SQL read | Platform grants catalog/model access, SQL owner grants database access |
+| MCP server with `nl2sql` selected | Catalog read, selected models and approved SQL read | Platform grants declared catalog/model access only for the selected toolset; SQL owner grants database access |
 | Administrative importer | App Configuration read, catalog write and embedding-model access | No, the operator authorizes this separate runner identity |
 
 Use an existing approved Azure runner that can obtain its assigned managed
@@ -183,11 +195,13 @@ The platform normally downloads runtime components automatically for deployment,
 but that does not launch the administrative import:
 
 ```text
-git clone --branch v1.0.0 https://github.com/Azure/agent-app-mcp.git
+git clone --branch <manifest-mcp-tag> https://github.com/Azure/agent-app-mcp.git
 cd agent-app-mcp
 uv sync --frozen
 ```
 
+Replace `<manifest-mcp-tag>` with the MCP tag in your platform's reviewed
+`manifest.json`, not an independently newer component release.
 The repository supplies `samples/approved-synthetic.json` for an authorized
 development test. Its illustrative source is not an automatically provisioned
 SQL connection. For your application, replace the sample path with your
@@ -276,8 +290,8 @@ decimal precision. A successful zero-row query is distinct from an error.
 | SQL execution | 30 seconds |
 | Rows | 1,000 |
 | Serialized result | 256 KiB (`262144` bytes) |
-| Complete server query | `MCP_QUERY_TIMEOUT_SECONDS=75` by default |
-| Consuming MCP client | `MCP_CLIENT_TIMEOUT=90` by default; must exceed the server deadline |
+| Complete server query | `MCP_QUERY_TIMEOUT_SECONDS=75` by default; accepted range `1..75` |
+| Consuming MCP client | `MCP_CLIENT_TIMEOUT=90` by default; positive and must exceed the NL2SQL whole-query deadline |
 
 The complete deadline covers connection, metadata retrieval, model generation
 and SQL. Limits produce explicit errors, not silently truncated results.

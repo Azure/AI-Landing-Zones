@@ -108,8 +108,9 @@ and protected retrieval do not have the same integration requirements.
 - **Optional MCP deployment:** the helper automatically configures the
   dedicated Entra API registration/service principal and `MCP.Invoke` app role.
   The deployer needs directory rights for app registration and application-role
-  assignments, separately from Azure resource/RBAC rights. The SQL owner must
-  approve the server's read access; deployment does not create database grants.
+  assignments, separately from Azure resource/RBAC rights. When NL2SQL is
+  selected, the SQL owner must approve read access; deployment does not create
+  database grants.
 
 !!! important "Protected retrieval keeps the signed-in user's permissions"
     The UI and native agent's retrieval capability require delegated Search
@@ -288,19 +289,21 @@ One environment binds to one application ID.
 To query approved Azure SQL or SQL Server data, select
 **[Agent App MCP Server](agent-app-mcp.md)** before provision:
 
-First select the [coordinated MCP platform source](agent-app-mcp.md#use-the-coordinated-platform-source).
-The MCP component release alone does not add this integration to a checkout
-whose application definition does not include it.
+Use the [coordinated platform source](agent-app-mcp.md#use-the-coordinated-platform-source)
+and its reviewed manifest/application definition.
 
 ```bash
 azd env set DEPLOY_AGENT_APP_MCP true
+azd env set MCP_TOOLSETS '["nl2sql"]'
 ```
 
-It defaults to `false` and adds a separate Container App with either
-orchestration host. The platform requires application Cosmos automatically,
+The server selector defaults to `false` and adds separate compute with either
+orchestration host. `MCP_TOOLSETS` defaults to `[]`: server deployment alone
+registers zero tools and needs no NL2SQL catalog/model/secret grants.
+The explicit `["nl2sql"]` selection requires application Cosmos automatically,
 reusing a compatible account or creating it when absent. Catalog containers,
-vector policies, managed identities, scoped grants and App Configuration outputs
-are coordinated; do not add Cosmos or NL2SQL enable flags for this dependency.
+vector policies, scoped grants and settings under label `agent-lz` are
+coordinated by application composition, not tool-specific foundation parameters.
 Search and document ingestion are not required by MCP.
 
 This does not create SQL databases, users or grants, nor import source metadata.

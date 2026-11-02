@@ -4,9 +4,10 @@ Agent App UI provides a floating **Chainlit Copilot** widget for an existing
 portal. Its script renders in an open Shadow DOM, a separate part of the
 portal page's document structure, not an iframe containing another web page.
 
-This is Agent App UI embedding, not Copilot Studio. The UI remains in Container
-Apps, with the orchestrator hosted in Foundry and grounding through Foundry IQ.
-This page covers widget configuration, portal integration and session lifecycle.
+The UI runs in Container Apps. This guide covers widget configuration, portal
+integration and session lifecycle for the default Foundry-hosted application.
+Retrieval is selected independently through [Tools & MCP](agent-tools.md).
+For a Copilot Studio channel, use [Connect Copilot Studio](connect-copilot-studio.md).
 
 This page describes requirements, not a turnkey portal integration.
 Portal token acquisition, Content Security Policy (CSP) and widget lifecycle

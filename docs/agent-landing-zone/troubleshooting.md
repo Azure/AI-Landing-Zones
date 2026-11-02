@@ -779,8 +779,11 @@ Start at the first failed boundary, not the UI symptom. A successful
 | Symptom | Check | Correct safely |
 | --- | --- | --- |
 | Entra setup fails during deploy | Deployer's directory rights for API registration/service principal and app-role assignment | Arrange required directory permissions; ARM Contributor alone is insufficient |
+| Authenticated discovery returns no tools | Effective startup `MCP_TOOLSETS`, default `[]` | Empty server is supported. For SQL, explicitly set `["nl2sql"]` before provision/deploy and restart/redeploy; server compute does not imply SQL |
+| Toolset selection fails at startup/preflight | JSON array shape, supported names and duplicates; reference server compute selection | Use `[]` or `["nl2sql"]`; unknown/duplicate/invalid values fail closed. Reference apps require compute selection for nonempty toolsets |
+| Custom application rejects reference compute selection | Selected `AGENTLZ_APP_DEFINITION` and `DEPLOY_AGENT_APP_MCP` | Remove the reference compute switch. Custom apps may explicitly supply `MCP_TOOLSETS` with their own compute/configuration/dependency/grant declarations |
 | MCP discovery returns 401/403 | Actual caller, tenant, v2 audience, allowed client ID and `MCP.Invoke` role | Repair the generated identity/assignment through the platform lifecycle; do not accept an ARM token, API key or user-context JSON |
-| Cosmos selection conflicts | Deliberately set or persisted `DEPLOY_COSMOS_DB=false` | Unset the declaration for automatic selection or set it to `true`; it is not silently overridden |
+| NL2SQL Cosmos selection conflicts | Deliberately set or persisted `DEPLOY_COSMOS_DB=false` | Unset the declaration for automatic selection or set it to `true`; an empty server does not need the catalog |
 | Vector provisioning fails | Throughput compatibility, preserved capabilities, model dimensions and new-container policies | Review compatibility; do not recreate accounts/containers or convert throughput as a retry |
 | Catalog name/dimension change is rejected | Existing catalog declarations and selected embedding model | Arrange explicit migration/reindexing; in-place name/dimension changes are not a supported retry |
 | Sources are absent or metadata is incomplete | Enabled approved source and active, completely imported metadata version | Complete the administrative import; provisioning does not discover SQL schemas |
@@ -792,7 +795,8 @@ orchestrator. Cancellation must not close cursor/connection resources while
 an ODBC worker is still running and does not guarantee instant SQL-server
 cancellation.
 
-Verify authenticated discovery, a known approved result, denied callers/objects
+Verify authenticated discovery and denied callers even for an empty server.
+With NL2SQL selected, also check a known approved result, denied objects
 and explicit limit/error behavior after repair. Use query IDs and metadata
 versions without logging tokens, SQL or business rows.
 See [SQL failure handling](nl2sql.md#failures-cancellation-and-cleanup).

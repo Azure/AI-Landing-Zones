@@ -10,7 +10,7 @@ Use [Run locally](local-development.md) to prepare a development environment.
 | Change | Repository and starting point |
 | --- | --- |
 | Agent definitions, workflow graphs, prompts and registered tools | [Orchestrator](https://github.com/Azure/agent-app-orchestrator), application definitions and tool/connector owners under `src/` |
-| NL2SQL generation, validation, execution, catalog import and MCP tool modules | [Agent App MCP Server](https://github.com/Azure/agent-app-mcp), separate from orchestrator definitions |
+| MCP transport, authentication and explicit toolset registration; NL2SQL generation, validation, execution and catalog import | [Agent App MCP Server](https://github.com/Azure/agent-app-mcp), separate from orchestrator definitions |
 | File parsing, chunking, source jobs, indexing | [Ingestion](https://github.com/Azure/agent-app-ingestion), `chunking/`, `jobs/`, and `tools/` |
 | Chat presentation, identity/session handling, backend client | [UI](https://github.com/Azure/agent-app-ui), `src/gpt_rag_ui/`, `public/`, and `.chainlit/` |
 | Ingestion operator dashboard | Ingestion `frontend/`, not the chat UI or native runtime |
@@ -69,9 +69,12 @@ from an MCP knowledge source consulted by Foundry IQ.
 - For SQL, keep a read-only database principal as the primary security boundary.
   Generated-SQL validation is not a substitute for database permissions.
   SQL generation, catalog retrieval and execution belong in Agent App MCP
-  Server, not the orchestrator. Extend its reviewed tool modules with typed
-  schemas, scoped permissions and tests. Only the two documented NL2SQL tools
-  are supplied; future capabilities require implementation.
+  Server. Keep its reviewed modules, typed schemas, scoped permissions,
+  dependencies and tests aligned with explicit module registration.
+  `MCP_TOOLSETS=[]` registers zero tools and initializes no NL2SQL
+  dependencies; `["nl2sql"]` selects the two supplied SQL tools at startup.
+  Unknown/duplicate/invalid selections fail closed. Changes require
+  restart/redeployment.
 
 Retrieval backend selection does not switch every datasource or tool.
 Use [Foundry IQ](foundry-iq.md) and the relevant source guide for source

@@ -52,8 +52,18 @@ preparing Azure resources from publishing application code.
 
 An infrastructure-only deployment stops after resource provisioning and
 service configuration. It does not publish application images or start a
-hosted agent. A full-stack deployment completes the application stage too.
+hosted agent. Generic compute placeholders may exist until application deploy.
+Reprovisioning preserves application images/revisions already published.
+There is no extra application-deployment flag: use native `azd provision`
+for the foundation and `azd deploy` for the application.
+A full-stack deployment completes the application stage too.
 The deployment guides provide the supported sequence and its checks.
+
+For **another application instead of the reference UI/orchestrator**, select
+[`AGENTLZ_APP_DEFINITION`](build-your-own-app.md#application-binding-and-selection)
+before provision. Its composition declares the names, tools and dependencies;
+the reusable foundation accepts generic compute, data, capability and role
+inputs. Custom-only applications do not inherit reference MCP, SQL or catalogs.
 
 <span id="choose-your-path"></span>
 <span id="agent-application"></span>

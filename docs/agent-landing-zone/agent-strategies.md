@@ -33,8 +33,9 @@ authorized capability when it is registered in their definitions.
   independently indexed sources.
 - Use [Tools & MCP](agent-tools.md) for reviewed operations and downstream
   identity requirements.
-- Use [Agent App MCP Server](agent-app-mcp.md) for optional approved SQL tools
-  on either host, and [NL2SQL](nl2sql.md) to distinguish that execution path
+- Use [Agent App MCP Server](agent-app-mcp.md) for explicitly selected toolsets
+  on either host. Its default `MCP_TOOLSETS=[]` registers zero tools;
+  `["nl2sql"]` selects the supplied [NL2SQL](nl2sql.md) tools, a distinct execution path
   from a remote Fabric data agent.
 - Use [Document formats & images](multimodality.md) to distinguish document
   processing from direct image input in chat.

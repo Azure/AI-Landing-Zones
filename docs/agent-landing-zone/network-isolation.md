@@ -146,10 +146,12 @@ from a connected host before deploying applications.
 ## Account for integration-specific paths
 
 Agent App MCP Server needs HTTPS from the actual Hosted or Container Apps
-consumer to its separate Container App, and outbound access from the MCP app
-to App Configuration, application Cosmos, selected models and the approved SQL
-destination. SQL-password sources also need the selected Key Vault.
-The administrative metadata importer needs its own catalog/model path.
+consumer to its separate Container App, plus configuration and identity
+connectivity even when `MCP_TOOLSETS=[]`.
+Only the selected NL2SQL toolset adds outbound paths to application Cosmos,
+generation/embedding models and the approved SQL destination. SQL-password
+sources also need the selected Key Vault. The administrative metadata importer
+needs its own catalog/model path.
 Plan routes, DNS and TLS with the SQL and network owners; provisioning does
 not authorize an external database or make its network reachable.
 MCP does not add a Search path or Search grant. Other retrieval consumers keep

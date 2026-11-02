@@ -27,7 +27,7 @@ granting access.
 | Frontend managed identity | Reads UI settings/secrets, pulls its image and accesses Blob references. It is not the signed-in user. |
 | Foundry project managed identity | Pulls the hosted image and uses configured project connections. It is not the running agent's identity. |
 | Hosted agent runtime principal | The actual principal discovered for the deployed agent; receives the runtime grants below. |
-| MCP Container App managed identity | Reads approved SQL metadata and models and queries SQL when the component is selected; it is not the orchestrator identity. |
+| MCP Container App managed identity | Authenticates the server and reads its configuration; only selected toolsets add data/model/secret access. It is not the orchestrator identity. |
 | Administrative metadata importer | Writes approved source/schema/example versions and generates embeddings; separate from the read-only MCP runtime. |
 | Signed-in application user | Invokes Foundry through UI OBO and separately needs source/document authorization. |
 
@@ -114,16 +114,22 @@ authentication fallback.
 | Principal | Required access | Boundary |
 | --- | --- | --- |
 | MCP Container App identity | Configuration read and image pull | Base application resources |
-| MCP Container App identity | Selected generation and embedding models | Only the models it consumes |
-| MCP Container App identity | Catalog read | Exact `mcp-sources` and `mcp-nl2sql-metadata` containers in application Cosmos |
-| MCP Container App identity | SQL read | SQL owner approves/grants permitted views/tables; platform startup does not create database grants |
-| MCP Container App identity | SQL password secret, when required | Exact names declared in `MCP_SQL_SECRET_NAMES` (default `[]`), not vault-wide access |
+| MCP Container App identity | Generation and embedding models | Only when `nl2sql` is selected; no static model-user grant for an empty server |
+| MCP Container App identity | Catalog read | Only for selected NL2SQL: exact `mcp-sources` and `mcp-nl2sql-metadata` containers in application Cosmos |
+| MCP Container App identity | SQL read | For selected NL2SQL, SQL owner approves/grants permitted views/tables; platform startup does not create database grants |
+| MCP Container App identity | SQL password secret, when required by NL2SQL | Exact names declared in `MCP_SQL_SECRET_NAMES` (default `[]`), not vault-wide access |
 | Administrative importer | Catalog write and embedding model access | Complete approved-version import, not runtime catalog administration |
 | Hosted/Container Apps consumer | `MCP.Invoke`, allowed client ID and MCP-audience token | Invocation only; no MCP catalog or SQL grant |
 
+`DEPLOY_AGENT_APP_MCP=true` selects server compute only. `MCP_TOOLSETS=[]`
+registers zero tools with the same mandatory tenant/audience/app-role/client
+checks; it adds no NL2SQL catalog/model/secret grants. Explicit
+`["nl2sql"]` selects that dependency/grant set.
 Normal application Cosmos is serverless and separate from Foundry backing
-Cosmos. MCP adds vector policies to its catalog, not UI containers or native
+Cosmos. NL2SQL adds vector policies to its catalog, not UI containers or native
 execution state. No Search grants are added by MCP selection.
+Deselection stops initialization after restart/redeployment but does not
+automatically revoke previously granted roles or delete retained data.
 See [MCP deployment and onboarding](../agent-landing-zone/agent-app-mcp.md).
 
 <span id="microsoft-foundry-and-ai-search-assignments"></span>
