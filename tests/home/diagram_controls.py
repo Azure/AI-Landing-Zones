@@ -32,6 +32,23 @@ def check_diagram_controls(page, base, screenshots=None):
             bounds = control.bounding_box()
             assert bounds["width"] >= 44 and bounds["height"] >= 44, (guide, width)
             assert bounds["x"] >= 0 and bounds["x"] + bounds["width"] <= width, (guide, width)
+            figure = page.locator(".alz-diagram")
+            diagram = figure.locator("img").first
+            content = diagram if diagram.is_visible() else figure.locator(".runbook-diagram__summary")
+            expect(content).to_be_visible()
+            content_bounds = content.bounding_box()
+            figure_bounds = figure.bounding_box()
+            assert bounds["y"] >= content_bounds["y"] + content_bounds["height"] - 1, (
+                guide, width, "Expand control must be below the diagram or mobile summary"
+            )
+            assert abs(bounds["x"] + bounds["width"] - figure_bounds["x"] - figure_bounds["width"]) <= 1, (
+                guide, width, "Expand control must align with the diagram's right edge"
+            )
+            assert figure.evaluate("""figure =>
+                Boolean(figure.querySelector('img').compareDocumentPosition(
+                    figure.querySelector('.alz-diagram__expand')
+                ) & Node.DOCUMENT_POSITION_FOLLOWING)
+            """), (guide, width, "Expand control must follow the image in DOM order")
             assert page.locator("a.runbook-diagram__open").count() == 0, (guide, width)
             assert not page.locator("article a").filter(
                 has_text=re.compile(r"^Open (the )?full-size diagram$")
@@ -39,7 +56,7 @@ def check_diagram_controls(page, base, screenshots=None):
             assert page.evaluate(
                 "document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"
             ), (guide, width, "Page overflow")
-            if screenshots and guide in ("fabric-iq", "application") and width != 320:
+            if screenshots and guide in ("fabric-iq", "application", "hosted-agents") and width != 320:
                 page.mouse.move(0, 0)
                 page.locator(".alz-diagram").screenshot(
                     path=str(screenshots / f"{guide}-control-{width}.png")
@@ -124,6 +141,6 @@ def check_diagram_controls(page, base, screenshots=None):
     finally:
         fallback.close()
     print(
-        f"PASS: {len(DIAGRAM_PAGES)} diagram controls at three viewports, keyboard/focus, "
+        f"PASS: {len(DIAGRAM_PAGES)} lower-right diagram controls at three viewports, keyboard/focus, "
         "zoom/pan, errors, no-JS fallback and Home/Gateway isolation"
     )
