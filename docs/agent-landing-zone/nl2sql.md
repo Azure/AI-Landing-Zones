@@ -2,8 +2,10 @@
 
 Natural-language-to-SQL (NL2SQL) turns a question into a validated, read-only
 database query. In Agent Application, an Agent or Workflow calls
-**[Agent App MCP Server](agent-app-mcp.md)** to query an approved Azure SQL or
-SQL Server source. The orchestrator does not connect directly to SQL.
+the **NL2SQL tools hosted by [Agent App MCP Server](agent-app-mcp.md)** to query
+an approved Azure SQL or SQL Server source. The orchestrator does not connect
+directly to SQL. MCP is the tool-call protocol, the server hosts the tools,
+and NL2SQL is the capability described on this page.
 
 NL2SQL is optional. It does not change `APPLICATION_MODE` or
 `ORCHESTRATION_HOST`, and applications without it do not need its SQL
@@ -13,15 +15,17 @@ connectivity or metadata catalog.
 
 | Route | Who executes the query | What you prepare |
 | --- | --- | --- |
-| Agent App MCP Server | A separate Container App generates, validates and executes SQL as the application's read-only principal | Approved SQL source, Cosmos schemas/examples and embeddings, model selection and network access |
+| NL2SQL tools on Agent App MCP Server | The tool implementation in a separate Container App generates, validates and executes SQL as the application's read-only principal | Approved SQL source, Cosmos schemas/examples and embeddings, model selection and network access |
 | Foundry IQ `fabricDataAgent` source | The published Fabric data agent owns query generation and execution; the application consumes its answer | Published Fabric agent, knowledge-source binding and delegated source access |
 
-The MCP component supports Azure SQL and SQL Server, not Fabric SQL endpoints,
+The current NL2SQL toolset supports Azure SQL and SQL Server, not Fabric SQL endpoints,
 semantic models or DAX. Use the Fabric route for its supported analytical
-sources. Changing a retrieval-backend setting does not redirect MCP queries.
-Search remains a dependency of Foundry IQ, not of the MCP metadata catalog.
+sources. Changing a retrieval-backend setting does not redirect NL2SQL tool calls.
+Search remains a dependency of Foundry IQ, not of the NL2SQL metadata catalog.
 
-## How an MCP question is answered
+<span id="how-an-mcp-question-is-answered"></span>
+
+## How an NL2SQL request is answered
 
 1. The Agent or Workflow lists the approved sources using
    `nl2sql.list_sources()`.

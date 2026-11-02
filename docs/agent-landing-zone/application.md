@@ -57,7 +57,7 @@ not automatically know your organization's documents or databases.
 | Agent App UI/BFF | Provides sign-in, chat/process presentation, owner mappings, product metadata and feedback. |
 | Agent App Orchestrator | Runs native MAF Agents and Workflows, using the explicit integration for the selected host. |
 | Agent App Ingestion | Provides optional application-managed document processing and indexing. |
-| [Agent App MCP Server](agent-app-mcp.md) | Runs in a separate Container App and queries approved Azure SQL/SQL Server data through two NL2SQL tools. |
+| [Agent App MCP Server](agent-app-mcp.md) | Hosts authenticated tools in a separate Container App. The currently supplied toolset is NL2SQL over approved Azure SQL/SQL Server data. |
 
 ## Default deployment
 
@@ -173,8 +173,9 @@ Choose [where execution runs](hosted-agents.md), configure
 [workflows and human input](workflows.md), or connect
 [tools and MCP servers](agent-tools.md). A tool lets an agent perform an
 operation. Retrieval supplies information for its answer.
-For the optional SQL component, start with [Agent App MCP Server](agent-app-mcp.md)
+For the optional tool server, start with [Agent App MCP Server](agent-app-mcp.md)
 to understand deployment, automatic configuration and operator responsibilities.
+Its current NL2SQL tools have their own SQL onboarding procedure.
 
 <span id="frontend"></span>
 

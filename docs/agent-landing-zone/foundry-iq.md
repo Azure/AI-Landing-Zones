@@ -30,8 +30,8 @@ or Workflow. It does not reroute the
 [Application settings](application-settings.md) describes how to change runtime
 values. [Agents & prompts](agent-strategies.md) describes application selection
 independently of the host and its tools.
-Agent App MCP Server stores approved SQL metadata and vectors in application
-Cosmos. It does not require Search; enabling it does not enable Foundry IQ
+The NL2SQL tools on Agent App MCP Server store approved SQL metadata and vectors
+in application Cosmos. This toolset does not require Search; enabling the server does not enable Foundry IQ
 or alter this knowledge base's sources.
 
 <span id="before-you-start"></span>

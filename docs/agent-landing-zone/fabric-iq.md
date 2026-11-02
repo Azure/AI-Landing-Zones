@@ -13,8 +13,8 @@ Deployment procedures are in the
 [full-stack deployment guide](deploy-full-stack.md).
 
 For approved Azure SQL or SQL Server connections, use the separate
-[MCP NL2SQL tools](nl2sql.md). Agent App MCP Server does not support Fabric
-SQL endpoints, semantic models or DAX. Its application Cosmos catalog is
+[NL2SQL tools on Agent App MCP Server](nl2sql.md). That current toolset does not
+support Fabric SQL endpoints, semantic models or DAX. Its application Cosmos catalog is
 independent of Fabric's schema context; enabling MCP does not publish a
 Fabric data agent.
 

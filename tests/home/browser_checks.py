@@ -256,6 +256,7 @@ def check_application_mcp_documentation(page, base):
     assert "rather than automatically destroyed" in content.inner_text()
     assert "restarts every active MCP revision" in content.inner_text()
     assert "startup-only" in content.inner_text()
+    assert "MCP is the communication protocol, not a SQL feature." in content.inner_text()
 
     page.goto(base + "agent-landing-zone/application-settings/")
     content = page.locator(".md-content__inner")
@@ -293,6 +294,8 @@ def check_application_mcp_documentation(page, base):
     assert any("--file /path/to/approved-products.json" in block and "APP_CONFIG_ENDPOINT" in block for block in imports)
     expect(content.get_by_role("heading", name="Example approved source file", exact=True)).to_have_count(1)
     expect(content.get_by_role("heading", name="Ask the first question", exact=True)).to_have_count(1)
+    expect(content.get_by_role("heading", name="How an NL2SQL request is answered", exact=True)).to_have_count(1)
+    expect(content.get_by_role("heading", name="How an MCP question is answered", exact=True)).to_have_count(0)
     assert "Azure CLI login is not an importer credential fallback" in text
 
     page.goto(base + "agent-landing-zone/configuration/")

@@ -32,7 +32,7 @@ NL2SQL with a second runtime flag.
 | Call an operation | A reviewed tool with a narrow schema and explicit authorization |
 | Connect an MCP server | Registered MCP tools, authenticated transport and approved destination |
 | Ground an answer | A configured Foundry IQ source or Search capability |
-| Query approved Azure SQL or SQL Server data | Agent App MCP Server, with a Cosmos metadata catalog and read-only SQL principal |
+| Query approved Azure SQL or SQL Server data | NL2SQL tools hosted by Agent App MCP Server, with a Cosmos metadata catalog and read-only SQL principal |
 | Wait for a person's decision | Native workflow human input, not a blocking tool socket |
 | Change a process graph | Reviewed workflow definition and compatible publication |
 
@@ -44,15 +44,19 @@ control source planning, output parsing and query credentials.
 ### Optional Agent App MCP Server
 
 The separate MCP Container App works with either consuming host and any
-application mode. It exposes only `nl2sql.list_sources()` and
-`nl2sql.query(source_id, question)`. The official Python MCP SDK hosts the
+application mode. It hosts tools over MCP. Its currently supplied toolset is
+NL2SQL: `nl2sql.list_sources()` and `nl2sql.query(source_id, question)`.
+MCP is not synonymous with this toolset. Other tools require reviewed
+implementation, permissions, dependency wiring and consumer registration.
+The official Python MCP SDK hosts the
 server; MAF remains in the consuming orchestrator.
 
-Selecting `DEPLOY_AGENT_APP_MCP=true` adds its application Cosmos catalog,
+Selecting `DEPLOY_AGENT_APP_MCP=true` deploys the current server and adds its
+NL2SQL application Cosmos catalog,
 identity and deployment. It does not enable Search or require ingestion.
 The operator still approves SQL destinations, read permissions and metadata.
-The server—not the orchestrator—owns SQL connectivity, metadata retrieval and
-generated-query validation. There are no individually registered SQL helpers,
+The server's NL2SQL implementation—not the orchestrator—owns SQL connectivity,
+metadata retrieval and generated-query validation. There are no individually registered SQL helpers,
 arbitrary-SQL arguments, catalog write tools or DAX operations.
 
 The configured read-only principal queries the application's approved dataset,

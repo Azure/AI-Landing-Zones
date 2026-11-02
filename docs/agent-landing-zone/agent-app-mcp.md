@@ -1,9 +1,15 @@
 # Agent App MCP Server
 
-**Agent App MCP Server** gives an Agent or Workflow access to approved SQL
-data through Model Context Protocol (MCP). It is an optional application
+**Agent App MCP Server** hosts tools that an Agent or Workflow calls through
+Model Context Protocol (MCP). It is an optional application
 component in a **separate Azure Container App**, whether the consuming
 orchestrator runs in Foundry Hosted Agents or Azure Container Apps.
+
+MCP is the communication protocol, not a SQL feature. Agent App MCP is the
+server component. **NL2SQL is the toolset currently supplied by that server**,
+with operations for listing approved sources and asking questions about SQL
+data. Other reviewed toolsets can be added to the server without redefining
+MCP as NL2SQL.
 
 The server uses the official Python MCP SDK, not Microsoft Agent Framework.
 It performs a bounded operation for each request; it does not host conversations,
@@ -11,6 +17,9 @@ workflows, a scheduler or a UI.
 
 ## Start here: from deployment to the first question
 
+The steps below deploy the server and onboard its current **NL2SQL toolset**.
+SQL permissions and catalog import belong to that toolset, not to the MCP
+protocol or every possible MCP tool.
 Follow these steps in order. **Deploying the component does not connect a SQL
 source or populate its catalog.**
 
@@ -28,15 +37,18 @@ and approved metadata separately.
 
 ## What the component provides
 
-| MCP operation | Purpose |
+| NL2SQL tool exposed over MCP | Purpose |
 | --- | --- |
 | `nl2sql.list_sources()` | List approved, enabled sources available to the authenticated application. |
 | `nl2sql.query(source_id, question)` | Find approved metadata, generate and validate read-only SQL, execute it and return typed results. |
 
-These are the only supplied tools. The model cannot submit arbitrary SQL,
+These are the currently supplied tools, not a fixed limit of MCP or the
+server's intended tool catalog. This release does not provide additional
+toolsets or automatic plugin installation.
+Through the NL2SQL tools, the model cannot submit arbitrary SQL,
 change the catalog or pass identities and credentials as tool arguments.
-Azure SQL and SQL Server are supported; Fabric SQL endpoints, semantic models
-and DAX are not part of this component.
+The current NL2SQL toolset supports Azure SQL and SQL Server, not Fabric SQL
+endpoints, semantic models or DAX.
 
 The server listens on port `8080` inside its container. The Azure HTTPS
 endpoint uses stateless Streamable HTTP at `/mcp`.
@@ -138,7 +150,8 @@ selection does not silently replace it or create a multi-endpoint integration.
 
 ## Why application Cosmos DB is required
 
-MCP uses the **application-owned Cosmos DB for NoSQL account**, never Foundry's
+The supplied NL2SQL toolset uses the **application-owned Cosmos DB for NoSQL
+account**, never Foundry's
 backing Cosmos account. The platform reuses the account managed by this
 deployment when compatible, or creates it during `azd provision` if absent.
 Selecting MCP automatically requires this dependency. Normal application
@@ -246,5 +259,10 @@ still need explicit owner review. Recovery uses a compatible image/configuration
 or controlled deactivation, never direct SQL inside the orchestrator as a fallback.
 
 The server's transport, authentication, configuration and observability can
-support future reviewed tool modules. Adding a tool is development work with
-its own schema, permissions and tests; no additional tools are supplied here.
+be reused for other reviewed tool modules. Adding a tool is development work
+with its own schema, permissions, dependencies and tests, plus explicit
+registration in the consuming application.
+The current startup initializes NL2SQL's Cosmos/model/SQL services. A future
+toolset that does not need those services must have its initialization and
+deployment dependencies separated accordingly. The current component is not
+an automatic, independently configurable plugin platform.
