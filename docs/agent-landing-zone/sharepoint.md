@@ -14,14 +14,15 @@ Deployment procedures are in the
 **Who copies SharePoint content, and who keeps its permissions current?**
 
 1. Native indexed SharePoint lets Search manage indexing and permission ingestion.
-2. Application-managed ingestion uses Graph, selected-site app access and
-   scheduled ACL refresh to populate a separately owned Search index.
+2. Application-managed ingestion uses Microsoft Graph, selected-site app
+   access and scheduled permission refresh to populate a separately owned
+   Search index.
 3. Both indexed routes still need an authorized retrieval path. Remote
    SharePoint is another service option, not an installed application switch.
 
 </div>
 
-[![Two supported SharePoint indexing recipes: Search-managed indexedSharePoint copies content and permissions into a generated index; optional Agent App Ingestion reads selected Graph lists and libraries into an application-owned index with scheduled ACL refresh. Retrieval authorization is separate from app-only ingestion access.](../media/runbooks/sharepoint.svg)](../media/runbooks/sharepoint.svg){: .runbook-diagram__image aria-label="Open full-size SharePoint indexing alternatives diagram"}
+[![Two SharePoint indexing recipes: the native preview source copies content and permissions into a Search-managed generated index; optional Agent App Ingestion reads selected Microsoft Graph lists and libraries into an application-owned Search index with scheduled permission refresh. Retrieval integration and user authorization are separate from app-only ingestion access.](../media/runbooks/sharepoint.svg)](../media/runbooks/sharepoint.svg){: .runbook-diagram__image aria-label="Open full-size SharePoint indexing alternatives diagram"}
 
 [Open full-size diagram](../media/runbooks/sharepoint.svg){: .runbook-diagram__open}
 

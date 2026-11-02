@@ -31,8 +31,8 @@ flowchart TB
     foundation["Azure foundation<br/>Network · identities · AI services · runtimes · data"]
     outputs["Infrastructure output contract"]
     configuration["Shared service configuration<br/>App Configuration · Key Vault references · access"]
-    deploy["Shared application deployment<br/>Manifest-pinned sources · image builds · publication"]
-    application["Running application<br/>Foundry hosted agent · selected Container Apps"]
+    deploy["azd deploy — separate application stage<br/>Pinned sources · build/reuse images · publish"]
+    application["Running selected application<br/>UI · Hosted agent OR Container Apps worker"]
     state[("Existing Azure Storage backend<br/>Environment-specific state")]
 
     inputs --> azd
@@ -44,7 +44,7 @@ flowchart TB
     foundation --> outputs
     outputs --> configuration
     azd -.->|"postprovision"| configuration
-    configuration -->|"Ready foundation"| deploy
+    configuration -.->|"Prerequisite; provision stops here"| deploy
     azd -->|"deploy"| deploy
     deploy --> application
 

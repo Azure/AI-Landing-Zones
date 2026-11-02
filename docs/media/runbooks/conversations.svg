@@ -34,7 +34,7 @@
   <text class="heading" x="590" y="132">Native execution and retention</text>
   <rect class="node" x="60" y="190" width="380" height="180"/>
   <use href="#aca" x="220" y="210" width="60" height="60" aria-hidden="true"/>
-  <text class="node-title" x="250" y="306" text-anchor="middle">Authenticated UI / BFF</text>
+  <text class="node-title" x="250" y="306" text-anchor="middle">Signed-in chat UI + backend</text>
   <text x="250" y="342" text-anchor="middle">Checks current owner before native access</text>
   <path class="arrow" d="M440 280H600"/>
   <rect x="456" y="237" width="126" height="28" fill="white"/>
@@ -42,17 +42,17 @@
   <text x="520" y="310" text-anchor="middle">+ optional files</text>
   <rect class="node" x="600" y="190" width="340" height="300"/>
   <use href="#foundry" x="622" y="214" width="48" height="48" aria-hidden="true"/>
-  <text class="node-title" x="690" y="242">Hosted</text>
+  <text class="node-title" x="690" y="242">Foundry Hosted</text>
   <text x="622" y="296">Foundry persistence</text>
   <text x="622" y="323">Conversation / workflow state</text>
   <path d="M620 346H920" stroke="#9bb2c4" stroke-width="1"/>
   <use href="#aca" x="622" y="366" width="48" height="48" aria-hidden="true"/>
   <text class="node-title" x="690" y="394">Container Apps</text>
-  <text x="622" y="446">Durable Extension + DTS state</text>
+  <text x="622" y="446">Durable Task Scheduler stores state</text>
   <text x="770" y="472" text-anchor="middle">One selected host, not both</text>
   <path class="arrow" d="M250 370V520"/>
   <rect x="108" y="402" width="284" height="68" fill="#f3f8fc"/>
-  <text x="250" y="428" text-anchor="middle">Only when metadata is selected</text>
+  <text x="250" y="428" text-anchor="middle">When a feature below requires it</text>
   <text x="250" y="455" text-anchor="middle">Frontend-only container grant</text>
   <rect class="node" x="60" y="520" width="380" height="208"/>
   <use href="#cosmos" x="80" y="540" width="50" height="50" aria-hidden="true"/>
@@ -65,8 +65,8 @@
   <text x="600" y="587">Owner + format + size checks at the UI</text>
   <text x="600" y="614">Up to 3 files, each 64 KiB</text>
   <text x="600" y="641">256 KiB serialized turn budget</text>
-  <text x="600" y="682">No Blob / SAS / corporate ingestion</text>
+  <text x="600" y="682">No shared-source ingestion or Blob URLs</text>
   <text x="600" y="709">Review native input retention separately.</text>
   <text x="30" y="797">Metadata is selected by workflow mode, history, feedback or attachments.</text>
-  <text x="30" y="825">Conversational + all product flags off: volatile owner maps, lost on UI restart; no saved discovery.</text>
+  <text x="30" y="825">Without these features: owner maps are in memory, lost on UI restart; no saved-session list.</text>
 </svg>

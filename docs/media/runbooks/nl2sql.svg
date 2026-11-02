@@ -11,7 +11,7 @@
   <style>text{font-family:"Segoe UI",sans-serif;fill:#1e3646;font-size:20px}.title{font-size:28px;font-weight:700}.head{font-size:22px;font-weight:600}.node{fill:#fff;stroke:#9bb2c4;stroke-width:1.5}.group{fill:#f3f8fc;stroke:#9bb2c4;stroke-width:1.5}.header{fill:#e1edf4;stroke:#9bb2c4;stroke-width:1.5}.flow{fill:none;stroke:#32698e;stroke-width:2;marker-end:url(#arrow)}.setup{fill:none;stroke:#766798;stroke-width:2;stroke-dasharray:7 5;marker-end:url(#setup-arrow)}</style>
   <rect width="1000" height="760" fill="#fff"/>
   <text x="32" y="46" class="title">Where is SQL generated and authorized?</text>
-  <text x="32" y="80">Shipped optional toolset — default Agent App MCP Server has zero tools</text>
+  <text x="32" y="80">Natural language to SQL — optional tools; the server exposes none by default</text>
   <rect x="32" y="194" width="220" height="182" class="node"/>
   <text x="52" y="236" class="head">Agent / Workflow</text>
   <text x="52" y="279">Authorized caller</text>
@@ -28,7 +28,7 @@
   <text x="382" y="370">Validate read-only SQL</text>
   <rect x="770" y="194" width="198" height="222" class="node"/>
   <use href="#sql-icon" transform="translate(842 214) scale(2.6)"/>
-  <text x="790" y="303" class="head">Approved DB</text>
+  <text x="790" y="303" class="head">Approved SQL</text>
   <text x="790" y="339">Azure SQL /</text>
   <text x="790" y="370">SQL Server</text>
   <text x="790" y="401">Read-only principal</text>
@@ -39,20 +39,20 @@
   <text x="686" y="268">SELECT</text>
   <rect x="346" y="494" width="330" height="150" class="node"/>
   <use href="#cosmos-icon" transform="translate(366 510) scale(2.5)"/>
-  <text x="427" y="539" class="head">Cosmos catalog</text>
+  <text x="427" y="539" class="head">App Cosmos catalog</text>
   <text x="366" y="582">Approved sources · active version</text>
   <text x="366" y="617">Schema / example embeddings</text>
   <path d="M511 396V494" class="flow"/>
   <text x="534" y="459">Catalog read</text>
   <rect x="32" y="494" width="220" height="150" class="node"/>
   <text x="52" y="534" class="head">Separate importer</text>
-  <text x="52" y="574">Authorized MI runner</text>
+  <text x="52" y="574">Managed identity</text>
   <text x="52" y="609">Embeds + activates</text>
   <path d="M252 568H346" class="setup"/>
   <text x="267" y="546">Import</text>
   <text x="720" y="525" class="head">Separate grant owners</text>
   <text x="720" y="563">Platform: catalog + models</text>
   <text x="720" y="598">SQL owner: database read</text>
-  <text x="32" y="692">All admitted users share the approved SQL dataset. No automatic per-user SQL OBO.</text>
-  <text x="32" y="729">Blue: runtime calls. Purple dashed: administrative import. Search is not a dependency.</text>
+  <text x="32" y="692">Admitted users share the approved SQL dataset; no per-user database delegation.</text>
+  <text x="32" y="729">MCP = Model Context Protocol. Blue: runtime. Purple dashed: import. No Search dependency.</text>
 </svg>

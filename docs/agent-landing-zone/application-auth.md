@@ -21,14 +21,14 @@ Deployment and redeployment belong to the
 **Three separate access checks**
 
 1. Entra sign-in supplies a UI API token; the UI checks admission and ownership.
-2. The UI exchanges delegated credentials for Foundry invocation and, separately,
-   Search retrieval. The user also needs Foundry caller access.
-3. Search checks current document permissions. Login and workload RBAC do not
-   grant access to every source.
+2. The UI exchanges delegated credentials for Foundry invocation.
+   The user also needs Foundry caller access.
+3. Configure and verify source authorization for the selected retrieval tool.
+   Login and workload roles do not grant access to every document.
 
 </div>
 
-[![A signed-in user reaches the Container Apps UI, which checks admission and ownership before delegated Foundry invocation. Native retrieval separately checks the user's document permissions in Azure AI Search.](../media/runbooks/application-auth.svg)](../media/runbooks/application-auth.svg){: .runbook-diagram__image aria-label="Open full-size application access diagram"}
+[![A signed-in user reaches the Container Apps UI, which checks admission and ownership before delegated Foundry invocation. Protected retrieval requires a separate source-specific authorization integration. Foundry invocation alone does not establish document access.](../media/runbooks/application-auth.svg)](../media/runbooks/application-auth.svg){: .runbook-diagram__image aria-label="Open full-size application access diagram"}
 
 [Open full-size diagram](../media/runbooks/application-auth.svg){: .runbook-diagram__open}
 
@@ -288,19 +288,23 @@ describes downstream consent.
 `service_identity` would make Foundry see the UI service rather than the user.
 Neither mode alone establishes authorization inside the hosted container.
 
-With `RETRIEVAL_AUTH_MODE=native_search`, the supplied UI performs a separate
-OBO exchange for `https://search.azure.com/.default`.
-It uses the same authenticated UI assertion as the Foundry exchange.
-Foundry forwards the resulting `x-client-search-token` to the selected native
-Hosted publication. The connector supplies that
-raw token in `x-ms-query-source-authorization`, separately from its workload
-authentication to Search. It does not exchange the Search token again.
+The native UI client exchanges the user token for Foundry invocation.
+It does not automatically forward a separate Search user token.
+The native agent registers Search and Foundry IQ through Foundry client
+integrations and project connections. Configure and verify the selected
+integration's source authorization before enabling protected retrieval.
 
-This built-in path does not require customer-written Toolbox integration or
-forward the browser's Authorization header unchanged. Native Search evaluates
-document permissions; caller-provided identity/group IDs are not entitlement
-evidence. The transport identity's Search role alone does not grant the user
-access to protected sources.
+The separate direct-connector implementation uses
+`RETRIEVAL_AUTH_MODE=native_search`, an OBO token for
+`https://search.azure.com/.default` and `x-client-search-token`.
+Its Search connector supplies `x-ms-query-source-authorization` separately
+from workload authentication. Those connector functions are not the native
+client's automatic retrieval path.
+
+Do not treat Foundry invocation consent as evidence of document authorization.
+Caller-provided identity/group IDs are not entitlement evidence.
+The transport identity's Search role alone does not grant the user access
+to protected sources.
 
 Required retrieval rejects a missing credential before execution. Tokens stay
 request-local, outside prompts, conversation history and recovery checkpoints.

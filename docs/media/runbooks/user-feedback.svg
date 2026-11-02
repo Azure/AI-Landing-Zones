@@ -25,7 +25,7 @@
     </symbol>
   </defs>
   <rect width="1000" height="800" fill="white"/>
-  <text class="title" x="30" y="52">Save feedback with its native reference</text>
+  <text class="title" x="30" y="52">Save a rating for the current agent result</text>
   <rect class="group" x="30" y="100" width="940" height="350"/>
   <rect class="header" x="30" y="100" width="940" height="48"/>
   <text class="heading" x="50" y="132">Authenticated feedback write</text>
@@ -34,10 +34,10 @@
   <text class="node-title" x="155" y="299" text-anchor="middle">Signed-in user</text>
   <text x="155" y="338" text-anchor="middle">Rating: −1 or 1</text>
   <text x="155" y="365" text-anchor="middle">Optional comment</text>
-  <text x="155" y="392" text-anchor="middle">Current native reference</text>
+  <text x="155" y="392" text-anchor="middle">Current result reference</text>
   <rect class="node" x="350" y="180" width="300" height="240"/>
   <use href="#aca" x="470" y="202" width="60" height="60" aria-hidden="true"/>
-  <text class="node-title" x="500" y="299" text-anchor="middle">UI / BFF</text>
+  <text class="node-title" x="500" y="299" text-anchor="middle">Chat UI + backend</text>
   <text x="500" y="338" text-anchor="middle">Admission + owner checks</text>
   <text x="500" y="365" text-anchor="middle">Native reference + progress check</text>
   <text x="500" y="392" text-anchor="middle">No caller-supplied owner grant</text>
@@ -57,7 +57,7 @@
   <rect class="node" x="60" y="585" width="330" height="125"/>
   <text class="node-title" x="225" y="618" text-anchor="middle">Selected native execution</text>
   <text x="225" y="655" text-anchor="middle">Hosted: Foundry persistence</text>
-  <text x="225" y="683" text-anchor="middle">Container Apps: DTS persistence</text>
+  <text x="225" y="683" text-anchor="middle">Container Apps: durable state</text>
   <path class="arrow" d="M500 420V648H390"/>
   <rect x="440" y="470" width="190" height="60" fill="white"/>
   <text x="455" y="491">Validate current</text>
@@ -65,7 +65,7 @@
   <text class="heading" x="550" y="579">Confirm only after storage succeeds</text>
   <text x="550" y="617">Metadata is not a transcript or checkpoint.</text>
   <text x="550" y="644">No tokens or file bytes are saved here.</text>
-  <text x="550" y="687">Hosted: response ref. DTS: execution ref.</text>
+  <text x="550" y="687">References identify the response or execution.</text>
   <text x="550" y="714">Each accepted submission is a new record.</text>
   <text x="30" y="778">Default: ENABLE_USER_FEEDBACK=false. Select true before azd provision, then azd deploy.</text>
 </svg>

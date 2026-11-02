@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1060" viewBox="0 0 1000 1060" role="img" aria-labelledby="ingestion-title ingestion-description">
   <title id="ingestion-title">Ingestion and private-input boundaries</title>
-  <desc id="ingestion-description">Two separate data paths. Shared Blob content and permissions belong to source administrators. Native Foundry IQ Blob ingestion manages indexing without Agent App Ingestion. Optional custom Agent App Ingestion can instead populate a compatible Azure AI Search index. Foundry IQ retrieval still requires delegated user authorization and query-time permission checks. Private inline attachments belong to the signed-in conversation owner. An explicit ENABLE_PRIVATE_ATTACHMENTS flag and UI metadata grant are required. The UI/BFF checks ownership and bounded inline inputs, then calls the native conversational backend on Hosted or DTS. That host owns native state. UI-owned Cosmos stores owner mappings and attachment descriptors, never file bytes, transcripts or tokens. Attachments are conversational only, not workflow input, and have no path to shared ingestion or the corporate index. Retrieval and custom ingestion are optional application capabilities, not requirements for every deployment. Blue arrows show data flow; there is no deployment setup path in this diagram.</desc>
+  <desc id="ingestion-description">Two separate data paths. Shared Blob content and permissions belong to source administrators. Native Foundry IQ Blob ingestion manages its generated Search index without Agent App Ingestion. Optional custom Agent App Ingestion instead populates a compatible application-owned Azure AI Search index. Foundry IQ retrieval requires separate native tool connection setup and verified source-specific user authorization; indexing does not install user delegation. Private inline attachments belong to the signed-in conversation owner. An explicit ENABLE_PRIVATE_ATTACHMENTS flag and UI metadata grant are required. The web app backend checks ownership and bounded inline inputs, then calls the native conversational backend on Foundry Agent Service or Durable Task Scheduler. That host owns native conversation state, separately from the application's Cosmos metadata. UI-owned application Cosmos stores owner mappings and attachment descriptors, never file bytes, transcripts or tokens. Attachments are conversational only, not workflow input, and have no path to shared ingestion or the corporate index. Retrieval and custom ingestion are optional application capabilities, not requirements for every deployment. Blue arrows show data flow; there is no deployment setup path in this diagram.</desc>
   <metadata>Azure Public Service Icons v24, Microsoft. Usage: https://learn.microsoft.com/azure/architecture/icons/ . Official icons are embedded intact, uniformly scaled and not recolored. All layout, labels and connectors are editable SVG elements.</metadata>
   <defs>
     <marker id="runtime-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" viewBox="0 0 8 8">
@@ -65,12 +65,12 @@
       <text x="65" y="269">Content + permissions</text>
       <text x="330" y="264">Native Blob ingestion</text>
       <text x="330" y="287">Service-managed indexing</text>
-      <text x="668" y="269">Shared index + ACLs</text>
+      <text x="668" y="269">Managed or app-owned index</text>
       <text x="330" y="446">Custom processing → index</text>
       <text x="668" y="446">Allowed results → agent</text>
       <text x="65" y="341">Optional path</text>
-      <text x="665" y="336">Query-time authorization</text>
-      <text x="50" y="504">Indexing identity writes content; retrieval still requires delegated user access.</text>
+      <text x="665" y="336">User authorization required</text>
+      <text x="50" y="504">Connect the native retrieval tool and prove per-user access separately from indexing.</text>
     </g>
     <g fill="none" stroke="#32698e" stroke-width="2.2" marker-end="url(#runtime-arrow)">
       <path d="M250 248H308"/>
@@ -98,20 +98,20 @@
     </g>
     <g font-size="20" font-weight="700">
       <text x="118" y="685">Owner's file</text>
-      <text x="380" y="685">UI / BFF</text>
-      <text x="720" y="685">Native conversation</text>
-      <text x="380" y="878">UI-owned Cosmos metadata</text>
+      <text x="380" y="685">Web app backend</text>
+      <text x="720" y="685">Conversation + state</text>
+      <text x="380" y="878">App Cosmos: web metadata</text>
     </g>
     <g font-size="18">
       <text x="65" y="723">Inline file input</text>
       <text x="65" y="753">No input URLs</text>
       <text x="330" y="723">Flag + owner checks</text>
       <text x="330" y="753">Bounded inline turn</text>
-      <text x="668" y="723">Hosted or DTS</text>
-      <text x="668" y="753">Host owns native state</text>
+      <text x="668" y="723">Foundry Agent Service or</text>
+      <text x="668" y="753">Durable Task Scheduler</text>
       <text x="330" y="911">Owner mappings + attachment descriptors</text>
       <text x="330" y="940">No file bytes, transcripts or tokens</text>
-      <text x="50" y="987">Optional: ENABLE_PRIVATE_ATTACHMENTS + UI metadata grant. No workflows.</text>
+      <text x="50" y="987">Optional: ENABLE_PRIVATE_ATTACHMENTS + metadata-store access. No workflows.</text>
     </g>
     <g fill="none" stroke="#32698e" stroke-width="2.2" marker-end="url(#runtime-arrow)">
       <path d="M250 710H308"/>

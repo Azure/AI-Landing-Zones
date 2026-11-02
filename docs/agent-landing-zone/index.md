@@ -13,7 +13,9 @@ Source code: [Azure/agent-landing-zone](https://github.com/Azure/agent-landing-z
 
 ## Architecture overview
 
-[![Standalone Agent Landing Zone reference architecture](../architecture/media/AI-Landing-Zone-without-platform.png?v=aa651551c880)](../architecture/media/AI-Landing-Zone-without-platform.png?v=aa651551c880)
+[![Standalone private reference layout: the Container Apps UI calls the default Foundry hosted agent through a private endpoint. Network isolation is opt-in; Teams and Copilot Studio integrations require separate setup.](../architecture/media/AI-Landing-Zone-without-platform.svg)](../architecture/media/AI-Landing-Zone-without-platform.svg)
+
+[Open full-size diagram](../architecture/media/AI-Landing-Zone-without-platform.svg)
 
 <span id="foundation-and-application"></span>
 

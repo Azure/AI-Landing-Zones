@@ -11,24 +11,25 @@
   <style>text{font-family:"Segoe UI",sans-serif;fill:#1e3646;font-size:20px}.title{font-size:28px;font-weight:700}.head{font-size:22px;font-weight:600}.node{fill:#fff;stroke:#9bb2c4;stroke-width:1.5}.group{fill:#f3f8fc;stroke:#9bb2c4;stroke-width:1.5}.header{fill:#e1edf4;stroke:#9bb2c4;stroke-width:1.5}.flow{fill:none;stroke:#32698e;stroke-width:2;marker-end:url(#arrow)}.setup{fill:none;stroke:#766798;stroke-width:2;stroke-dasharray:7 5;marker-end:url(#setup-arrow)}</style>
   <rect width="1000" height="680" fill="#fff"/>
   <text x="32" y="46" class="title">Which identity authorizes a Work IQ answer?</text>
-  <text x="32" y="80">Integration recipe — native application assertion forwarding must be implemented / verified</text>
+  <text x="32" y="80">Integration recipe — native application user-token forwarding is not installed by source setup</text>
   <rect x="32" y="118" width="272" height="270" class="group"/>
   <rect x="32" y="118" width="272" height="44" class="header"/>
   <text x="50" y="147" class="head">Application boundary</text>
   <rect x="48" y="182" width="240" height="186" class="node"/>
   <use href="#user-icon" transform="translate(68 201) scale(2.4)"/>
   <text x="128" y="228" class="head">Trusted app</text>
-  <text x="68" y="279">Signed-in user assertion</text>
+  <text x="68" y="279">User's sign-in token</text>
   <text x="68" y="309">Audience: Work IQ app</text>
-  <text x="68" y="339">Scope: access_as_user</text>
+  <text x="68" y="339">Not a workload token</text>
   <rect x="406" y="118" width="250" height="270" class="group"/>
   <rect x="406" y="118" width="250" height="44" class="header"/>
   <text x="424" y="147" class="head">Azure AI Search</text>
   <rect x="422" y="182" width="218" height="186" class="node"/>
   <use href="#search-icon" transform="translate(442 201) scale(2.4)"/>
-  <text x="499" y="228" class="head">workIQ</text>
+  <text x="499" y="215" class="head">Work IQ</text>
+  <text x="499" y="244">source</text>
   <text x="442" y="279">Retrieve knowledge</text>
-  <text x="442" y="309">Exchange assertion</text>
+  <text x="442" y="309">Exchange user token</text>
   <text x="442" y="339">Not app-only access</text>
   <rect x="758" y="118" width="210" height="270" class="group"/>
   <rect x="758" y="118" width="210" height="44" class="header"/>
@@ -40,16 +41,16 @@
   <text x="794" y="339">No corpus copy</text>
   <path d="M288 257H422" class="flow"/>
   <text x="314" y="216">Retrieve</text>
-  <text x="314" y="242">+ assertion</text>
+  <text x="314" y="242">+ token</text>
   <path d="M640 257H774" class="flow"/>
   <text x="666" y="216">Delegated</text>
   <text x="666" y="242">access</text>
-  <text x="32" y="429">Assertion header: x-ms-query-work-iq-source-authorization</text>
+  <text x="32" y="429">Send the user's token for the Work IQ app, not a Search-audience token.</text>
   <text x="32" y="461">A separate workload credential authenticates Search transport, not Microsoft 365 entitlement.</text>
   <path d="M32 489H968" stroke="#9bb2c4" stroke-dasharray="4 4"/>
   <rect x="32" y="522" width="290" height="104" class="node"/>
   <text x="52" y="558" class="head">Tenant + source admins</text>
-  <text x="52" y="591">Billing, consent, federation</text>
+  <text x="52" y="591">Billing, consent, identity trust</text>
   <text x="372" y="548" class="head">Shipped: source-registration template</text>
   <text x="372" y="581">Not shipped: turnkey native Work IQ delegation</text>
   <text x="372" y="614">Preview can invoke actions; review permissions.</text>

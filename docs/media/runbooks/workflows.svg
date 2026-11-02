@@ -20,19 +20,19 @@
   </defs>
   <rect width="1000" height="760" fill="#fff"/>
   <text class="title" x="40" y="52">Where does a human-reviewed run wait?</text>
-  <text x="40" y="88">Reference process: draft → human decision → result. No business-system write.</text>
+  <text x="40" y="88">Implemented example: the agent writes a draft, then a person approves or rejects it.</text>
   <rect class="group" x="330" y="130" width="630" height="530"/>
   <rect class="header" x="330" y="130" width="630" height="52"/>
   <text class="heading" x="350" y="164">Selected native host owns execution state</text>
   <rect class="node" x="40" y="225" width="235" height="130"/>
   <text class="heading" x="157" y="273" text-anchor="middle">Topic input</text>
-  <text class="label" x="157" y="315" text-anchor="middle">Start a named process</text>
+  <text class="label" x="157" y="315" text-anchor="middle">Enter a question or task</text>
   <rect class="node" x="360" y="225" width="250" height="130"/>
   <use href="#agent" x="460" y="242" width="50" height="50" aria-hidden="true"/>
-  <text class="heading" x="485" y="329" text-anchor="middle">Agent drafts</text>
+  <text class="heading" x="485" y="329" text-anchor="middle">Agent writes a draft</text>
   <rect class="node" x="685" y="225" width="250" height="130"/>
   <text class="heading" x="810" y="265" text-anchor="middle">Pending review</text>
-  <text class="label" x="810" y="302" text-anchor="middle">Native request + draft</text>
+  <text class="label" x="810" y="302" text-anchor="middle">Draft saved for review</text>
   <text class="label" x="810" y="333" text-anchor="middle">Safe to disconnect</text>
   <path class="flow" d="M275 290H360"/>
   <path class="flow" d="M610 290H685"/>
@@ -49,6 +49,6 @@
   <text class="heading" x="810" y="553" text-anchor="middle">Return result</text>
   <text class="label" x="810" y="589" text-anchor="middle">Original draft + status</text>
   <text class="label" x="810" y="617" text-anchor="middle">+ review comment</text>
-  <text x="40" y="706">Foundry Hosted OR Container Apps worker + DTS persists the pending request.</text>
-  <text x="40" y="740">The browser is not the state store. Approval does not grant business-write authority.</text>
+  <text x="40" y="706">Host: Foundry Hosted OR Container Apps with Durable Task Scheduler.</text>
+  <text x="40" y="740">No automatic rewrite or business-system write. Closing the browser does not cancel the wait.</text>
 </svg>

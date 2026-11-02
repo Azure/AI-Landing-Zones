@@ -21,7 +21,7 @@
   <text class="heading" x="60" y="204">Presentation</text>
   <rect class="node" x="60" y="295" width="200" height="160"/>
   <use href="#aca" x="135" y="315" width="50" height="50" aria-hidden="true"/>
-  <text class="heading" x="160" y="398" text-anchor="middle">UI / BFF</text>
+  <text class="label" x="160" y="398" text-anchor="middle">Chat UI + backend</text>
   <text class="label" x="160" y="432" text-anchor="middle">Owner checks</text>
   <text class="label" x="60" y="540">Product metadata</text>
   <text class="label" x="60" y="570">≠ execution state</text>
@@ -34,13 +34,13 @@
   <text x="520" y="330">Foundry owns execution state</text>
   <rect class="group" x="490" y="425" width="470" height="270"/>
   <rect class="header" x="490" y="425" width="470" height="52"/>
-  <text class="heading" x="510" y="459">Option B · Container Apps + DTS</text>
+  <text class="heading" x="510" y="459">Option B · Azure Container Apps</text>
   <rect class="node" x="520" y="500" width="410" height="80"/>
   <use href="#aca" x="540" y="515" width="50" height="50" aria-hidden="true"/>
   <text x="610" y="548">Native durable worker</text>
   <path class="flow" d="M725 580V620"/>
   <rect class="node" x="520" y="620" width="410" height="50"/>
-  <text x="725" y="652" text-anchor="middle">DTS owns execution state</text>
+  <text x="725" y="652" text-anchor="middle">Durable Task Scheduler stores state</text>
   <path class="flow" d="M260 335H370V245H520"/>
   <text class="label" x="375" y="226">Responses</text>
   <path class="flow" d="M260 415H370V540H520"/>

@@ -15,14 +15,15 @@ Deployment follows the [full-stack deployment guide](deploy-full-stack.md).
 **What must be connected before an agent can use a knowledge base?**
 
 1. Search owns the knowledge base and its registered sources.
-2. The native Agent uses a project-connection MCP tool, not the direct Search
-   connector. The provisioned Search connection is not that MCP connection.
+2. The native Agent uses a Model Context Protocol (MCP) project-connection tool,
+   not the direct connector. Foundry Search and Foundry IQ have distinct
+   connections; the IQ tool binding still needs a compatible connection.
 3. Source ingestion, tool registration and end-user authorization are separate
    setup tasks. Test all three before admitting users.
 
 </div>
 
-[![A native Agent calls a reviewed MCP project connection to reach a Search knowledge base. Native Blob ingestion copies content into Search; an existing index keeps its own ingestion owner. Setup must replace the generated Search connection with a compatible MCP connection and verify user authorization.](../media/runbooks/foundry-iq.svg)](../media/runbooks/foundry-iq.svg){: .runbook-diagram__image aria-label="Open full-size Foundry IQ connection diagram"}
+[![A native Agent or Workflow uses a Model Context Protocol (MCP) project connection to reach a Search knowledge base, separately from the native Foundry Search connection. Native Blob ingestion owns its generated index; an existing index keeps its ingestion owner. The Foundry IQ tool binding requires a compatible RemoteTool connection and verified source-specific user authorization.](../media/runbooks/foundry-iq.svg)](../media/runbooks/foundry-iq.svg){: .runbook-diagram__image aria-label="Open full-size Foundry IQ connection diagram"}
 
 [Open full-size diagram](../media/runbooks/foundry-iq.svg){: .runbook-diagram__open}
 

@@ -78,7 +78,7 @@ Keep deployment selection and runtime key edits in their documented surfaces.
 
 | Component | What it does |
 | --- | --- |
-| Agent App UI/BFF | Provides sign-in, chat/process presentation, owner mappings, product metadata and feedback. |
+| Agent App UI and backend for frontend (BFF) | Provides sign-in, chat/process presentation, owner mappings, product metadata and feedback. |
 | Agent App Orchestrator | Runs native MAF Agents and Workflows, using the explicit integration for the selected host. |
 | Agent App Ingestion | Provides optional application-managed document processing and indexing. |
 | [Agent App MCP Server](agent-app-mcp.md) | Extensible official Python SDK server in a separate Container App. Registers zero tools by default; `["nl2sql"]` explicitly selects the supplied SQL toolset. |

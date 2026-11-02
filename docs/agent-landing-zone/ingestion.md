@@ -20,21 +20,22 @@ described in [Deployment settings](configuration.md#ingestion-application-select
 1. A source administrator supplies content and permissions.
 2. Foundry IQ's native Blob pipeline manages indexing, or an **optional**
    Agent App Ingestion pipeline writes a compatible Search index.
-3. Retrieval still checks the querying user's access. Indexing success is
-   not an authorization grant.
+3. Configure and test source-compatible user authorization separately from
+   indexing. Indexing success is not an authorization grant.
 
 **Private conversation input**
 
-1. A signed-in owner submits a bounded inline attachment to the UI/BFF.
-2. The explicit attachment flag and UI metadata grant must be configured.
-   The UI checks ownership before calling the native conversational backend.
-3. Hosted or DTS owns native state. UI Cosmos holds owner mappings and
-   descriptors, **not file bytes or transcripts**. This path never publishes
-   the attachment into shared ingestion.
+1. A signed-in owner submits a bounded inline attachment to the web app backend.
+2. The explicit attachment flag and metadata-store access must be configured.
+   The web backend checks ownership before calling the native conversational backend.
+3. Foundry Agent Service or Durable Task Scheduler owns native state.
+   The application's Cosmos web metadata holds owner mappings and descriptors,
+   **not file bytes or transcripts**. This path never publishes the attachment
+   into shared ingestion.
 
 </div>
 
-[![Shared content and permissions flow through native Foundry IQ ingestion or optional Agent App Ingestion into Search and authorized retrieval. A separate owner-checked inline attachment path goes from the UI to a native conversation, with descriptors only in UI Cosmos and no shared ingestion.](../media/runbooks/ingestion.svg)](../media/runbooks/ingestion.svg){: .runbook-diagram__image aria-label="Open full-size ingestion and private-input boundary diagram"}
+[![Shared content flows through native Foundry IQ ingestion into a managed Search index or optional Agent App Ingestion into an application-owned index. Retrieval needs separate tool setup and verified user authorization. Private inline attachments pass through the owner-checking web backend to Foundry Agent Service or Durable Task Scheduler; application Cosmos stores only owner mappings and descriptors, not native state or file bytes. There is no attachment path into shared ingestion.](../media/runbooks/ingestion.svg)](../media/runbooks/ingestion.svg){: .runbook-diagram__image aria-label="Open full-size ingestion and private-input boundary diagram"}
 
 [Open full-size diagram](../media/runbooks/ingestion.svg){: .runbook-diagram__open}
 
@@ -90,9 +91,16 @@ describes the managed pipeline and service requirements.
    and deployment lifecycle, not only an application restart.
 
 Successful ingestion alone does not establish protected retrieval. The built-in
-UI/hosted native path forwards a separately delegated Search token. Ingestion
-must still record correct permissions and acceptance must prove allow/deny
-behavior. [Application access](application-auth.md) describes the OBO contract.
+native UI delegates for hosted invocation; it does not implement the direct
+connector's Search-token forwarding path. Native Foundry IQ uses a
+project-connection tool. Configure and verify source-compatible user
+authorization for that connection, or explicitly integrate trusted credential
+forwarding and direct-connector invocation.
+
+Ingestion must still record correct permissions, and acceptance must prove
+allow/deny behavior. [Application access](application-auth.md#hosted-retrieval-identity-boundary)
+and [Foundry IQ authorization](foundry-iq.md#user-authorization-boundaries)
+describe the native-versus-direct integration boundary.
 
 <span id="sharepoint-is-a-separate-integration"></span>
 
@@ -105,8 +113,10 @@ Foundry also supports native SharePoint options, including previews:
 | Foundry Agent Service SharePoint tool | The agent calls a native tool backed by Microsoft 365 retrieval, outside the knowledge-base source list. It does not require the custom ingestion application. |
 
 These product options are not all wired into Agent Application. The native
-indexed SharePoint path includes source registration, permission ingestion
-and delegated Search authorization.
+indexed SharePoint path ships source registration and permission ingestion,
+not end-to-end application delegation. Its native tool connection and
+source-specific user authorization still require explicit setup and validation.
+App-only ingestion access does not authorize users.
 
 Remote retrieval and native tools need
 their own connection, consent and trusted delegated-user integration.

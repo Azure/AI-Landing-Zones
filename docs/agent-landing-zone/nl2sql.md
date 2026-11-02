@@ -12,15 +12,17 @@ validation and read-only database execution.
 
 **Where is SQL generated and authorized?**
 
-1. An authenticated Agent or Workflow invokes Agent App MCP Server.
+1. An authenticated Agent or Workflow invokes Agent App MCP Server, the
+   separate Model Context Protocol tool service.
 2. Only an explicitly selected `nl2sql` toolset reads its own approved source
    and vector-metadata catalog, generates SQL and validates it.
 3. The server executes against the approved database under its read-only
-   principal. Users share that approved dataset; this is not per-user SQL OBO.
+   principal. Users share that approved dataset; there is no per-user database
+   delegation.
 
 </div>
 
-[![Agent App MCP Server contains the explicitly selected nl2sql toolset. It reads approved source and vector metadata from Cosmos, generates and validates SQL, then queries an approved read-only database. A separate importer activates catalog versions. The default server exposes zero tools and Search is not a dependency.](../media/runbooks/nl2sql.svg)](../media/runbooks/nl2sql.svg){: .runbook-diagram__image aria-label="Open full-size NL2SQL ownership and execution diagram"}
+[![Agent App MCP Server contains the explicitly selected natural-language-to-SQL toolset. It reads approved source and vector metadata from application Cosmos, generates and validates SQL, then queries an approved read-only database. A separate managed-identity importer activates catalog versions. Admitted users share the approved dataset without per-user database delegation. The default server exposes zero tools and Search is not a dependency.](../media/runbooks/nl2sql.svg)](../media/runbooks/nl2sql.svg){: .runbook-diagram__image aria-label="Open full-size NL2SQL ownership and execution diagram"}
 
 [Open full-size diagram](../media/runbooks/nl2sql.svg){: .runbook-diagram__open}
 

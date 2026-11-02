@@ -325,7 +325,7 @@ from `$work` to deploy the saved template into the Foundry resource group.
 
 ```powershell
 $displayName = "<agent-display-name>"
-$activityEndpoint = "$agentUri/endpoint/protocols/activityProtocol"
+$activityEndpoint = "$agentUri/endpoint/protocols/activityProtocol?api-version=v1"
 
 az deployment group create --resource-group $resourceGroup `
     --name "teams-bot" --template-file bot-service.bicep `
@@ -345,6 +345,10 @@ az resource show --ids $botServiceId --api-version 2022-09-15 `
 URL, and its network setting is `"pna": "Disabled"`. The bot uses the agent's
 identity; you do not need a client secret, public VNet ingress or a custom
 connector.
+
+The `api-version=v1` query is part of
+[Microsoft's documented Bot Service endpoint URL](https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot-virtual-network);
+it selects the API contract, not the agent version.
 
 ### Step 3: Enable the source-IP-filtered public Activity route
 

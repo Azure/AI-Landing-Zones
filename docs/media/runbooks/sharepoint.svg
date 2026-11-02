@@ -12,7 +12,7 @@
   <text x="32" y="80">Choose an indexing owner — source read access is not end-user document authorization</text>
   <rect x="32" y="118" width="936" height="208" class="group"/>
   <rect x="32" y="118" width="936" height="44" class="header"/>
-  <text x="50" y="147" class="head">A. Native indexedSharePoint — shipped source-registration template</text>
+  <text x="50" y="147" class="head">A. Native SharePoint indexing (preview) — shipped source template</text>
   <rect x="52" y="182" width="230" height="120" class="node"/>
   <text x="72" y="220" class="head">SharePoint site</text>
   <text x="72" y="254">Federated app</text>
@@ -34,23 +34,23 @@
   <text x="50" y="389" class="head">B. Application-managed — optional Agent App Ingestion + operator configuration</text>
   <rect x="52" y="426" width="230" height="150" class="node"/>
   <text x="72" y="464" class="head">Lists / libraries</text>
-  <text x="72" y="499">Graph app access</text>
+  <text x="72" y="499">Microsoft Graph access</text>
   <text x="72" y="530">Sites.Selected</text>
   <text x="72" y="559">+ selected-site grant</text>
   <rect x="386" y="426" width="236" height="150" class="node"/>
   <text x="406" y="464" class="head">Ingestion worker</text>
-  <text x="406" y="503">Content + ACLs</text>
-  <text x="406" y="536">Scheduled ACL refresh</text>
+  <text x="406" y="503">Content + permissions</text>
+  <text x="406" y="536">Permission refresh jobs</text>
   <rect x="726" y="426" width="222" height="150" class="node"/>
   <use href="#search-icon" transform="translate(744 439) scale(2)"/>
-  <text x="792" y="464" class="head">Owned index</text>
-  <text x="746" y="503">Optional searchIndex</text>
-  <text x="746" y="536">knowledge source</text>
+  <text x="792" y="464" class="head">Search index</text>
+  <text x="746" y="503">Application-owned</text>
+  <text x="746" y="536">Bind to Foundry IQ</text>
   <path d="M282 501H386" class="flow"/>
   <text x="295" y="480">Read</text>
   <path d="M622 501H726" class="flow"/>
   <text x="632" y="480">Write</text>
   <text x="32" y="644" class="head">Both routes: connect retrieval separately and prove allowed / denied-user results.</text>
-  <text x="32" y="681">Native MCP connection or explicit connector integration; app-only ingestion grants are not user grants.</text>
+  <text x="32" y="681">Native tool connection or custom integration; app-only ingestion access does not authorize users.</text>
   <text x="32" y="723">Remote SharePoint: separate no-copy service option; native application integration is still required.</text>
 </svg>
