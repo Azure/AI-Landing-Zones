@@ -76,19 +76,17 @@ inputs. Custom-only applications do not inherit reference MCP, SQL or catalogs.
   [new-user application route](application.md#first-time-using-agent-application)
   from deployment and sign-in to the first conversation, then add only the
   optional capabilities you need.
-- **What does the template do?** [How the template works](#how-the-template-works)
-  explains resource provisioning and application deployment.
-- **What needs planning?** [Deployment choices](planning.md) covers resources,
-  network integration and deployment tools. The
-  [Design checklist](../architecture/design-checklist.md) supports architecture
-  and security review.
+- **What does the template do?** See [provisioning and deployment](#how-the-template-works).
+- **What needs planning?** Review [resources, networking and deployment tools](planning.md),
+  then use the [Design checklist](../architecture/design-checklist.md) for architecture
+  and security decisions.
 - **How much capacity and budget are needed?** The
   [Sizing & cost planner](sizing-cost-planner.md) combines guidance, resource
   choices and editable estimates.
 - **Do I only need Azure resources?** Deploy infra only
   [with&nbsp;Bicep](deploy-infra-only.md) or [with&nbsp;Terraform](deploy-terraform-infra-only.md).
-- **Do I want the supplied application running?** Deploy full stack
-  [with&nbsp;Bicep](deploy-full-stack.md) or [with&nbsp;Terraform](deploy-terraform-full-stack.md).
+- **Want the reference application?** Deploy full stack with
+  [Bicep](deploy-full-stack.md) or [Terraform](deploy-terraform-full-stack.md).
 
 For an existing environment, **Operate** brings together
 [updates and recovery](deployment-operations.md) and
