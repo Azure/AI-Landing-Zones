@@ -5354,11 +5354,11 @@ the hooks with submodule initialization scripts.
 See the <a href="../../agent-landing-zone/#how-the-template-works">template overview</a> and
 <a href="../../agent-landing-zone/configuration/">Deployment settings</a>.</p>
 <p><a id="boolean-rewrite-edge-case"></a></p>
-<p>Use <code>azd env set</code> for documented environment variables that take one value,
-such as <code>NETWORK_ISOLATION</code>. Settings containing lists (<code>[...]</code>) or groups of
-named fields (<code>{...}</code>) belong in the reviewed root <code>main.parameters.json</code> file.
-Parameters without a documented environment-variable equivalent also go in
-that file.</p>
+<p>Use <code>azd env set</code> for documented environment inputs, such as
+<code>NETWORK_ISOLATION</code> or the application's JSON-array setting <code>MCP_TOOLSETS</code>.
+Native structured foundation parameters, including lists (<code>[...]</code>) and groups
+of named fields (<code>{...}</code>), belong in the reviewed root <code>main.parameters.json</code>.
+Parameters without a documented environment-variable equivalent also go there.</p>
 <p>Keep the JSON value types shown in the parameter examples: for instance, use
 <code>true</code> for a boolean, not the text <code>"true"</code>, and keep lists and objects in their
 original JSON format. Follow the

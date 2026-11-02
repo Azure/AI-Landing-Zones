@@ -5770,6 +5770,13 @@ Framework (MAF) execution, optional document processing and optional MCP tools. 
 conversation or a Workflow for a published process with human input.</p>
 <p>Start with <a href="../deploy-full-stack/">Deploy full stack</a> to deploy the application.
 The guides below explain how to configure, operate and extend it.</p>
+<p>The reference application is <strong>one application on the reusable foundation</strong>,
+not the definition of that foundation. To deploy other components instead of
+the supplied UI/orchestrator, select your own
+<a href="../build-your-own-app/#application-binding-and-selection">application definition</a>
+before provision. Application composition owns component names, tool selection
+and dependency declarations; the foundation accepts generic compute, data,
+capability and role inputs.</p>
 <h2 id="first-time-using-agent-application">First time using Agent Application?</h2>
 <p>Start with ordinary authenticated chat. Add data sources and other capabilities
 after that baseline works.</p>
@@ -5839,7 +5846,7 @@ not automatically know your organization's documents or databases.</p>
 <tr>
 <td>Ask about approved SQL data</td>
 <td><a href="../agent-app-mcp/">Agent App MCP Server</a> and <a href="../nl2sql/">NL2SQL walkthrough</a></td>
-<td>A separate optional server, read-only SQL access and an approved metadata import, not a document-ingestion job</td>
+<td>Explicitly select the <code>nl2sql</code> toolset as well as the optional server, approve SQL read access and import metadata</td>
 </tr>
 <tr>
 <td>Run a process with human review</td>
@@ -5898,7 +5905,7 @@ not automatically know your organization's documents or databases.</p>
 </tr>
 <tr>
 <td><a href="../agent-app-mcp/">Agent App MCP Server</a></td>
-<td>Hosts authenticated tools in a separate Container App. The currently supplied toolset is NL2SQL over approved Azure SQL/SQL Server data.</td>
+<td>Extensible official Python SDK server in a separate Container App. Registers zero tools by default; <code>["nl2sql"]</code> explicitly selects the supplied SQL toolset.</td>
 </tr>
 </tbody>
 </table>
@@ -5911,6 +5918,8 @@ not require application-owned Cosmos DB; Foundry backing resources and
 optional UI product storage are separate concerns.
 Search, Foundry IQ and multimodal tool flags default to off.
 Agent App MCP Server is also omitted by default (<code>DEPLOY_AGENT_APP_MCP=false</code>).
+When deployed, its <code>MCP_TOOLSETS</code> still defaults to <code>[]</code>: no business tools
+or NL2SQL dependencies are initialized until explicitly selected.
 Preparing a source does not register a tool. History, feedback and private
 attachments also default to off; conversational UI owner maps are then bounded
 and volatile, not a restart-safe saved-session store.</p>
@@ -5951,9 +5960,14 @@ feedback or per-user document authorization.</p>
 <td>Application Cosmos for product metadata; private file bytes are not stored there</td>
 </tr>
 <tr>
+<td>Authenticated MCP server without business tools</td>
+<td><code>DEPLOY_AGENT_APP_MCP=true</code>, <code>MCP_TOOLSETS=[]</code></td>
+<td>Separate Container App and MCP authentication; no NL2SQL model, catalog or secret grants</td>
+</tr>
+<tr>
 <td>Questions over approved SQL data</td>
-<td><code>DEPLOY_AGENT_APP_MCP=true</code></td>
-<td>Separate MCP Container App, application Cosmos catalog and model access; operator-approved SQL access and metadata import</td>
+<td><code>DEPLOY_AGENT_APP_MCP=true</code> and <code>MCP_TOOLSETS=["nl2sql"]</code></td>
+<td>MCP server plus application Cosmos catalog and model access; operator-approved SQL access and metadata import</td>
 </tr>
 <tr>
 <td>Custom shared-document processing</td>
@@ -5964,14 +5978,14 @@ feedback or per-user document authorization.</p>
 </table>
 <p>The platform handles resource dependencies and generated connections.
 You still choose the data sources, arrange authorization and provide approved
-content. MCP selection does not create SQL databases or database grants,
-enable Search, or require the ingestion application.</p>
+content. For NL2SQL, SQL owners approve database access and operators import
+the catalog. Search and document ingestion are independent capabilities.</p>
 <h3 id="what-cosmos-means-in-this-application">What Cosmos means in this application</h3>
 <p>There are separate storage responsibilities:</p>
 <ul>
 <li><strong>Application Cosmos</strong> is conditional. It is required automatically for
   workflow/<code>both</code> UI metadata, enabled history, feedback or private attachments,
-  Agent App MCP Server, and declared custom Cosmos capabilities.
+  the selected NL2SQL toolset, retained catalogs and declared custom Cosmos capabilities.
   A compatible existing application account is reused, with separate containers
   and scoped grants for each consumer.</li>
 <li><strong>Foundry backing Cosmos</strong> belongs to Foundry's service infrastructure.

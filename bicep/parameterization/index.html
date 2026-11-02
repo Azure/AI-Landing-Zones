@@ -5984,8 +5984,10 @@ pinned AVM to apply these settings. See
 </table>
 <p>Agent Application selects its optional server through
 <code>DEPLOY_AGENT_APP_MCP=false</code> (default) in the azd environment. Selecting <code>true</code>
-requires application Cosmos automatically; it does not enable Search or require
-a second NL2SQL flag. See the
+adds server compute/authentication only. Application/runtime setting
+<code>MCP_TOOLSETS</code> defaults to <code>[]</code>; explicitly selecting <code>["nl2sql"]</code> requires the
+application Cosmos catalog and declared model/secret access. Neither setting
+is a new tool-specific Bicep parameter, and neither enables Search. See the
 <a href="../../agent-landing-zone/configuration/#agent-app-mcp-server-selection">MCP selector reference</a>.
 An explicit conflicting <code>DEPLOY_COSMOS_DB=false</code> must be unset for automatic
 selection. Generic Cosmos can be selected independently without MCP or the
@@ -6670,10 +6672,12 @@ embedding default or the empty-list fallback.</p>
 </code></pre></div>
 <h3 id="database-containers">Database containers</h3>
 <p>The <code>databaseContainersList</code> parameter defines containers to create in the Cosmos DB database.</p>
-<p>The Agent Application composition owns its UI and MCP catalog-container
-contracts. Selecting MCP automatically creates its source and vector-metadata
-containers/policies; do not manually duplicate those entries here.
-Generic serverless Cosmos without MCP does not require vector policies.
+<p>The application composition owns its UI and toolset catalog-container
+contracts. Selecting the NL2SQL toolset creates its source and vector-metadata
+containers/policies; an empty MCP server does not. Do not manually duplicate
+those entries here. Generic serverless Cosmos does not require vector policies;
+custom applications can select generic vector capability independently of the
+reference catalog.
 See <a href="../../agent-landing-zone/configuration/#application-cosmos-db">application Cosmos ownership</a>.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">"databaseContainersList"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>

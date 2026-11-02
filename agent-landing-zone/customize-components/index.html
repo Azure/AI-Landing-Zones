@@ -5527,7 +5527,7 @@ Use <a href="../local-development/">Run locally</a> to prepare a development env
 <td><a href="https://github.com/Azure/agent-app-orchestrator">Orchestrator</a>, application definitions and tool/connector owners under <code>src/</code></td>
 </tr>
 <tr>
-<td>NL2SQL generation, validation, execution, catalog import and MCP tool modules</td>
+<td>MCP transport, authentication and explicit toolset registration; NL2SQL generation, validation, execution and catalog import</td>
 <td><a href="https://github.com/Azure/agent-app-mcp">Agent App MCP Server</a>, separate from orchestrator definitions</td>
 </tr>
 <tr>
@@ -5596,9 +5596,12 @@ from an MCP knowledge source consulted by Foundry IQ.</p>
 <li>For SQL, keep a read-only database principal as the primary security boundary.
   Generated-SQL validation is not a substitute for database permissions.
   SQL generation, catalog retrieval and execution belong in Agent App MCP
-  Server, not the orchestrator. Extend its reviewed tool modules with typed
-  schemas, scoped permissions and tests. Only the two documented NL2SQL tools
-  are supplied; future capabilities require implementation.</li>
+  Server. Keep its reviewed modules, typed schemas, scoped permissions,
+  dependencies and tests aligned with explicit module registration.
+  <code>MCP_TOOLSETS=[]</code> registers zero tools and initializes no NL2SQL
+  dependencies; <code>["nl2sql"]</code> selects the two supplied SQL tools at startup.
+  Unknown/duplicate/invalid selections fail closed. Changes require
+  restart/redeployment.</li>
 </ul>
 <p>Retrieval backend selection does not switch every datasource or tool.
 Use <a href="../foundry-iq/">Foundry IQ</a> and the relevant source guide for source

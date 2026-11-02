@@ -5487,8 +5487,9 @@ authorized capability when it is registered in their definitions.</p>
   independently indexed sources.</li>
 <li>Use <a href="../agent-tools/">Tools &amp; MCP</a> for reviewed operations and downstream
   identity requirements.</li>
-<li>Use <a href="../agent-app-mcp/">Agent App MCP Server</a> for optional approved SQL tools
-  on either host, and <a href="../nl2sql/">NL2SQL</a> to distinguish that execution path
+<li>Use <a href="../agent-app-mcp/">Agent App MCP Server</a> for explicitly selected toolsets
+  on either host. Its default <code>MCP_TOOLSETS=[]</code> registers zero tools;
+  <code>["nl2sql"]</code> selects the supplied <a href="../nl2sql/">NL2SQL</a> tools, a distinct execution path
   from a remote Fabric data agent.</li>
 <li>Use <a href="../multimodality/">Document formats &amp; images</a> to distinguish document
   processing from direct image input in chat.</li>

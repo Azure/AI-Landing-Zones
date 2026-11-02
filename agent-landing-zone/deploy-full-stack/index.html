@@ -6154,8 +6154,9 @@ and protected retrieval do not have the same integration requirements.</p>
 <li><strong>Optional MCP deployment:</strong> the helper automatically configures the
   dedicated Entra API registration/service principal and <code>MCP.Invoke</code> app role.
   The deployer needs directory rights for app registration and application-role
-  assignments, separately from Azure resource/RBAC rights. The SQL owner must
-  approve the server's read access; deployment does not create database grants.</li>
+  assignments, separately from Azure resource/RBAC rights. When NL2SQL is
+  selected, the SQL owner must approve read access; deployment does not create
+  database grants.</li>
 </ul>
 <div class="admonition important">
 <p class="admonition-title">Protected retrieval keeps the signed-in user's permissions</p>
@@ -6320,16 +6321,18 @@ One environment binds to one application ID.</p>
 <h4 id="optional-sql-tools-through-mcp">Optional SQL tools through MCP</h4>
 <p>To query approved Azure SQL or SQL Server data, select
 <strong><a href="../agent-app-mcp/">Agent App MCP Server</a></strong> before provision:</p>
-<p>First select the <a href="../agent-app-mcp/#use-the-coordinated-platform-source">coordinated MCP platform source</a>.
-The MCP component release alone does not add this integration to a checkout
-whose application definition does not include it.</p>
+<p>Use the <a href="../agent-app-mcp/#use-the-coordinated-platform-source">coordinated platform source</a>
+and its reviewed manifest/application definition.</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_AGENT_APP_MCP<span class="w"> </span><span class="nb">true</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>MCP_TOOLSETS<span class="w"> </span><span class="s1">'["nl2sql"]'</span>
 </code></pre></div>
-<p>It defaults to <code>false</code> and adds a separate Container App with either
-orchestration host. The platform requires application Cosmos automatically,
+<p>The server selector defaults to <code>false</code> and adds separate compute with either
+orchestration host. <code>MCP_TOOLSETS</code> defaults to <code>[]</code>: server deployment alone
+registers zero tools and needs no NL2SQL catalog/model/secret grants.
+The explicit <code>["nl2sql"]</code> selection requires application Cosmos automatically,
 reusing a compatible account or creating it when absent. Catalog containers,
-vector policies, managed identities, scoped grants and App Configuration outputs
-are coordinated; do not add Cosmos or NL2SQL enable flags for this dependency.
+vector policies, scoped grants and settings under label <code>agent-lz</code> are
+coordinated by application composition, not tool-specific foundation parameters.
 Search and document ingestion are not required by MCP.</p>
 <p>This does not create SQL databases, users or grants, nor import source metadata.
 Approve the datasource and read access with its owner, then complete

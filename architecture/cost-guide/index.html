@@ -5465,12 +5465,14 @@ parameters.</p>
   create its own Search, Storage and Cosmos DB resources in addition to workload
   resources. Count what is actually created or reused.</li>
 <li><strong>Application Cosmos DB follows consumers.</strong> Workflow/<code>both</code> UI metadata,
-  selected history/feedback/attachments, MCP and custom Cosmos capabilities
+  selected history/feedback/attachments, NL2SQL and custom Cosmos capabilities
   require it. Generic storage can also be selected separately. The normal
   application account is serverless; Foundry backing Cosmos is separate.</li>
-<li><strong>MCP has its own costs.</strong> Budget the separate Container App, SQL query load,
-  model calls, catalog embeddings/import, Cosmos RUs/vector storage and any
-  additional network resources. Reuse does not make usage free. MCP does not
+<li><strong>MCP has its own costs.</strong> Budget separate server compute and any network
+  resources even with the default empty toolset list. Only selected NL2SQL
+  adds SQL query load, model calls, catalog embeddings/import and Cosmos
+  RUs/vector storage. Retained catalogs can still incur storage charges after
+  deselection. Reuse does not make usage free. MCP does not
   require Search, though independent retrieval can still incur Search costs.
   See <a href="../../agent-landing-zone/agent-app-mcp/#operate-and-extend-safely">MCP operation</a>.</li>
 <li><strong>Ingestion is a separate choice.</strong> Omitting the optional ingestion app does

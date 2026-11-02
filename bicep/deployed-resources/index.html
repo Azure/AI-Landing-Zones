@@ -5769,7 +5769,7 @@ If regional processing is required, explicitly set the embedding entry's
 <td>Workload Cosmos DB</td>
 <td>🟧</td>
 <td><code>deployCosmosDb</code>; Agent azd requires it for selected consumers</td>
-<td>NoSQL, <strong>serverless</strong> (<code>EnableServerless</code>); MCP adds vector capability/policies to its separate catalog</td>
+<td>NoSQL, <strong>serverless</strong> (<code>EnableServerless</code>); selected NL2SQL adds vector capability/policies to its separate catalog</td>
 </tr>
 <tr>
 <td>Workload Key Vault</td>
@@ -5786,9 +5786,11 @@ If regional processing is required, explicitly set the embedding entry's
 </tbody>
 </table>
 <h3 id="common-platform-services">Common platform services</h3>
-<p>For Agent Application, <code>DEPLOY_AGENT_APP_MCP=true</code> adds a separate Container App
-with its own identity and the application Cosmos catalog, on either consuming
-host. It reuses compatible selected infrastructure; it does not create another
+<p>For Agent Application, <code>DEPLOY_AGENT_APP_MCP=true</code> adds a separate <strong>Agent App
+MCP Server</strong> Container App and its identity, on either consuming host.
+<code>MCP_TOOLSETS=[]</code> is the default: no tools or NL2SQL catalog/model/secret grants.
+Explicit <code>MCP_TOOLSETS=["nl2sql"]</code> adds the application-owned catalog dependency.
+It reuses compatible selected infrastructure; it does not create another
 Search service or use Foundry backing Cosmos. Provisioning creates dependencies;
 application deployment supplies the image. SQL databases, read principals and
 approved metadata remain operator-owned onboarding.

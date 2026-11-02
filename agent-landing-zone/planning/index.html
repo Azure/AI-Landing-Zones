@@ -5652,6 +5652,10 @@ must not create them. A single platform workflow coordinates the destinations.
 See <a href="../configuration/#resource-group-destinations">resource group inputs</a>
 for defaults, permissions and provider-specific removal rules.</p>
 <h2 id="choose-application-behavior-and-execution-host">Choose application behavior and execution host</h2>
+<p>The foundation can host the reference application <strong>or another application</strong>.
+Choose an <a href="../build-your-own-app/#application-binding-and-selection">application definition</a>
+before first provision. Custom definitions supply their own components and
+requirements, not implicit reference UI/orchestrator or SQL tooling.</p>
 <p>For the reference application, choose conversation, a published workflow or
 both with <code>APPLICATION_MODE</code>. Select <code>ORCHESTRATION_HOST</code> independently:</p>
 <table>

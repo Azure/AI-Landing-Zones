@@ -5664,14 +5664,19 @@ require separate publications when both are selected; pass their actual
 distinct endpoints to the UI. The Container Apps alternative uses the
 official Durable Extension worker/client and provisioned DTS binding.
 Do not treat every canonical runtime key as an implied <code>azd env</code> input.</p>
-<p>For optional SQL tools, set <code>DEPLOY_AGENT_APP_MCP=true</code> before provision.
-Use the <a href="../agent-app-mcp/#use-the-coordinated-platform-source">coordinated MCP platform source</a>
+<p>For optional SQL tools, explicitly select both server and toolset before provision:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_AGENT_APP_MCP<span class="w"> </span><span class="nb">true</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>MCP_TOOLSETS<span class="w"> </span><span class="s1">'["nl2sql"]'</span>
+</code></pre></div>
+<p>Use the <a href="../agent-app-mcp/#use-the-coordinated-platform-source">coordinated MCP platform source</a>
 and its complete manifest/application definition, not an isolated component
 version change in another checkout.
-The default is <code>false</code>. Terraform provisions the separate MCP Container App,
-its identity and application Cosmos dependency with the same policies and
-scoped access contract as Bicep. The shared lifecycle generates the consuming
-MCP connection and authorization; no second NL2SQL enable flag is required.
+The server default is <code>false</code>; toolsets default to <code>[]</code>. Empty server compute
+does not require the NL2SQL catalog, models or secret grants.
+With NL2SQL selected, Terraform projects the application's declared catalog
+policies and scoped grants into generic foundation inputs, as Bicep does.
+The shared application lifecycle publishes <code>MCP_TOOLSETS</code> under <code>agent-lz</code>
+and generates the consuming MCP connection and authorization.
 Search and document ingestion remain independent.
 See <a href="../agent-app-mcp/">Agent App MCP Server</a> for what is automatic and for
 operator-owned SQL permissions and approved metadata import.</p>

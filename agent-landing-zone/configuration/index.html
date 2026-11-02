@@ -6983,7 +6983,7 @@ The UI consumes
 (default <code>native-ui-metadata</code>, partition key <code>/principal_id</code>, owner <code>tid:oid</code>), with its grant
 assigned only to the frontend. Existing <code>COSMOS_DB_ENDPOINT</code> and
 <code>COSMOS_DB_ACCOUNT_RESOURCE_ID</code> outputs remain conditional; no separate native
-endpoint key is introduced. Agent App MCP Server selects the same application
+endpoint key is introduced. The explicitly selected NL2SQL toolset uses the same application
 account for its separate approved-source and vector-metadata containers,
 with grants assigned to the MCP identity, not the orchestrator.
 A custom component may declare another application storage
@@ -7004,8 +7004,11 @@ overridden.</p>
 orchestrator, including a custom <code>AGENTLZ_APP_DEFINITION</code>.
 Custom Cosmos capabilities can declare the dependency directly.
 Enabling Cosmos alone does not deploy MCP or enable vector search.
-Normal application Cosmos is serverless. Vector policies are selected only
-for MCP or a retained MCP catalog, not for generic Cosmos by itself.</p>
+Normal application Cosmos is serverless. NL2SQL selects vector capability and
+its catalog policies; a retained catalog preserves them.
+Custom applications may explicitly select generic vector capability with
+<code>COSMOS_VECTOR_SEARCH_ENABLED</code> without injecting the reference catalog.
+Generic Cosmos by itself does not enable vector search.</p>
 <p>Direct foundation-template deployments also default <code>deployCosmosDb</code> to <code>false</code>;
 set it to <code>true</code> when application storage is needed. For an existing deployment,
 review the provision preview and retain the account until its consumers and
@@ -7023,15 +7026,29 @@ data-retention requirements have been reviewed.</p>
 <tr>
 <td><code>DEPLOY_AGENT_APP_MCP</code></td>
 <td><code>false</code></td>
-<td>Adds the optional Agent App MCP Server Container App and requires application Cosmos for its NL2SQL catalog.</td>
+<td>Adds optional Agent App MCP Server compute and authentication only; does not select SQL or catalog/model/secret access.</td>
 </tr>
 </tbody>
 </table>
 <p>Set this selector before provision. It is independent of
 <code>ORCHESTRATION_HOST=hosted|container_apps</code> and
-<code>APPLICATION_MODE=conversational|workflow|both</code>. Do not add a second NL2SQL
-enable flag or manually copy generated endpoint/authentication settings.</p>
-<p>Both Bicep and Terraform create the dependency when absent or reuse the
+<code>APPLICATION_MODE=conversational|workflow|both</code>.
+Select tools explicitly with application/runtime setting <code>MCP_TOOLSETS</code>,
+published under label <code>agent-lz</code>, not new tool-specific Bicep/Terraform
+parameters. The default <code>[]</code> registers zero tools and initializes no NL2SQL
+clients or dependencies. The only supported nonempty value is <code>["nl2sql"]</code>:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_AGENT_APP_MCP<span class="w"> </span><span class="nb">true</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>MCP_TOOLSETS<span class="w"> </span><span class="s1">'["nl2sql"]'</span>
+</code></pre></div>
+<p>Set both before provision/deploy for SQL. Unknown names, duplicates and invalid
+values fail closed. In the reference application, nonempty toolsets require
+server compute selection.
+<code>DEPLOY_AGENT_APP_MCP</code> is rejected for custom definitions before Azure calls.
+Custom applications may explicitly supply <code>MCP_TOOLSETS</code> as runtime
+configuration and declare their own compute, dependencies and permissions;
+this adds no automatic reference catalog or model resources.
+Do not manually copy generated endpoint/authentication settings.</p>
+<p>Only when NL2SQL is selected, Bicep and Terraform create the dependency when absent or reuse the
 compatible application account managed by this deployment. Provision captures
 and preserves the exact existing capability set and data, adds
 <code>EnableNoSQLVectorSearch</code> and provisions
@@ -7054,13 +7071,19 @@ by the exact application object ID recorded in App Configuration.
 The deployer must have directory
 rights for registration and application-role assignments, separate from ARM
 permissions; there is no broad ARM-token authentication fallback.</p>
-<p>Selection does not enable <code>DEPLOY_SEARCH_SERVICE</code>, create Search indexes or
+<p>An empty server retains mandatory tenant/audience/app-role/client restrictions
+but receives no NL2SQL catalog, model or secret grants.
+Selection does not enable <code>DEPLOY_SEARCH_SERVICE</code>, create Search indexes or
 grant Search access. Other retrieval consumers keep their independent Search
 requirements. Generated settings are published under <code>agent-lz</code>; see the
 <a href="../application-settings/#agent-app-mcp-contract">MCP contract</a>.
 Use the <a href="../agent-app-mcp/#select-and-deploy">MCP component guide</a> for fresh and
-existing-installation steps. Setting the selector to <code>false</code> disables the
-runtime tools and does not delete metadata or grants. The catalog account,
+existing-installation steps. Toolsets are startup-only: changes require
+restart/redeployment. Setting <code>MCP_TOOLSETS=[]</code> stops NL2SQL
+registration and dependency initialization; it does not automatically revoke
+old roles. Disabling server compute likewise does not delete catalog metadata.
+The retained <code>COSMOS_VECTOR_SEARCH_ENABLED</code> marker preserves vector capability.
+The catalog account,
 container declarations and vector policies are retained for owner-reviewed
 safe cleanup.</p>
 <p><span id="ingestion-application-selection"></span></p>
@@ -7083,8 +7106,8 @@ safe cleanup.</p>
 </table>
 <p>The boolean is persisted by pre-provision and published under label <code>agent-lz</code>.
 Existing environments retain their selection rather than silently adopting the
-fresh default. Custom definitions retain their declared components and additive
-infrastructure composition.</p>
+fresh default. Custom definitions retain only their declared components and
+resource requirements; this reference selector does not add ingestion to them.</p>
 <table>
 <thead>
 <tr>
@@ -8087,8 +8110,9 @@ See <a href="../hosted-agents/">Agent hosting</a>,
 <p><code>ENABLE_CHAT_HISTORY</code> and <code>ENABLE_USER_FEEDBACK</code> default to <code>false</code>;
 workflow mode, <code>both</code> or enabled history, feedback or attachments declares UI metadata
 storage directly. <code>DEPLOY_AGENT_APP_MCP=false</code> keeps the optional MCP server
-unselected. Selecting it requires application Cosmos and derives the consuming
-MCP connection and registration. Catalog and SQL access belong to the MCP
+unselected. Selecting it derives the consuming MCP connection and registration,
+not SQL. Explicit <code>MCP_TOOLSETS=["nl2sql"]</code> requires the application catalog.
+Catalog and SQL access belong to the MCP
 identity, not the native execution host.
 Declare actual tool secret names through <code>NATIVE_TOOL_SECRET_NAMES</code> (default
 <code>[]</code>), a JSON array of names rather than values, and grant only the consuming
@@ -8268,7 +8292,7 @@ for diagnosis.</p>
 </tr>
 <tr>
 <td><code>COSMOS_VECTOR_SEARCH_ENABLED</code></td>
-<td>Internal azd-only marker for selected or retained MCP vector resources, not a new foundation output or operator enable flag. Preserve the owning lifecycle's state rather than editing it to force compatibility.</td>
+<td>Application-layer vector capability/retention state, not a new foundation output. Custom applications can explicitly select generic vector capability independently of the reference catalog. The lifecycle preserves the marker for retained NL2SQL catalogs.</td>
 </tr>
 </tbody>
 </table>

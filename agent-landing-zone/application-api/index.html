@@ -5812,7 +5812,7 @@ deployment composition. UI session creation selects an already enabled
 application; it does not change the deployment's host or mode.
 Tools, including optional MCP NL2SQL, are registered capabilities rather
 than strategy keys.
-The Agent/Workflow calls <code>nl2sql.list_sources()</code> and
+With the <code>nl2sql</code> toolset explicitly selected, the Agent/Workflow calls <code>nl2sql.list_sources()</code> and
 <code>nl2sql.query(source_id, question)</code> on the separate Agent App MCP Server;
 these are not browser-to-SQL APIs. See <a href="../nl2sql/#results-and-execution-limits">NL2SQL results</a>
 for the versioned typed result and <a href="../application-settings/#agent-app-mcp-contract">MCP settings</a>

@@ -7175,14 +7175,29 @@ when retrieval is involved. Keep credentials and content out of diagnostics.</p>
 <td>Arrange required directory permissions; ARM Contributor alone is insufficient</td>
 </tr>
 <tr>
+<td>Authenticated discovery returns no tools</td>
+<td>Effective startup <code>MCP_TOOLSETS</code>, default <code>[]</code></td>
+<td>Empty server is supported. For SQL, explicitly set <code>["nl2sql"]</code> before provision/deploy and restart/redeploy; server compute does not imply SQL</td>
+</tr>
+<tr>
+<td>Toolset selection fails at startup/preflight</td>
+<td>JSON array shape, supported names and duplicates; reference server compute selection</td>
+<td>Use <code>[]</code> or <code>["nl2sql"]</code>; unknown/duplicate/invalid values fail closed. Reference apps require compute selection for nonempty toolsets</td>
+</tr>
+<tr>
+<td>Custom application rejects reference compute selection</td>
+<td>Selected <code>AGENTLZ_APP_DEFINITION</code> and <code>DEPLOY_AGENT_APP_MCP</code></td>
+<td>Remove the reference compute switch. Custom apps may explicitly supply <code>MCP_TOOLSETS</code> with their own compute/configuration/dependency/grant declarations</td>
+</tr>
+<tr>
 <td>MCP discovery returns 401/403</td>
 <td>Actual caller, tenant, v2 audience, allowed client ID and <code>MCP.Invoke</code> role</td>
 <td>Repair the generated identity/assignment through the platform lifecycle; do not accept an ARM token, API key or user-context JSON</td>
 </tr>
 <tr>
-<td>Cosmos selection conflicts</td>
+<td>NL2SQL Cosmos selection conflicts</td>
 <td>Deliberately set or persisted <code>DEPLOY_COSMOS_DB=false</code></td>
-<td>Unset the declaration for automatic selection or set it to <code>true</code>; it is not silently overridden</td>
+<td>Unset the declaration for automatic selection or set it to <code>true</code>; an empty server does not need the catalog</td>
 </tr>
 <tr>
 <td>Vector provisioning fails</td>
@@ -7215,7 +7230,8 @@ when retrieval is involved. Keep credentials and content out of diagnostics.</p>
 orchestrator. Cancellation must not close cursor/connection resources while
 an ODBC worker is still running and does not guarantee instant SQL-server
 cancellation.</p>
-<p>Verify authenticated discovery, a known approved result, denied callers/objects
+<p>Verify authenticated discovery and denied callers even for an empty server.
+With NL2SQL selected, also check a known approved result, denied objects
 and explicit limit/error behavior after repair. Use query IDs and metadata
 versions without logging tokens, SQL or business rows.
 See <a href="../nl2sql/#failures-cancellation-and-cleanup">SQL failure handling</a>.</p>

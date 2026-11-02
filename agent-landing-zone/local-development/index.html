@@ -5632,7 +5632,7 @@ with <code>TaskHub=agent-lz;Authentication=ManagedIdentity</code>, and keep nati
 <code>agent-lz-conversation</code> and <code>agent-lz-research-review</code> aligned with the UI client.</p>
 <p>The selected mode needs its model, configuration and tool dependencies.
 Hosted native execution does not require application Cosmos; DTS owns durable
-worker execution. UI product metadata and a selected MCP server can
+worker execution. UI product metadata and a selected NL2SQL toolset can
 have their own storage requirements. Do not require every optional source
 credential or secret to start an unrelated capability.</p>
 <p>The orchestrator consumes the authenticated MCP endpoint; it does not need an
@@ -5641,7 +5641,10 @@ those dependencies. Use <a href="../agent-app-mcp/">Agent App MCP Server</a> for
 and identity responsibilities, not direct SQL configuration in this process.</p>
 <p>For local MCP development, follow the MCP repository's contributor setup and
 frozen dependency lock rather than the <code>requirements.txt</code> setup above.
-Its SQL execution environment requires Microsoft ODBC Driver 18 for SQL Server
+Select toolsets explicitly: <code>MCP_TOOLSETS=[]</code> starts an authenticated server
+with zero tools and no NL2SQL clients/dependencies; <code>["nl2sql"]</code> selects the
+SQL toolset. Changes require restart/redeployment, not hot reload.
+The NL2SQL execution environment requires Microsoft ODBC Driver 18 for SQL Server
 and native ODBC dependencies; installing Python packages alone does not
 install the driver. Use approved development metadata and read-only SQL access.
 Local startup neither provisions the catalog nor authorizes Azure callers.

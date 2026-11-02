@@ -5724,12 +5724,21 @@
 <p>Natural-language-to-SQL (NL2SQL) turns a question into a validated, read-only
 database query. In Agent Application, an Agent or Workflow calls
 the <strong>NL2SQL tools hosted by <a href="../agent-app-mcp/">Agent App MCP Server</a></strong> to query
-an approved Azure SQL or SQL Server source. The orchestrator does not connect
-directly to SQL. MCP is the tool-call protocol, the server hosts the tools,
-and NL2SQL is the capability described on this page.</p>
+an approved Azure SQL or SQL Server source. The server owns query generation,
+validation and read-only database execution.</p>
 <p>NL2SQL is optional. It does not change <code>APPLICATION_MODE</code> or
 <code>ORCHESTRATION_HOST</code>, and applications without it do not need its SQL
-connectivity or metadata catalog.</p>
+connectivity or metadata catalog.
+For the reference application, select it explicitly before provision/deploy:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_AGENT_APP_MCP<span class="w"> </span><span class="nb">true</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>MCP_TOOLSETS<span class="w"> </span><span class="s1">'["nl2sql"]'</span>
+</code></pre></div>
+<p><code>MCP_TOOLSETS</code> defaults to <code>[]</code>; choose <code>["nl2sql"]</code> for this walkthrough.
+Tool registration is startup-scoped; changes require restart/redeployment.
+Disabling NL2SQL stops registration and client initialization, not deletion
+of retained catalogs or automatic revocation of previously granted roles.
+Custom apps follow the <a href="../agent-app-mcp/#custom-applications">MCP custom application contract</a>
+for their own runtime settings, compute and permission declarations.</p>
 <h2 id="choose-the-structured-data-route">Choose the structured-data route</h2>
 <table>
 <thead>
@@ -5906,7 +5915,7 @@ Azure CLI login is not an importer credential fallback.</p>
 <tr>
 <th>Identity</th>
 <th>Access needed</th>
-<th>Granted automatically by MCP selection?</th>
+<th>Provisioning responsibility</th>
 </tr>
 </thead>
 <tbody>
@@ -5916,9 +5925,9 @@ Azure CLI login is not an importer credential fallback.</p>
 <td>Yes, for the selected application callers</td>
 </tr>
 <tr>
-<td>MCP server</td>
+<td>MCP server with <code>nl2sql</code> selected</td>
 <td>Catalog read, selected models and approved SQL read</td>
-<td>Platform grants catalog/model access, SQL owner grants database access</td>
+<td>Platform grants declared catalog/model access only for the selected toolset; SQL owner grants database access</td>
 </tr>
 <tr>
 <td>Administrative importer</td>
@@ -5939,11 +5948,13 @@ embeddings or business rows: the importer generates the vectors.</p>
 <p>Obtain the released component on that runner, then install from its frozen lock.
 The platform normally downloads runtime components automatically for deployment,
 but that does not launch the administrative import:</p>
-<div class="highlight"><pre><span></span><code>git clone --branch v1.0.0 https://github.com/Azure/agent-app-mcp.git
+<div class="highlight"><pre><span></span><code>git clone --branch &lt;manifest-mcp-tag&gt; https://github.com/Azure/agent-app-mcp.git
 cd agent-app-mcp
 uv sync --frozen
 </code></pre></div>
-<p>The repository supplies <code>samples/approved-synthetic.json</code> for an authorized
+<p>Replace <code>&lt;manifest-mcp-tag&gt;</code> with the MCP tag in your platform's reviewed
+<code>manifest.json</code>, not an independently newer component release.
+The repository supplies <code>samples/approved-synthetic.json</code> for an authorized
 development test. Its illustrative source is not an automatically provisioned
 SQL connection. For your application, replace the sample path with your
 operator-approved JSON file.</p>
@@ -6050,11 +6061,11 @@ decimal precision. A successful zero-row query is distinct from an error.</p>
 </tr>
 <tr>
 <td>Complete server query</td>
-<td><code>MCP_QUERY_TIMEOUT_SECONDS=75</code> by default</td>
+<td><code>MCP_QUERY_TIMEOUT_SECONDS=75</code> by default; accepted range <code>1..75</code></td>
 </tr>
 <tr>
 <td>Consuming MCP client</td>
-<td><code>MCP_CLIENT_TIMEOUT=90</code> by default; must exceed the server deadline</td>
+<td><code>MCP_CLIENT_TIMEOUT=90</code> by default; positive and must exceed the NL2SQL whole-query deadline</td>
 </tr>
 </tbody>
 </table>
