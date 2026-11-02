@@ -43,6 +43,58 @@ def edit_resource_field(page, field, value):
     control.press("Tab")
 
 
+def check_resource_readability(page):
+    """Expanded resource prose stays short without changing its text or state."""
+    viewport = page.viewport_size
+    opened = page.locator("#capabilities details[open]").evaluate_all("nodes=>nodes.map(e=>e.id)")
+    original = page.evaluate("JSON.stringify({state:planner.state,snapshot:planner.snapshot})")
+    links = page.locator("#capabilities a").evaluate_all("nodes=>nodes.map(e=>e.getAttribute('href'))")
+    results = []
+    try:
+        page.locator("#capabilities details").evaluate_all("nodes=>nodes.forEach(e=>e.open=true)")
+        for width in (1440, 390, 320):
+            page.set_viewport_size({"width": width, "height": 1000})
+            page.evaluate("document.fonts.ready")
+            cards = page.locator("#capabilities .resource").evaluate_all(r"""cards=>cards.map(card=>{
+              const row=planner.snapshot.rows.find(row=>row.id===card.dataset.resource);
+              const expected=document.createElement("div");
+              expected.innerHTML=row.detail;
+              const paragraphs=[...card.querySelectorAll("p.resource-assumption")];
+              const normalize=text=>text.trim().replace(/\s+/g," ");
+              return {
+                id:row.id,
+                visible:card.getBoundingClientRect().height>0,
+                paragraphWords:[...card.querySelectorAll("p")].map(p=>
+                  normalize(p.textContent).split(/\s+/).length),
+                emptyAssumptions:paragraphs.filter(p=>!p.textContent.trim()).length,
+                expected:normalize(expected.textContent),
+                actual:normalize(paragraphs.map(p=>p.textContent).join(" ")),
+                expectedLinks:[...expected.querySelectorAll("a")].map(a=>a.getAttribute("href")),
+                actualLinks:paragraphs.flatMap(p=>[...p.querySelectorAll("a")].map(a=>a.getAttribute("href")))
+              };
+            })""")
+            assert len(cards) == page.evaluate("planner.snapshot.rows.length") == 77
+            dense = [(card["id"], words) for card in cards for words in card["paragraphWords"] if words > 70]
+            assert not dense, (width, dense)
+            for card in cards:
+                assert card["visible"], (width, card["id"])
+                assert card["emptyAssumptions"] == 0, (width, card["id"])
+                assert card["actual"] == card["expected"], (width, card["id"], "detail text changed")
+                assert card["actualLinks"] == card["expectedLinks"], (width, card["id"], "detail links changed")
+            assert page.locator("#capabilities a").evaluate_all(
+                "nodes=>nodes.map(e=>e.getAttribute('href'))") == links
+            assert page.evaluate("document.documentElement.scrollWidth<=document.documentElement.clientWidth"), width
+            assert page.evaluate("JSON.stringify({state:planner.state,snapshot:planner.snapshot})") == original
+            results.append({"width": width, "cards": len(cards),
+                            "max_paragraph_words": max(max(card["paragraphWords"]) for card in cards),
+                            "preserved_text_links_and_state": True, "document_overflow": False})
+    finally:
+        page.locator("#capabilities details").evaluate_all(
+            "(nodes,opened)=>nodes.forEach(e=>e.open=opened.includes(e.id))", opened)
+        page.set_viewport_size(viewport)
+    return results
+
+
 def run(base, candidate=None):
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
@@ -235,6 +287,7 @@ def run(base, candidate=None):
             !document.querySelector("#assessment-verdict").classList.contains("needs-attention"));
           return results;
         }""")
+        check_resource_readability(page)
         nav = page.locator(".md-sidebar--primary")
         assert not nav.locator("a").evaluate_all(
             "links=>links.some(a=>/\\/(sizing|cost-planning)\\/$/.test(new URL(a.href).pathname))")
