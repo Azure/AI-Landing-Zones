@@ -5943,9 +5943,9 @@ discovery, titles, owner maps and feedback belong to the UI/BFF and its selected
 metadata store. An administrative panel is not a prerequisite for native
 conversation or workflow persistence.</p>
 <p>History, feedback and private attachments default to off. Workflow mode,
-<code>both</code> or any enabled product flag selects UI metadata in <code>native-ui-metadata</code>,
-partition key <code>/principal_id</code> with owner <code>tid:oid</code>; only the frontend receives
-its metadata grant.</p>
+<code>both</code> or any enabled product flag selects UI metadata.
+The container is <code>native-ui-metadata</code>, with partition key <code>/principal_id</code>
+and owner <code>tid:oid</code>. Only the frontend receives its metadata grant.</p>
 <p>Records contain descriptors/references, not bytes,
 transcripts or tokens. With conversational mode and all product flags off,
 bounded volatile owner maps are lost on UI restart.</p>

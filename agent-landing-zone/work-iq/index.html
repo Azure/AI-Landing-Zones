@@ -5595,9 +5595,10 @@ for production. Do not describe this integration as guaranteed read-only.</p>
 <p>Initialize the environment through the <a href="../deploy-full-stack/">full-stack deployment guide</a>.
 Enable Work IQ billing and assign pilot users. Follow the
 <a href="https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-work-iq#set-up-microsoft-entra-authentication">official Entra authentication procedure</a>
-for a customer-owned application exposing <code>access_as_user</code>, delegated
-<code>WorkIQAgent.Ask</code> permission, administrator consent and a federated credential
-trusting Search's managed identity.</p>
+for a customer-owned application exposing <code>access_as_user</code>.
+The application needs delegated <code>WorkIQAgent.Ask</code> permission and administrator
+consent. The application also needs a federated credential trusting Search's
+managed identity.</p>
 <p>Record the application's client ID and the federated credential's <strong>object
 ID</strong>. Neither is the Search principal ID. Creating the source does not create
 these Entra objects or grant consent. If Search does not exist yet, provision

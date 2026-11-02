@@ -5930,9 +5930,10 @@ and sign in again. The UI caches settings at startup.</p>
 Supported functional runtime parameters use App Configuration refresh and
 per-run snapshots. Structural host, graph, identity or publication changes
 require a compatible new publication; they are not live parameter updates.</p>
-<p>Verify in order: signed-out chat is denied; an admitted test user completes
-sign-in and returns to the exact callback; that user can invoke the intended
-agent through OBO; and a user outside the admission lists is denied.
+<p>First, verify that signed-out chat is denied. Then sign in as an admitted
+test user and confirm the return to the exact callback.
+Verify that the same user can invoke the intended agent through OBO.
+Finally, confirm that a user outside the admission lists is denied.
 Use sanitized status/correlation information, not raw tokens.</p>
 <p><strong>Login and invocation are not protected retrieval.</strong> Complete the identity
 integration and document allow/deny checks below before admitting protected
@@ -5950,9 +5951,10 @@ describes downstream consent.</p>
 <code>service_identity</code> would make Foundry see the UI service rather than the user.
 Neither mode alone establishes authorization inside the hosted container.</p>
 <p>With <code>RETRIEVAL_AUTH_MODE=native_search</code>, the supplied UI performs a separate
-OBO exchange for <code>https://search.azure.com/.default</code> from the same authenticated
-UI assertion used for the Foundry exchange. Foundry forwards the resulting
-<code>x-client-search-token</code> to the selected native Hosted publication. The connector supplies that
+OBO exchange for <code>https://search.azure.com/.default</code>.
+It uses the same authenticated UI assertion as the Foundry exchange.
+Foundry forwards the resulting <code>x-client-search-token</code> to the selected native
+Hosted publication. The connector supplies that
 raw token in <code>x-ms-query-source-authorization</code>, separately from its workload
 authentication to Search. It does not exchange the Search token again.</p>
 <p>This built-in path does not require customer-written Toolbox integration or

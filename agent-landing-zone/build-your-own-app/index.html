@@ -6287,9 +6287,9 @@ Configure user consent and document authorization separately, preserving
 <a href="../application-auth/">authentication and OBO</a> and
 <a href="../foundry-iq/">Foundry IQ source permissions</a>.</p>
 <p>Container App profiles reconcile during post-provisioning. Hosted image pull
-uses the existing Foundry <strong>project</strong> managed identity. After deployment verifies
-the routed agent version and <strong>instance</strong> identity, it reconciles that instance's
-declared profiles before greeting smoke. Agent Application orchestrator grants are not
+uses the existing Foundry <strong>project</strong> managed identity. Deployment first verifies
+the routed agent version and <strong>instance</strong> identity. It then reconciles that instance's
+declared profiles before the greeting smoke check. Agent Application orchestrator grants are not
 substituted; denied or ambiguous assignments fail deployment.</p>
 <p>Key Vault targeting and scope resolution follow the
 <a href="https://github.com/Azure/agent-landing-zone/blob/main/config/appdefinition/roles.py">role assignment contract</a>;

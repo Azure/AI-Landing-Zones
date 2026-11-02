@@ -5772,8 +5772,8 @@ to work around login or consent failures.</p>
 uses its adjacent assets. For an installed package staged elsewhere, set
 <code>CHAINLIT_APP_ROOT</code> to that root or start there. A wheel contains code, not a
 self-contained deployed UI. Do not write assets into <code>site-packages</code>.
-Missing <code>VERSION</code> is optional and a missing <code>.chainlit/config.toml</code> produces
-a warning.</p>
+The <code>VERSION</code> file is optional.
+A missing <code>.chainlit/config.toml</code> produces a warning.</p>
 <p>A missing or disconnected App Configuration provider produces an HTTP <code>503</code>
 not-ready app. Private attachments require their explicitly selected file
 path and ownership checks; ingestion is not a replacement upload path. See

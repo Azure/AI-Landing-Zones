@@ -5658,10 +5658,11 @@ overview. Its conversation-history endpoint returns <code>501</code>.
 Use the <a href="../application-api/#ingestion-administration">ingestion API contracts</a>
 to select the supported administration operations.</p>
 <h3 id="operator-overview-and-curation">Operator overview and curation</h3>
-<p>In a component-managed integration, operator readiness requires the selected
-administrative surface, <code>PANEL_OPERATOR_SURFACES_ENABLED</code>, an explicit
-<code>PANEL_OPERATOR_APP_ROLE</code> or <code>PANEL_OPERATOR_GROUP_ID</code>, and the securely resolved
-<code>DATA_INGEST_APP_APIKEY</code> cursor-signing secret before routes are exposed.
+<p>Before exposing operator routes, a component-managed integration requires the
+selected administrative surface and <code>PANEL_OPERATOR_SURFACES_ENABLED</code>.
+The integration also requires an explicit <code>PANEL_OPERATOR_APP_ROLE</code> or
+<code>PANEL_OPERATOR_GROUP_ID</code>.
+The <code>DATA_INGEST_APP_APIKEY</code> cursor-signing secret must be securely resolved.
 These are component contracts, not an activation recipe for the reference
 platform: its configuration ownership fixes operator surfaces to <code>false</code>.</p>
 <p>Use the <a href="../build-your-own-app/">application integration procedure</a> to review

@@ -5721,10 +5721,11 @@ See <a href="../application-auth/">Sign-in &amp; access</a>.</p>
 </tr>
 </tbody>
 </table>
-<p>The product metadata store keeps owner maps, display information and feedback,
-with <code>/principal_id</code> set to <code>tid:oid</code>; it contains no transcripts, file bytes
+<p>The product metadata store keeps owner maps, display information and feedback.
+Its <code>/principal_id</code> value is <code>tid:oid</code>. It contains no transcripts, file bytes
 or tokens. Workflow mode and <code>both</code> select it even when history and feedback
-are off. It is not a second copy of execution checkpoints. Redis is not required to imitate
+are off.</p>
+<p>It is not a second copy of execution checkpoints. Redis is not required to imitate
 Hosted streaming. No ALZ queue, scheduler or custom workflow-state engine is
 introduced.</p>
 <p>For operational failures, follow <a href="../troubleshooting/">Troubleshooting</a>.</p>

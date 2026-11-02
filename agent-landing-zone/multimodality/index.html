@@ -5622,10 +5622,10 @@ receives text, not the original image.</p>
 <code>FOUNDRY_IQ_PATTERN=azureBlob</code>, <code>FOUNDRY_IQ_KNOWLEDGE_SOURCE_KIND=azureBlob</code>
 and <code>FOUNDRY_IQ_CONTENT_EXTRACTION_MODE=standard</code>.
 Agent App Ingestion is not required.</p>
-<p>The provisioning template sets <code>disableImageVerbalization=false</code>, but only
-supplies <code>chatCompletionModel</code> for its supported Content Understanding model
-names. <code>gpt-4.1</code> is supported. The default <code>gpt-5-nano</code> is not in that allowlist.
-The flag alone therefore does <strong>not</strong> establish working image verbalization
+<p>The provisioning template sets <code>disableImageVerbalization=false</code>.
+It supplies <code>chatCompletionModel</code> only for its supported Content Understanding model
+names. <code>gpt-4.1</code> is supported. The default <code>gpt-5-nano</code> is not in that allowlist.</p>
+<p>The flag alone therefore does <strong>not</strong> establish working image verbalization
 in a fresh deployment. Standard extraction also requires a compatible region,
 Foundry AI Services endpoint and embedding deployment.
 <a href="https://learn.microsoft.com/en-us/azure/search/agentic-knowledge-source-how-to-blob">Blob source prerequisites</a>

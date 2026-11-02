@@ -5990,9 +5990,10 @@ URL, and its network setting is <code>"pna": "Disabled"</code>. The bot uses the
 identity; you do not need a client secret, public VNet ingress or a custom
 connector.</p>
 <h3 id="step-3-enable-the-source-ip-filtered-public-activity-route">Step 3: Enable the source-IP-filtered public Activity route</h3>
-<p>Run the block below to enable the <strong>public HTTPS Activity exception</strong>, apply the Bot
-Service authorization scheme for your chosen audience and send traffic to the
-tested agent version. The block reads the current configuration so it can
+<p>Run the block below to enable the <strong>public HTTPS Activity exception</strong>.
+The block also applies the Bot Service authorization scheme for your chosen
+audience. It sends traffic to the tested agent version.
+The block reads the current configuration so it can
 preserve the existing protocols and non-Bot authorization schemes. It also
 checks for Foundry's default <code>Entra</code> authorization. If you changed that
 configuration, review the

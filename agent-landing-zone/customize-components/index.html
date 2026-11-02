@@ -5638,15 +5638,18 @@ from an MCP knowledge source consulted by Foundry IQ.</p>
   Native retrieval and protected downloads require their own user tokens.</li>
 <li>Do not accept client-supplied groups, user IDs, indexes, or document URLs as
   proof of access. Add negative tests for cross-user and source-denied requests.</li>
-<li>For SQL, keep a read-only database principal as the primary security boundary.
+<li>
+<p>For SQL, keep a read-only database principal as the primary security boundary.
   Generated-SQL validation is not a substitute for database permissions.
   SQL generation, catalog retrieval and execution belong in Agent App MCP
-  Server. Keep its reviewed modules, typed schemas, scoped permissions,
-  dependencies and tests aligned with explicit module registration.
-  <code>MCP_TOOLSETS=[]</code> registers zero tools and initializes no NL2SQL
-  dependencies; <code>["nl2sql"]</code> selects the two supplied SQL tools at startup.
-  Unknown/duplicate/invalid selections fail closed. Changes require
-  restart/redeployment.</li>
+  Server.</p>
+<p>Keep its reviewed modules, typed schemas, scoped permissions,
+dependencies and tests aligned with explicit module registration.
+<code>MCP_TOOLSETS=[]</code> registers zero tools and initializes no NL2SQL
+dependencies. <code>["nl2sql"]</code> selects the two supplied SQL tools at startup.
+Unknown/duplicate/invalid selections fail closed. Changes require
+restart/redeployment.</p>
+</li>
 </ul>
 <p>Retrieval backend selection does not switch every datasource or tool.
 Use <a href="../foundry-iq/">Foundry IQ</a> and the relevant source guide for source

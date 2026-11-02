@@ -5746,9 +5746,9 @@ The existing session-signing secret stays protected.</p>
    <a href="../application-auth/">application access</a> with an admitted user.</li>
 <li>
 <p>The portal developer and Entra administrator register the portal's own
-   redirect URI under its <strong>App registration &gt; Authentication</strong>, add the
+   redirect URI under its <strong>App registration &gt; Authentication</strong>. They add the
    UI API's delegated <code>user_impersonation</code> permission under <strong>API permissions</strong>,
-   and complete required tenant consent.</p>
+   then complete required tenant consent.</p>
 </li>
 <li>
 <p>The configuration operator publishes the table's nonsecret values in
@@ -5765,9 +5765,10 @@ Data Owner for these writes; see
 <a href="../application-settings/#edit-an-existing-nonsecret-key">edit an existing nonsecret key</a>.</p>
 <ol>
 <li>Restart/redeploy the <strong>frontend Container App</strong> after the write, then open
-   a new browser session. Its operator must enforce the
-   single-process/revision/replica requirements below before the portal developer
-   adds bootstrap and mounts the widget. No hosted-agent republication is needed
+   a new browser session. The frontend operator must enforce the
+   single-process/revision/replica requirements below.
+   Only then can the portal developer add bootstrap and mount the widget.
+   No hosted-agent republication is needed
    for an embedding-only change.</li>
 </ol>
 <h3 id="session-settings">Session settings</h3>
