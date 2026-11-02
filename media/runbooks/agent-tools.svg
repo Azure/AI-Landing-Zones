@@ -1,9 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="660" viewBox="0 0 1000 660" role="img" aria-labelledby="title desc">
-  <title id="title">What makes a capability callable?</title>
-  <desc id="desc">The application registers optional capabilities for an agent or workflow on either native host. Search retrieval and Agent App MCP Server are two examples shown here. Search source access is independent of MCP transport and tool authorization. All capabilities start disabled. Configuration, permissions and network reachability are required in addition to registration. Other reviewed MCP servers have their own hosting contracts.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="960" viewBox="0 0 1000 960" role="img" aria-labelledby="title desc">
+  <title id="title">Tools available to the agent</title>
+  <desc id="desc">The Agent Application explicitly supplies tools to its agent or workflow on one selected host. Foundry tool integrations include Azure AI Search for a configured index and Foundry IQ through its own prepared project connection. Application tool integrations include the multimodal_retrieve function and tool functions discovered from an MCP server. The explicitly selected NL2SQL toolset on Agent App MCP Server provides nl2sql.list_sources and nl2sql.query. The four branches are independent optional integrations, not a required sequence. Each needs its own configuration and authorization.</desc>
   <!-- Azure public service icons, July 2026 pack. https://learn.microsoft.com/azure/architecture/icons/ -->
   <defs>
-    <style>text{font-family:"Segoe UI",sans-serif;fill:#1e3646;font-size:22px}.title{font-size:28px;font-weight:700}.heading{font-size:23px;font-weight:700}.label{font-size:20px}.node{fill:#fff;stroke:#9bb2c4;stroke-width:1.5}.group{fill:#f3f8fc;stroke:#9bb2c4;stroke-width:1.5}.header{fill:#e1edf4;stroke:#9bb2c4;stroke-width:1.5}.flow{fill:none;stroke:#32698e;stroke-width:2;marker-end:url(#arrow)}</style>
+    <style>text{font-family:"Segoe UI",sans-serif;fill:#1e3646;font-size:20px}.title{font-size:28px;font-weight:700}.heading{font-size:23px;font-weight:700}.label{font-size:18px}.code{font-family:Consolas,monospace;font-size:18px}.node{fill:#fff;stroke:#9bb2c4;stroke-width:1.5}.group{fill:#f3f8fc;stroke:#9bb2c4;stroke-width:1.5}.header{fill:#e1edf4;stroke:#9bb2c4;stroke-width:1.5}.line,.flow{fill:none;stroke:#32698e;stroke-width:2}.flow{marker-end:url(#arrow)}</style>
     <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 10 5 0 10Z" fill="#32698e"/></marker>
     <symbol id="search" viewBox="0 0 18 18">
       <defs><linearGradient id="b198f9ad-224e-4f37-99bb-f1c5a20d3916" x1="9" y1="0.36" x2="9" y2="18.31" gradientUnits="userSpaceOnUse"><stop offset="0.18" stop-color="#5ea0ef"/><stop offset="1" stop-color="#0078d4"/></linearGradient></defs><path d="M18,11.32a4.12,4.12,0,0,0-3.51-4,5.15,5.15,0,0,0-5.25-5,5.25,5.25,0,0,0-5,3.49A4.86,4.86,0,0,0,0,10.59a5,5,0,0,0,5.07,4.82l.44,0h8.21a.78.78,0,0,0,.22,0A4.13,4.13,0,0,0,18,11.32Z" fill="url(#b198f9ad-224e-4f37-99bb-f1c5a20d3916)"/><path d="M12.33,6.59a3.07,3.07,0,0,0-5.61.85,3.16,3.16,0,0,0,.33,2.27L4.71,12.08a.79.79,0,0,0,0,1.12.78.78,0,0,0,.56.23.76.76,0,0,0,.56-.23l2.33-2.36a3.14,3.14,0,0,0,.81.33,3.08,3.08,0,0,0,3.36-4.58Zm-.54,2.1A2.16,2.16,0,0,1,9.7,10.34a1.79,1.79,0,0,1-.51-.07,1.87,1.87,0,0,1-.7-.32,2.13,2.13,0,0,1-.56-.56,2.17,2.17,0,0,1-.31-1.73A2.14,2.14,0,0,1,9.7,6a2.31,2.31,0,0,1,.52.06,2.18,2.18,0,0,1,1.32,1A2.13,2.13,0,0,1,11.79,8.69Z" fill="#f2f2f2"/><ellipse cx="9.69" cy="8.18" rx="2.15" ry="2.16" fill="#83b9f9"/>
@@ -11,35 +11,58 @@
     <symbol id="aca" viewBox="0 0 18 18">
       <defs><linearGradient id="a3a44093-b157-426e-a8fe-cec9f9c23978" x1="11.729" y1="4.88" x2="11.729" y2="13.099" gradientUnits="userSpaceOnUse"><stop offset="0.001" stop-color="#773adc"/><stop offset="0.528" stop-color="#6635bb"/><stop offset="1" stop-color="#552f99"/></linearGradient><linearGradient id="ad838859-03f4-472f-81bc-ebc921d71335" x1="6.35" y1="13.914" x2="6.35" y2="4.198" gradientUnits="userSpaceOnUse"><stop offset="0.001" stop-color="#773adc"/><stop offset="0.307" stop-color="#793ddd"/><stop offset="0.532" stop-color="#8046e1"/><stop offset="0.731" stop-color="#8c56e7"/><stop offset="0.915" stop-color="#9c6def"/><stop offset="1" stop-color="#a67af4"/></linearGradient></defs><g id="ae82470d-7a6c-4dfe-8533-59d8ff948629"><g><path d="M8.617,8.644H.639V1.784A1.16,1.16,0,0,1,1.788.624H8.617ZM1.63,7.653h6V1.594H1.788a.158.158,0,0,0-.158.158h0Z" fill="#949494"/><path d="M17.5,8.644H9.523V.624h6.828A1.16,1.16,0,0,1,17.5,1.784Zm-6.987-.991h6V1.784a.157.157,0,0,0-.123-.187.2.2,0,0,0-.035,0H10.513Z" fill="#949494"/><path d="M8.617,17.485H1.788A1.149,1.149,0,0,1,.639,16.347V9.476H8.617ZM1.63,10.467v5.88a.158.158,0,0,0,.158.158H7.626V10.467Z" fill="#949494"/><path d="M16.351,17.485H9.523V9.476H17.5v6.871A1.149,1.149,0,0,1,16.351,17.485Zm-5.838-.991h5.838a.157.157,0,0,0,.158-.158V10.467h-6Z" fill="#949494"/><path d="M14.6,6.294a.294.294,0,0,0-.2-.278L9.044,4.205A.128.128,0,0,0,9,4.2H9a.132.132,0,0,0-.133.133v9.445A.133.133,0,0,0,9,13.911H9a.138.138,0,0,0,.049-.01l5.365-2.145a.292.292,0,0,0,.184-.272Z" fill="url(#a3a44093-b157-426e-a8fe-cec9f9c23978)"/><path d="M8.966,4.2l-5.293.966a.161.161,0,0,0-.13.158V12.63a.16.16,0,0,0,.126.157L8.962,13.91a.161.161,0,0,0,.191-.121.22.22,0,0,0,0-.036V4.358A.16.16,0,0,0,9,4.2.163.163,0,0,0,8.966,4.2Z" fill="url(#ad838859-03f4-472f-81bc-ebc921d71335)"/><path d="M6.52,5.656v6.8l1.842.3V5.335Zm-2.262.367v5.955l1.6.326V5.754Z" fill="#b796f9" opacity="0.5"/></g></g>
     </symbol>
+    <symbol id="foundry-iq" viewBox="0 0 18 18">
+      <defs><linearGradient id="uuid-7526d738-2276-4943-a89d-7b8f37e752c7" x1="9.52" y1="1882" x2="17.62" y2="1887.9" gradientTransform="translate(0 -1882.5)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7274ff" /><stop offset="1" stop-color="#4f42fd" /></linearGradient><linearGradient id="uuid-9a254082-ecd5-41e7-b516-d7222c830106" x1="7.5" y1="1885.6" x2="10" y2="1883.1" gradientTransform="translate(0 -1882.5)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4f42fd" /><stop offset="1" stop-color="#2c08ac" /></linearGradient><linearGradient id="uuid-944cb126-a8a3-4575-8c15-15b68bff8253" x1="-.5" y1="1890.98" x2="5.4" y2="1882.88" gradientTransform="translate(0 -1882.5)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7274ff" /><stop offset="1" stop-color="#4f42fd" /></linearGradient><linearGradient id="uuid-fd46aaed-c6ee-4ec5-a79a-c451c5d41ce7" x1="3.11" y1="1892.99" x2=".61" y2="1890.49" gradientTransform="translate(0 -1882.5)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4f42fd" /><stop offset="1" stop-color="#2c08ac" /></linearGradient><linearGradient id="uuid-cdf32197-da5e-480d-8e7c-e9db7b4aa8d2" x1="8.46" y1="1900.94" x2=".36" y2="1895.14" gradientTransform="translate(0 -1882.5)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7274ff" /><stop offset="1" stop-color="#4f42fd" /></linearGradient><linearGradient id="uuid-5e60f7f1-a5c7-49fe-a279-f1bde8ca60da" x1="10.54" y1="1897.44" x2="8.04" y2="1899.94" gradientTransform="translate(0 -1882.5)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4f42fd" /><stop offset="1" stop-color="#2c08ac" /></linearGradient><linearGradient id="uuid-308c4ccc-3630-4f7c-98c6-7ffbde4b8d5b" x1="18.44" y1="1892.04" x2="12.64" y2="1900.14" gradientTransform="translate(0 -1882.5)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7274ff" /><stop offset="1" stop-color="#4f42fd" /></linearGradient><linearGradient id="uuid-b0c66d16-3170-41c2-a75a-45479ea00a11" x1="14.95" y1="1889.95" x2="17.45" y2="1892.45" gradientTransform="translate(0 -1882.5)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4f42fd" /><stop offset="1" stop-color="#2c08ac" /></linearGradient></defs><rect width="18" height="18" fill="none" /><g><path d="M7.85.25h5.2c.4,0,.8.2,1.1.5l1.1,1.1c.1.1.1.3,0,.4l-1.9,1.9h-.4l-1.2-1.2-1.7-1.7c-.4-.4-.8-.6-1.3-.8-.3,0-.6-.1-.9-.1h0v-.1Z" fill="url(#uuid-7526d738-2276-4943-a89d-7b8f37e752c7)" /><path d="M2.75,1.85l1.1-1.1c.3-.3.7-.5,1.1-.5h2.8c.4,0,.7,0,1,.1.5.1,1,.4,1.3.8l1,1c-.2-.2-.5,0-.5.2v4s-.1.3-.3.3h-2.7s-.3,0-.3-.3V2.35c0-.2,0-.3-.3-.3s0,0-.2,0l-1.1,1.1-.9.9h-.4l-1.9-1.9v-.4h.3v.1Z" fill="url(#uuid-9a254082-ecd5-41e7-b516-d7222c830106)" /><path d="M.25,10.15v-5.2c0-.4.2-.8.5-1.1l1.1-1.1h.4l1.9,1.9v.4l-1.2,1.2-1.7,1.7c-.4.4-.6.8-.8,1.3,0,.3-.1.6-.1.9h-.1Z" fill="url(#uuid-944cb126-a8a3-4575-8c15-15b68bff8253)" /><path d="M1.85,15.25l-1.1-1.1c-.3-.3-.5-.7-.5-1.1v-2.8c0-.4,0-.7.1-1,.1-.5.4-1,.8-1.3l1-1c-.2.2,0,.5.2.5h4s.3,0,.3.3v2.7c0,.1,0,.3-.3.3H2.35c-.2,0-.3.1-.3.3v.2l1.1,1.1.9.9v.4l-1.9,1.9c-.1.1-.3.1-.4,0h0v-.3h.1Z" fill="url(#uuid-fd46aaed-c6ee-4ec5-a79a-c451c5d41ce7)" /><path d="M10.15,17.75h-5.2c-.4,0-.8-.2-1.1-.5l-1.1-1.1v-.4l1.9-1.9c0-.1.3-.1.4,0l1.2,1.2,1.7,1.7c.4.4,.8.6,1.3.8.3,0,.6.1.9.1h0v.1Z" fill="url(#uuid-cdf32197-da5e-480d-8e7c-e9db7b4aa8d2)" /><path d="M15.25,16.15l-1.1,1.1c-.3.3-.7.5-1.1.5h-2.8c-.3,0-.6,0-.9-.1-.5-.1-1-.4-1.3-.8l-1-1c.2.2.5,0,.5-.2v-4c0-.1,0-.3.3-.3h2.7c.1,0,.3.1.3.3v4c0,.2.1.3.3.3h.2l1.1-1.1.9-.9c.1-.1.3-.1.4,0l1.9,1.9c.1.1.1.3,0,.4h-.4v-.1Z" fill="url(#uuid-5e60f7f1-a5c7-49fe-a279-f1bde8ca60da)" /><path d="M17.75,7.85v5.2c0,.4-.2.8-.5,1.1l-1.1,1.1c-.1.1-.3.1-.4,0l-1.9-1.9c-.1-.1-.1-.3,0-.4l1.2-1.2,1.7-1.7c.4-.4.6-.8.8-1.3,0-.3.1-.6.1-.9,0,0,.1,0,.1,0Z" fill="url(#uuid-308c4ccc-3630-4f7c-98c6-7ffbde4b8d5b)" /><path d="M16.15,2.75l1.1,1.1c.3.3.5.7.5,1.1v2.8c0,.3,0,.6-.1.9-.1.5-.4,1-.8,1.3l-1,1c.2-.2,0-.5-.2-.5h-4c-.1,0-.3-.1-.3-.3v-2.7s.1-.3.3-.3h4c.2,0,.3,0,.3-.3s0,0,0-.2l-1.1-1.1-.9-.9c-.1,0-.1-.3,0-.4l1.9-1.9c.1-.1.3-.1.4,0h0v.4h-.1Z" fill="url(#uuid-b0c66d16-3170-41c2-a75a-45479ea00a11)" /></g>
+    </symbol>
   </defs>
-  <rect width="1000" height="660" fill="#fff"/>
-  <text class="title" x="40" y="52">What makes a capability callable?</text>
-  <text x="40" y="88">Application registration is necessary; it is not a source or tool permission grant.</text>
-  <rect class="group" x="40" y="150" width="290" height="410"/>
-  <rect class="header" x="40" y="150" width="290" height="52"/>
-  <text class="heading" x="60" y="184">Either native host</text>
-  <rect class="node" x="60" y="275" width="250" height="165"/>
-  <text class="heading" x="185" y="318" text-anchor="middle">Agent or workflow</text>
-  <text x="185" y="363" text-anchor="middle">App registers</text>
-  <text x="185" y="394" text-anchor="middle">selected capabilities</text>
-  <text class="label" x="60" y="515">Optional flags default off</text>
-  <rect class="group" x="580" y="150" width="380" height="410"/>
-  <rect class="header" x="580" y="150" width="380" height="52"/>
-  <text class="heading" x="600" y="184">Independent path examples</text>
-  <rect class="node" x="610" y="230" width="320" height="130"/>
-  <use href="#search" x="625" y="250" width="45" height="45" aria-hidden="true"/>
-  <text class="heading" x="690" y="267">Search retrieval</text>
-  <text x="690" y="301">Source capability</text>
-  <text class="label" x="630" y="338">Source access still checked</text>
-  <rect class="node" x="610" y="405" width="320" height="130"/>
-  <use href="#aca" x="625" y="425" width="45" height="45" aria-hidden="true"/>
-  <text class="heading" x="690" y="443">Agent App MCP</text>
-  <text x="690" y="477">Server (optional)</text>
-  <text class="label" x="630" y="513">Transport + tool authorization</text>
-  <path class="flow" d="M310 315H440V295H610"/>
-  <text class="label" x="450" y="274">Retrieval</text>
-  <path class="flow" d="M310 400H440V470H610"/>
-  <text class="label" x="450" y="450">MCP</text>
-  <text x="40" y="609">A callable capability needs registration + configuration + permissions + network access.</text>
-  <text class="label" x="40" y="643">Shown: Agent App MCP Server. Other MCP servers have their own hosting contracts.</text>
+  <rect width="1000" height="960" fill="#fff"/>
+  <text class="title" x="40" y="52">Tools available to the agent</text>
+  <text x="40" y="88">The application supplies the agent's tool list explicitly.</text>
+  <rect class="group" x="40" y="150" width="270" height="710"/>
+  <rect class="header" x="40" y="150" width="270" height="52"/>
+  <text class="heading" x="60" y="184">Agent Application</text>
+  <text x="60" y="253">Select one host:</text>
+  <text x="60" y="285">Foundry Hosted</text>
+  <text class="label" x="60" y="315">or Container Apps + DTS</text>
+  <rect class="node" x="60" y="445" width="230" height="160"/>
+  <text class="heading" x="175" y="490" text-anchor="middle">Agent or workflow</text>
+  <text x="175" y="535" text-anchor="middle">Configured tools</text>
+  <text class="label" x="175" y="567" text-anchor="middle">available to the model</text>
+  <text class="label" x="60" y="748">Optional tools start off.</text>
+  <text class="label" x="60" y="780">Enable what you need.</text>
+  <rect class="group" x="420" y="150" width="540" height="320"/>
+  <rect class="header" x="420" y="150" width="540" height="52"/>
+  <text class="heading" x="440" y="184">Foundry tool integrations</text>
+  <rect class="node" x="440" y="225" width="490" height="100"/>
+  <use href="#search" x="455" y="244" width="40" height="40" aria-hidden="true"/>
+  <text class="heading" x="515" y="257">Azure AI Search</text>
+  <text class="label" x="515" y="282">Search tool for a configured index</text>
+  <text class="label" x="515" y="309">Foundry project connection</text>
+  <rect class="node" x="440" y="345" width="490" height="100"/>
+  <use href="#foundry-iq" x="455" y="364" width="40" height="40" aria-hidden="true"/>
+  <text class="heading" x="515" y="377">Foundry IQ</text>
+  <text class="label" x="515" y="402">Knowledge-base tool via Foundry</text>
+  <text class="label" x="515" y="429">Reviewed project connection</text>
+  <rect class="group" x="420" y="500" width="540" height="360"/>
+  <rect class="header" x="420" y="500" width="540" height="52"/>
+  <text class="heading" x="440" y="534">Application tool integrations</text>
+  <rect class="node" x="440" y="575" width="490" height="100"/>
+  <text class="heading" x="475" y="616" text-anchor="middle" aria-hidden="true">fn</text>
+  <text class="heading" x="515" y="607">Multimodal retrieval</text>
+  <text class="code" x="515" y="632">multimodal_retrieve</text>
+  <text class="label" x="515" y="659">Function implemented in the application</text>
+  <rect class="node" x="440" y="695" width="490" height="140"/>
+  <use href="#aca" x="455" y="737" width="40" height="40" aria-hidden="true"/>
+  <text class="heading" x="515" y="727">Selected MCP tools</text>
+  <text class="code" x="515" y="754">nl2sql.list_sources</text>
+  <text class="code" x="515" y="782">nl2sql.query</text>
+  <text class="label" x="515" y="816">NL2SQL example from Agent App MCP Server</text>
+  <path class="line" d="M290 520H360M360 275V765"/>
+  <text class="label" x="315" y="507">Calls</text>
+  <path class="flow" d="M360 275H440"/>
+  <path class="flow" d="M360 395H440"/>
+  <path class="flow" d="M360 625H440"/>
+  <path class="flow" d="M360 765H440"/>
+  <text x="40" y="907">Connections, permissions and network access are configured for each integration.</text>
+  <text class="label" x="40" y="939">Foundry IQ uses its own project connection; NL2SQL requires explicit toolset selection.</text>
 </svg>
