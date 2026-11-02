@@ -1,0 +1,174 @@
+.md-typeset .alz-diagram {
+  display: block;
+  margin: 1em 0;
+  width: 100%;
+}
+
+.alz-diagram__toolbar {
+  display: flex;
+  justify-content: flex-end;
+  min-height: 44px;
+}
+
+.alz-diagram .alz-diagram__toolbar + p {
+  margin-top: 0;
+}
+
+.alz-diagram__expand,
+.alz-diagram-viewer__controls :is(button, a) {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  color: var(--md-default-fg-color--light);
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 44px;
+  height: 44px;
+  justify-content: center;
+  padding: 0;
+  position: relative;
+  width: 44px;
+}
+
+.alz-diagram__expand svg,
+.alz-diagram-viewer__controls svg {
+  fill: none;
+  height: 24px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+  width: 24px;
+}
+
+.alz-diagram__expand::after,
+.alz-diagram-viewer__controls :is(button, a)::after {
+  background: var(--md-default-fg-color);
+  border-radius: 4px;
+  color: var(--md-default-bg-color);
+  content: attr(aria-label);
+  display: none;
+  font: 13px/1.4 var(--md-text-font-family);
+  padding: 6px 10px;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.alz-diagram__expand:is(:hover, :focus-visible),
+.alz-diagram-viewer__controls :is(button, a):is(:hover, :focus-visible) {
+  background: color-mix(in srgb, var(--md-primary-fg-color) 8%, var(--md-default-bg-color));
+  color: var(--md-primary-fg-color);
+}
+
+.alz-diagram__expand:is(:hover, :focus-visible)::after,
+.alz-diagram-viewer__controls :is(button, a):is(:hover, :focus-visible)::after {
+  display: block;
+}
+
+.alz-diagram__expand:focus-visible,
+.alz-diagram-viewer :focus-visible {
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: 2px;
+}
+
+.alz-diagram-viewer__controls button:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.alz-diagram-viewer {
+  background: var(--md-default-bg-color);
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 4px;
+  color: var(--md-default-fg-color);
+  height: calc(100dvh - 32px);
+  margin: auto;
+  max-height: none;
+  max-width: none;
+  padding: 16px;
+  width: calc(100vw - 32px);
+}
+
+.alz-diagram-viewer[open] {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.alz-diagram-viewer::backdrop {
+  background: rgb(12 25 43 / 78%);
+}
+
+html:has(.alz-diagram-viewer[open]) {
+  overflow: hidden;
+}
+
+.alz-diagram-viewer__toolbar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+
+.alz-diagram-viewer h2 {
+  flex: 1 1 12rem;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.alz-diagram-viewer__controls {
+  align-items: center;
+  display: flex;
+  margin-left: auto;
+}
+
+.alz-diagram-viewer output {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  min-width: 4ch;
+  text-align: center;
+}
+
+.alz-diagram-viewer p {
+  font-size: 13px;
+  margin: 0;
+}
+
+.alz-diagram-viewer__viewport {
+  background: color-mix(in srgb, var(--md-default-fg-color) 4%, var(--md-default-bg-color));
+  border: 1px solid var(--md-default-fg-color--lightest);
+  cursor: grab;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.alz-diagram-viewer__viewport.is-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.alz-diagram-viewer__viewport img {
+  display: block;
+  height: auto;
+  margin: 12px auto;
+  max-width: none;
+}
+
+.alz-diagram-viewer [hidden] {
+  display: none;
+}
+
+@media (max-width: 30em) {
+  .alz-diagram-viewer {
+    height: calc(100dvh - 16px);
+    padding: 12px;
+    width: calc(100vw - 16px);
+  }
+}
