@@ -166,6 +166,11 @@ Stop if the endpoint owner has not approved `https://ai.azure.com/.default`.
     azd env set HOSTED_AGENT_CAPTURE_MESSAGE_CONTENT false
     ```
 
+  !!! note
+      Some values already match the template defaults.
+      You do not need to set them in a new environment.
+      They are shown here to make the selected profile explicit.
+
 2. Ask the network operator to approve the new VNet's address plan in root `main.parameters.json`.
 3. Keep the selected subnets nonoverlapping with networks this environment must reach.
 4. Keep `publicIngress.enabled` set to `false` in root `main.parameters.json`.
