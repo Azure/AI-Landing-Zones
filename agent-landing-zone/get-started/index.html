@@ -6512,6 +6512,12 @@ The portal's consumer-role picker currently uses account scope; this CLI command
 </ol>
 <p><strong>Expected result:</strong> The approved user has both UI admission and agent-scoped Foundry caller access.
 Tenant consent, UI admission, Foundry access and source permissions remain separate controls.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This example grants access to one pilot user.
+For multiple users, assign Foundry Agent Consumer to a Microsoft Entra security group instead.
+Group members receive access to the agent.</p>
+</div>
 <p><span id="verify"></span></p>
 <h2 id="5-test-a-task-and-verify-the-boundaries">5. Test a task and verify the boundaries</h2>
 <p><strong>Computer: jumpbox. Browser: separate signed-out and test-user sessions.</strong></p>
