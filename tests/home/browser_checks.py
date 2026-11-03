@@ -31,6 +31,55 @@ class Handler(SimpleHTTPRequestHandler):
         pass
 
 
+def check_get_started(page, base, screenshots):
+    for width in (1440, 390, 320):
+        page.set_viewport_size({"width": width, "height": 1000})
+        response = page.goto(base + "agent-landing-zone/get-started/")
+        assert response.status == 200
+        content = page.locator(".md-content__inner")
+        expect(content.locator("h1")).to_have_text("Deploy your first agent application")
+        text = content.inner_text()
+        assert "--8<--" not in text, "Unexpanded shared instructions"
+        for required in (
+            "Bastion", "jumpbox", "resource-groups.json", "RUN_FROM_JUMPBOX",
+            "NETWORK_ISOLATION", "DEPLOY_ACR_TASK_AGENT_POOL",
+            "HOSTED_AGENT_RESOURCE_SCOPE", "OAUTH_AZURE_AD_CLIENT_SECRET",
+            "CHAINLIT_AUTH_SECRET", "agent-lz", "ALLOWED_USER_PRINCIPALS",
+        ):
+            assert required in text, (required, "Missing first-installation requirement")
+        commands = "\n".join(content.locator("pre").all_text_contents())
+        journey = (
+            "azd init", "azd provision", "azd env refresh",
+            "azd hooks run postprovision", "azd deploy",
+        )
+        positions = [commands.index(command) for command in journey]
+        assert positions == sorted(positions), ("Incorrect lifecycle order", positions)
+        assert "azd up" not in commands, "Do not bypass first-installation login setup"
+        assert "NETWORK_ISOLATION false" not in commands, "Private profile cannot fall back to public"
+        for paragraph in content.locator("p").all_text_contents():
+            assert len(paragraph.split()) <= 70, ("Dense quickstart paragraph", paragraph)
+        assert page.evaluate(
+            "document.documentElement.scrollWidth <= document.documentElement.clientWidth"
+        ), (width, "Quickstart overflows the viewport")
+        if width == 1440:
+            for href in content.locator("a[href]").evaluate_all(
+                "links => links.map(link => link.href)"
+            ):
+                if not href.startswith(base):
+                    continue
+                linked = page.request.get(href.split("#", 1)[0])
+                assert linked.status == 200, ("Broken quickstart link", href)
+                if "#" in href:
+                    fragment = href.split("#", 1)[1]
+                    assert page.evaluate("""({html, fragment}) =>
+                        Boolean(new DOMParser().parseFromString(html, "text/html")
+                            .getElementById(decodeURIComponent(fragment)))""",
+                        {"html": linked.text(), "fragment": fragment}
+                    ), ("Broken quickstart anchor", href)
+        if screenshots:
+            page.screenshot(path=str(screenshots / f"get-started-{width}.png"))
+
+
 def expand_navigation_group(page, nav, name):
     label = nav.locator("label.md-nav__link").filter(
         has_text=re.compile(r"^\s*" + re.escape(name) + r"\s*$")
@@ -50,7 +99,7 @@ def check_lifecycle_navigation(page, base, screenshots):
         item.querySelector(":scope > .md-nav__link > .md-ellipsis").textContent.trim()
     )""")
     assert labels == [
-        "Overview", "What's new", "Plan", "Deploy", "Operate", "Reference",
+        "Overview", "Get started", "What's new", "Plan", "Deploy", "Operate", "Reference",
         "Agent Application",
     ], labels
     for name in ("Plan", "Deploy", "Operate", "Reference"):
@@ -76,6 +125,7 @@ def check_lifecycle_navigation(page, base, screenshots):
         expect(toggle).to_be_checked()
 
     routes = (
+        ("agent-landing-zone/get-started/", ("Agent Landing Zone",)),
         ("agent-landing-zone/planning/", ("Agent Landing Zone", "Plan")),
         ("agent-landing-zone/network-isolation/", ("Agent Landing Zone", "Plan")),
         ("architecture/design-checklist/", ("Agent Landing Zone", "Plan")),
@@ -419,6 +469,7 @@ def run_agent_docs(base, screenshots):
             page = browser.new_page(viewport={"width": 1440, "height": 1000})
             check_application_guides(page, base, screenshots)
             check_lifecycle_navigation(page, base, screenshots)
+            check_get_started(page, base, screenshots)
             check_application_mcp_documentation(page, base)
             check_agent_page_inventory(page, base)
             check_application_navigation(page, base, screenshots)
@@ -539,9 +590,10 @@ def run(base, screenshots):
         assert "not a blank page" not in page.locator(".hero").inner_text()
         assert not page.locator(".alz-home a[href$='.md']").count()
         assert page.locator(".alz-home img:not(.home-diagram-image)").count() == 7
-        assert page.locator(".implementation-table tbody a").count() == 8
+        assert page.locator(".implementation-table tbody a").count() == 9
         card_links = (
             (
+                ("Get started", "agent-landing-zone/get-started/"),
                 ("Documentation", "agent-landing-zone/"),
                 ("GitHub repository", "https://github.com/Azure/agent-landing-zone"),
             ),
@@ -726,6 +778,7 @@ def run(base, screenshots):
             if not path.endswith("sizing-cost-planner/"):
                 expect(page.locator(".md-sidebar--secondary")).to_be_visible()
         check_lifecycle_navigation(page, base, screenshots)
+        check_get_started(page, base, screenshots)
         check_documentation_roles(page, base)
         check_application_navigation(page, base, screenshots)
         check_application_mcp_documentation(page, base)

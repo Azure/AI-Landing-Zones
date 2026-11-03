@@ -11,6 +11,13 @@ from connected knowledge sources.
 
 Source code: [Azure/agent-landing-zone](https://github.com/Azure/agent-landing-zone)
 
+## Get started
+
+Follow [Deploy your first agent application](get-started.md) for your first installation.
+The guide uses Bicep and the reference application with Hosted execution and
+`conversational` mode. It creates a private standalone virtual network (VNet),
+Azure Bastion and a jumpbox for initial access.
+
 ## Architecture overview
 
 [![Standalone Agent Landing Zone reference architecture](../architecture/media/AI-Landing-Zone-without-platform.png?v=aa651551c880)](../architecture/media/AI-Landing-Zone-without-platform.png?v=aa651551c880)
@@ -80,9 +87,8 @@ inputs. Custom-only applications do not inherit reference MCP, SQL or catalogs.
 ## Where do I start?
 
 - **Is this my first installation?** Follow the
-  [new-user application route](application.md#first-time-using-agent-application)
-  from deployment and sign-in to the first conversation, then add only the
-  optional capabilities you need.
+  [Get started guide](get-started.md) to deploy the private application,
+  configure sign-in, test a task and find its trace.
 - **What does the template do?** Review the [deployment lifecycle](#how-the-template-works).
 - **What needs planning?** Review [resources, networking and deployment tools](planning.md),
   then use the [Design checklist](../architecture/design-checklist.md) for architecture

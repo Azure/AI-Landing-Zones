@@ -57,7 +57,13 @@ Select these optional features in Step 3, before you provision Azure resources.
 
 ## When to use
 
-Use this guide for a new Agent Application installation.
+For your first installation, follow
+[Get started: Deploy your first agent application](get-started.md).
+That guide uses Bicep, the reference application, Hosted execution and
+`conversational` mode. It creates a private standalone virtual network (VNet),
+Azure Bastion and a jumpbox for initial access.
+
+Use this full reference guide to select other Bicep deployment options.
 You can also use it to add the application to a compatible, configured Agent foundation.
 
 For another task, use the matching guide:
@@ -704,7 +710,7 @@ Do not mark an untested feature as passed.
 Test session continuity for the selected host separately from saved-history discovery.
 
 For failures, use [Troubleshooting](troubleshooting.md).
-After validation, follow [first use](application.md#first-time-using-agent-application).
+After validation, choose [optional application capabilities](application.md#choose-what-to-add-next).
 Optional channel publication is covered in
 [Teams and Microsoft 365](publish-to-teams.md), not this deployment procedure.
 

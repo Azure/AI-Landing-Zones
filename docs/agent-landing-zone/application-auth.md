@@ -112,25 +112,7 @@ secret references and grants before changing them.
 
 ### 1. Register the UI application
 
-In the [Microsoft Entra admin center](https://entra.microsoft.com/), open
-**App registrations > New registration**. Select **Accounts in this
-organizational directory only** and record the **Application (client) ID**
-and **Directory (tenant) ID**. Use this same registration for the UI's
-confidential web client and its exposed API.
-
-Open **Expose an API**, set the Application ID URI to `api://<client-id>`,
-and add an enabled delegated scope named `user_impersonation`.
-In the registration's manifest, set `api.requestedAccessTokenVersion` to `2`.
-The UI needs an access token for this API, not an ID token or a Microsoft
-Graph access token. Keep the application confidential; do not enable public
-client flows to work around a token error.
-
-Follow Microsoft's [registration](https://learn.microsoft.com/entra/identity-platform/quickstart-register-app)
-and [exposed-scope procedure](https://learn.microsoft.com/entra/identity-platform/quickstart-configure-app-expose-web-apis)
-for the portal fields. Register the final callback in step 3.
-
-**Check:** The tenant/client IDs, API URI, enabled scope and version-2 token
-setting belong to the intended environment.
+--8<-- "agent-login-registration.md"
 
 ### 2. Authorize delegated Foundry calls
 
@@ -140,25 +122,7 @@ downstream service calls through the component identities instead. Do not reques
 delegated Foundry, Search or Storage permissions solely for service access.
 An operation requiring user delegation returns an explicit failure in that mode.
 
-In **API permissions**, configure consent to the UI API's
-`user_impersonation` scope and add the **Foundry resource's delegated
-`user_impersonation` permission** for downstream OBO. These are permissions
-on two different APIs, even though their scope names are the same.
-Have the Entra administrator grant the consent required by tenant policy
-before onboarding users.
-
-Protected native retrieval also needs the downstream Search consent required
-by Foundry's managed delegation flow for `https://search.azure.com/.default`.
-The UI does not acquire or forward that Search credential.
-Shared Blob/ADLS citation downloads need
-delegated Azure Storage `user_impersonation` consent for
-`https://storage.azure.com/.default`. These permissions do not grant the user
-access to source documents; retain the source's RBAC and ACL checks.
-
-For the standard Foundry-resource authorization scheme (`AzureRbac`, also
-known as `Entra`), the downstream scope is `https://ai.azure.com/.default`.
-Confirm the deployed endpoint's audience with its owner; do not substitute
-the UI API scope or a management-plane audience.
+--8<-- "agent-login-consent.md"
 
 From the platform checkout root, select the intended azd environment and set
 the confirmed audience **before `azd provision`**, for example:
@@ -171,11 +135,6 @@ azd env set HOSTED_AGENT_RESOURCE_SCOPE https://ai.azure.com/.default
 Use the audience approved for your endpoint. This supported deployment input
 is separate from the UI login scopes in step 4.
 
-The [Foundry client authorization procedure](https://learn.microsoft.com/azure/foundry/agents/how-to/configure-agent-endpoint-authorization#authorize-the-client-to-request-a-foundry-token)
-explains downstream permission and consent. The UI exchanges its user's API
-token for a Foundry token server-side; consent alone does not grant that user
-permission to invoke the agent.
-
 **Check:** Both API permissions have the required consent, and the selected
 Foundry audience matches the deployed authorization scheme.
 
@@ -186,89 +145,11 @@ outputs. For a private UI, the browser must have private connectivity.
 For Application Gateway, use the approved external hostname from its
 [sign-in URL procedure](application-gateway.md#3-configure-the-uis-external-sign-in-url).
 
-In the app registration, open **Authentication > Add a platform > Web**.
-Register the exact callback, for example:
-
-```text
-https://chat.contoso.com/auth/oauth/azure-ad/callback
-```
-
-In step 4, set `CHAINLIT_URL` to that UI origin (`https://chat.contoso.com`), without a
-trailing slash. Include any supported deployment prefix consistently in the
-URL and callback. Keep previously used callbacks only while they are still
-approved and required.
-
-**Check:** The configured callback matches the browser-facing scheme, host
-and path exactly; it is not the Foundry endpoint.
+--8<-- "agent-login-callback.md"
 
 ### 4. Store credentials and publish UI settings
 
-In **Certificates & secrets**, create the client secret under your tenant's
-expiry policy. Transfer its **value**, not its secret ID, directly into the
-environment's Key Vault through an approved secure process. Record its expiry
-and rotation owner. Do not copy the value into source, shell commands or logs.
-
-In **App Configuration > Configuration explorer**, create a **Key Vault
-reference** named `OAUTH_AZURE_AD_CLIENT_SECRET`, label `agent-lz`, pointing
-to that stored secret. Select the Key Vault reference type, not an ordinary
-string containing a secret or URI.
-
-Keep a stable, securely generated
-`CHAINLIT_AUTH_SECRET` of at least 32 UTF-8 bytes in Key Vault and publish it
-as a reference too; do not
-regenerate an existing session-signing secret during a routine update.
-
-Publish the following values in the same store:
-
-Use **Configuration explorer > Create > Key-value** for nonsecrets, with
-label `agent-lz` and plain-text values. These UI login keys are runtime
-configuration, not arbitrary `azd env set` inputs. Keep any reviewed deployment
-declarations aligned so a later provision does not restore different values.
-
-The configuration operator needs App Configuration Data Owner to write keys;
-the frontend needs only the reader permissions described below.
-
-<dl>
-<dt><code>OAUTH_AZURE_AD_CLIENT_ID</code></dt>
-<dd>Application (client) ID from step 1.</dd>
-
-<dt><code>OAUTH_AZURE_AD_TENANT_ID</code></dt>
-<dd>Directory (tenant) ID from step 1.</dd>
-
-<dt><code>OAUTH_AZURE_AD_ENABLE_SINGLE_TENANT</code></dt>
-<dd><code>true</code>.</dd>
-
-<dt><code>OAUTH_AZURE_AD_SCOPES</code></dt>
-<dd><code>api://&lt;client-id&gt;/user_impersonation,openid,profile,offline_access</code>,
-replacing <code>&lt;client-id&gt;</code>. Do not add Graph scopes such as
-<code>User.Read</code> or the Foundry scope here.</dd>
-
-<dt><code>CHAINLIT_URL</code></dt>
-<dd>Canonical UI HTTPS URL from step 3.</dd>
-
-<dt><code>ALLOW_ANONYMOUS</code></dt>
-<dd><code>false</code>.</dd>
-
-<dt><code>HOSTED_AGENT_AUTH_MODE</code></dt>
-<dd><code>user_delegated</code> by default, or the explicitly selected
-<code>service_identity</code> mode described above.</dd>
-
-<dt><code>RETRIEVAL_AUTH_MODE</code></dt>
-<dd>Platform-derived retrieval contract for the selected mode.
-Do not set this independently to bypass source authorization.</dd>
-</dl>
-
-Use label `agent-lz`. The frontend managed identity needs App Configuration
-Data Reader and Key Vault Secrets User at the relevant scopes; see
-[default hosted permissions](../bicep/permissions.md#frontend-container-app).
-Remove or update conflicting UI process-environment or other selected-label
-overrides. [Application settings](application-settings.md#overrides-and-effective-values)
-explains precedence. Preserve the platform's
-[configuration ownership](configuration.md#configuration-ownership-and-declarations).
-
-**Check:** The two secrets are Key Vault references, nonsecret keys have the
-intended values and the actual frontend identity can resolve the references.
-Do not display resolved credentials as verification.
+--8<-- "agent-login-settings.md"
 
 <span id="2-limit-application-admission"></span>
 <span id="2-limit-agent-application-admission"></span>
@@ -293,14 +174,7 @@ scope for the Toolbox. The project identity retains scoped Search access and
 ingestion needs its declared Blob permissions. A UI caller grant is not an
 ingestion or retrieval grant. Keep these grants limited to the approved resources.
 
-`ALLOWED_USER_PRINCIPALS` admits individual users by comma-separated
-`tenant-id:object-id` values. `ALLOWED_USER_NAMES` is an alternative list of
-sign-in names. The lists combine with **OR**; empty lists admit all successfully
-authenticated users. The callback does not fetch Graph group membership.
-
-These lists restrict UI admission, not Foundry access or document access-control
-lists (ACLs). Publish the approved admission settings with label `agent-lz`;
-for a restricted pilot, do not leave both lists empty.
+--8<-- "agent-login-admission.md"
 
 **Check:** An intended pilot user has both UI admission and Foundry caller
 access. Source/document grants remain a separate data-owner decision.

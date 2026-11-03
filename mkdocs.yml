@@ -20,6 +20,8 @@ theme:
 plugins:
   - search
   - macros
+exclude_docs: |
+  /_snippets/
 markdown_extensions:
   - admonition
   - attr_list
@@ -27,6 +29,10 @@ markdown_extensions:
   - md_in_html
   - sane_lists
   - mdx_truly_sane_lists
+  - pymdownx.snippets:
+      base_path: ["docs/_snippets"]
+      check_paths: true
+      url_download: false
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
@@ -41,6 +47,7 @@ nav:
   - Home: index.md
   - Agent Landing Zone:
       - "Overview": agent-landing-zone/index.md
+      - "Get started": agent-landing-zone/get-started.md
       - "What's new": agent-landing-zone/whats-new.md
       - Plan:
           - "Deployment choices": agent-landing-zone/planning.md

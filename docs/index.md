@@ -32,6 +32,7 @@ Reference architectures and deployable Azure foundations for your AI application
 <h3 id="agent-landing-zone">Agent Landing Zone</h3>
 <p>An Azure foundation for AI applications and agents, with a default application built on Microsoft Foundry.</p>
 <div class="path-links" markdown="span">
+[Get started](agent-landing-zone/get-started.md){ .text-link }
 [Documentation](agent-landing-zone/index.md){ .text-link }
 [GitHub repository](https://github.com/Azure/agent-landing-zone){ .text-link }
 </div>
@@ -136,7 +137,9 @@ Resource selection and reuse depend on your implementation and settings. The Age
 <tbody role="rowgroup" markdown="1">
 <tr role="row" markdown="1">
 <th scope="row" role="rowheader">Agent Landing Zone</th>
-<td role="cell" data-label="Bicep" markdown="block">[Full-stack deployment guide](agent-landing-zone/deploy-full-stack.md)
+<td role="cell" data-label="Bicep" markdown="block">[Get started: Deploy your first agent application](agent-landing-zone/get-started.md)
+
+[Full-stack deployment guide](agent-landing-zone/deploy-full-stack.md)
 
 [Infrastructure only](agent-landing-zone/deploy-infra-only.md)</td>
 <td role="cell" data-label="Terraform" markdown="block">[Full-stack deployment guide](agent-landing-zone/deploy-terraform-full-stack.md)

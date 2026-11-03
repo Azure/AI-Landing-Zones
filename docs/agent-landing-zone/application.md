@@ -7,7 +7,7 @@ It brings together a chat and workflow interface, native Microsoft Agent
 Framework (MAF) execution, optional document processing and optional MCP tools. Use an Agent for
 conversation or a Workflow for a published process with human input.
 
-Start with [Deploy full stack](deploy-full-stack.md) to deploy the application.
+Start with [Get started: Deploy your first agent application](get-started.md) for your first installation.
 The guides below explain how to configure, operate and extend it.
 
 The reference application is **one application on the reusable foundation**,
@@ -20,24 +20,23 @@ capability and role inputs.
 
 ## First time using Agent Application?
 
-Start with ordinary authenticated chat. Add data sources and other capabilities
-after that baseline works.
+Follow [Deploy your first agent application](get-started.md).
+This Bicep guide uses the reference application, Hosted execution and
+`conversational` mode. It creates a private standalone virtual network (VNet),
+Azure Bastion and a jumpbox for initial access.
 
-| Order | Your next step | What to verify before continuing |
-| --- | --- | --- |
-| 1. Prepare | Review the full-stack [prerequisites](deploy-full-stack.md#prerequisites), budget, region, permissions and network | You have a deployment host, supported models and both Azure and Entra administrators where required |
-| 2. Install | Follow the full-stack guide for [Bicep](deploy-full-stack.md) or [Terraform](deploy-terraform-full-stack.md), not both | The selected infrastructure and real application images are deployed |
-| 3. Complete sign-in | Follow [login setup in order](application-auth.md#configure-login-in-order), including the post-provision callback and user grants | Your pilot user can sign in and invoke the agent, an unapproved user is denied |
-| 4. Start a conversation | Open the frontend HTTPS URL from deployment outputs, sign in and send a simple greeting | The application receives a real model response |
-| 5. Add a capability | Select a route in the table below and complete its source/identity setup | The capability works with permitted data and rejects denied access |
-| 6. Operate | Set retention, inspect [native traces](application-monitoring.md#native-tracing) and follow [updates and recovery](deployment-operations.md) | Owners can find a real request trace, diagnose failures and apply controlled changes |
+The guide includes deployment, sign-in, a task test, denied-access checks
+and a request trace. Add data sources and other capabilities after these checks pass.
+
+For other deployment options, use the full-stack reference guide for
+[Bicep](deploy-full-stack.md) or [Terraform](deploy-terraform-full-stack.md).
 
 **Before provision**, register the UI application and arrange consent.
 **After provision and before deploy**, configure the actual UI callback,
 secrets and admission.
 The deployment guide marks that handoff explicitly.
 
-The first greeting proves model connectivity, not document retrieval, SQL
+The first task test does not prove document retrieval, SQL
 readiness, saved history or workflow recovery. The default application does
 not automatically know your organization's documents or databases.
 
