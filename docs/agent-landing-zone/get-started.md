@@ -83,8 +83,6 @@ CLI login authenticates the operator; it does not grant application admission or
 
 Initialization creates and selects the local environment.
 It does not deploy Azure resources.
-The release source for this procedure is commit `ef03a1248a9ee1de0a6023225a25fff7bae9577f`.
-Its manifest pins the compatible application sources.
 
 4. Keep the trailing `.` in the initialization command.
 5. Do not add `--up` or create the same local environment again.
