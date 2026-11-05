@@ -587,6 +587,13 @@ def run(base, screenshots):
             page.goto(base)
         expect(page.locator(".hero h1")).to_have_text("Build AI.On solid ground.")
         expect(page.locator(".home-button--primary")).to_have_text("Deploy AI Landing Zone")
+        architecture = page.locator(".architecture-workbench")
+        expect(architecture.get_by_role("tab")).to_have_text(["Platform Hub", "AI Gateway", "Standalone"])
+        expect(page.locator("#tab-hub")).to_have_attribute("aria-selected", "true")
+        expect(page.locator("#architecture-hub")).to_be_visible()
+        expect(page.locator("#architecture-standalone > p")).to_have_text(
+            "Deploy an independent environment where your team manages the network, without a shared platform hub."
+        )
         assert "not a blank page" not in page.locator(".hero").inner_text()
         assert not page.locator(".alz-home a[href$='.md']").count()
         assert page.locator(".alz-home img:not(.home-diagram-image)").count() == 7
@@ -745,9 +752,15 @@ def run(base, screenshots):
         expect(viewer.locator(".home-diagram-error")).to_be_hidden()
         expect(enlarged).to_be_visible()
         page.keyboard.press("Escape")
-        page.locator("#tab-standalone").focus()
+        page.locator("#tab-hub").focus()
         page.keyboard.press("End")
+        expect(page.locator("#tab-standalone")).to_be_focused()
+        page.keyboard.press("Home")
+        expect(page.locator("#tab-hub")).to_be_focused()
+        page.keyboard.press("ArrowRight")
         expect(page.locator("#tab-gateway")).to_be_focused()
+        page.keyboard.press("ArrowRight")
+        expect(page.locator("#tab-standalone")).to_be_focused()
         page.locator(".supporting-diagrams > summary").click()
         page.locator("#tab-design").focus()
         page.keyboard.press("ArrowRight")
@@ -852,6 +865,9 @@ def run(base, screenshots):
         fallback.goto(base)
         assert fallback.locator(".md-sidebar--secondary").is_hidden()
         assert fallback.locator(".home-mobile-contents").count() == 0
+        assert fallback.locator(".architecture-panel").evaluate_all(
+            "panels => panels.map(panel => panel.id)"
+        ) == ["architecture-hub", "architecture-gateway", "architecture-standalone"]
         for name in ("standalone", "hub", "gateway"):
             assert fallback.locator(f"#architecture-{name}").is_visible()
             assert fallback.locator(f"#architecture-{name} figcaption a").get_attribute("href")

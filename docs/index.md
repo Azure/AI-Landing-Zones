@@ -62,29 +62,13 @@ Reference architectures and deployable Azure foundations for your AI application
 
 ## Reference architectures. { #reference-architectures }
 
-Explore Agent Landing Zone on its own, connected to a platform hub, or integrated with AI Gateway Landing Zone.
+Explore Agent Landing Zone connected to a platform hub, integrated with AI Gateway Landing Zone, or on its own.
 
 <div class="architecture-workbench" data-home-tabs markdown="1">
 <div class="home-tabs" role="tablist" aria-label="Reference architecture" hidden>
-<button type="button" role="tab" id="tab-standalone" aria-selected="true" aria-controls="architecture-standalone">Standalone</button>
-<button type="button" role="tab" id="tab-hub" aria-selected="false" aria-controls="architecture-hub" tabindex="-1">Platform Hub</button>
+<button type="button" role="tab" id="tab-hub" aria-selected="true" aria-controls="architecture-hub">Platform Hub</button>
 <button type="button" role="tab" id="tab-gateway" aria-selected="false" aria-controls="architecture-gateway" tabindex="-1">AI Gateway</button>
-</div>
-
-<div id="architecture-standalone" class="architecture-panel" role="tabpanel" aria-labelledby="tab-standalone" tabindex="0" markdown="1">
-<div class="home-anchor" id="standalone"></div>
-<h3 class="home-panel-title" id="standalone-panel-title">Standalone Agent Landing Zone</h3>
-
-Agent Landing Zone uses its own virtual network and networking services, without a shared platform hub.
-
-<figure class="architecture-figure" markdown="1">
-![Standalone Agent Landing Zone reference architecture](architecture/media/AI-Landing-Zone-without-platform.png?v=aa651551c880){ width=6400 height=3946 loading=lazy }
-<figcaption markdown="block">
-[Enlarge the standalone diagram](architecture/media/AI-Landing-Zone-without-platform.png?v=aa651551c880)
-
-Resource selection and reuse depend on your implementation and settings. This reference shows the default hosted application without application Cosmos DB or its private endpoint; Foundry Agent Service's separate backing resources are retained.
-</figcaption>
-</figure>
+<button type="button" role="tab" id="tab-standalone" aria-selected="false" aria-controls="architecture-standalone" tabindex="-1">Standalone</button>
 </div>
 
 <div id="architecture-hub" class="architecture-panel" role="tabpanel" aria-labelledby="tab-hub" tabindex="0" markdown="1">
@@ -114,6 +98,22 @@ Combine Agent Landing Zone, a platform hub and a separate AI Gateway Landing Zon
 [Enlarge the integrated gateway diagram](architecture/media/AI-Landing-Zones-APIM.png?v=27769aa5cbf0)
 
 Resource selection and reuse depend on your implementation and settings. The Agent Landing Zone portion shows the default hosted application without application Cosmos DB or its private endpoint; Foundry Agent Service's separate backing resources are retained.
+</figcaption>
+</figure>
+</div>
+
+<div id="architecture-standalone" class="architecture-panel" role="tabpanel" aria-labelledby="tab-standalone" tabindex="0" markdown="1">
+<div class="home-anchor" id="standalone"></div>
+<h3 class="home-panel-title" id="standalone-panel-title">Standalone Agent Landing Zone</h3>
+
+Deploy an independent environment where your team manages the network, without a shared platform hub.
+
+<figure class="architecture-figure" markdown="1">
+![Standalone Agent Landing Zone reference architecture](architecture/media/AI-Landing-Zone-without-platform.png?v=aa651551c880){ width=6400 height=3946 loading=lazy }
+<figcaption markdown="block">
+[Enlarge the standalone diagram](architecture/media/AI-Landing-Zone-without-platform.png?v=aa651551c880)
+
+Resource selection and reuse depend on your implementation and settings. This reference shows the default hosted application without application Cosmos DB or its private endpoint; Foundry Agent Service's separate backing resources are retained.
 </figcaption>
 </figure>
 </div>
