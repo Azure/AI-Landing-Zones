@@ -371,8 +371,9 @@ required merely to prepare the hosted image.
 
 ## Optional PostgreSQL before first provision
 
-For a fresh custom consumer, choose Basic dedicated ACA NAT/restricted public PG
-or isolated PE/DNS, then supply the explicit Entra admin. Follow
+For a fresh custom consumer, use the enterprise private design:
+`NETWORK_ISOLATION=true`, an application Private Endpoint/private DNS and public
+PostgreSQL access disabled. Supply the explicit Entra administrator. Follow
 [Optional PostgreSQL](postgresql.md) for inputs/defaults, operator access and
 manual OID-bound schema CRUD. No bundled runtime/NL2SQL/Cosmos migration occurs.
 

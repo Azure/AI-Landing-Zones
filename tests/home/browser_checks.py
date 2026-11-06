@@ -470,6 +470,49 @@ def check_agent_page_inventory(page, base):
     print(f"PASS: all {len(sources)} Agent Landing Zone pages render, including compatibility routes")
 
 
+def check_postgresql_private_guidance(page, base, screenshots):
+    for width in (1440, 390, 320):
+        page.set_viewport_size({"width": width, "height": 1000})
+        page.goto(base + "agent-landing-zone/postgresql/")
+        content = page.locator(".md-content__inner")
+        primary_commands = content.locator("pre").first.inner_text()
+        assert "NETWORK_ISOLATION true" in primary_commands
+        assert "NETWORK_ISOLATION false" not in primary_commands
+        expect(content.get_by_role("cell", name=(
+            "false; explicitly set true for the recommended private design"
+        ), exact=True)).to_have_count(1)
+        diagram = content.locator(".alz-diagram img")
+        expect(diagram).to_have_attribute("alt", re.compile(
+            r"^Recommended private PostgreSQL connectivity:"
+        ))
+        image = page.request.get(base + "media/runbooks/postgresql.svg")
+        assert image.ok
+        for required in ("Private Endpoint", "Private DNS", "NETWORK_ISOLATION=true",
+                         "Public PostgreSQL access is disabled"):
+            assert required in image.text(), required
+        for public_emphasis in ("NAT Gateway", "Public endpoint", "NETWORK_ISOLATION=false"):
+            assert public_emphasis not in image.text(), public_emphasis
+        alternative = content.locator("details").filter(has=page.locator(
+            "summary", has_text="Optional configuration: restricted public access (Basic)"
+        ))
+        expect(alternative).to_have_count(1)
+        assert alternative.get_attribute("open") is None
+        public_setting = alternative.locator("code", has_text="NETWORK_ISOLATION=false")
+        expect(public_setting).not_to_be_visible()
+        alternative.locator("summary").click()
+        expect(public_setting).to_be_visible()
+        expect(alternative).to_contain_text("not the recommended enterprise path")
+        expect(alternative).to_contain_text("networking resource group")
+        alternative.locator("summary").click()
+        expect(public_setting).not_to_be_visible()
+        assert page.evaluate(
+            "document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"
+        ), (width, "PostgreSQL guide overflow")
+        if screenshots:
+            page.screenshot(path=str(screenshots / f"postgresql-private-{width}.png"))
+    print("PASS: private-first PostgreSQL example/diagram, unchanged defaults and collapsed Basic option")
+
+
 def run_agent_docs(base, screenshots):
     """Focused documentation check; no service, Azure or deployment calls."""
     with sync_playwright() as playwright:
@@ -481,6 +524,7 @@ def run_agent_docs(base, screenshots):
             check_get_started(page, base, screenshots)
             check_application_mcp_documentation(page, base)
             check_agent_page_inventory(page, base)
+            check_postgresql_private_guidance(page, base, screenshots)
             check_application_navigation(page, base, screenshots)
             check_prose_wrapping(page, base, screenshots)
         finally:
@@ -805,6 +849,7 @@ def run(base, screenshots):
         check_application_navigation(page, base, screenshots)
         check_application_mcp_documentation(page, base)
         check_agent_page_inventory(page, base)
+        check_postgresql_private_guidance(page, base, screenshots)
         check_application_guides(page, base, screenshots)
         check_diagram_controls(page, base, screenshots)
         check_prose_wrapping(page, base, screenshots)

@@ -366,10 +366,15 @@ data-retention requirements have been reviewed.
 
 `DEPLOY_POSTGRESQL=false` is the strict default-off selector for both providers.
 Fresh custom ACA deployments explicitly supply administrator OID/name/type.
-Defaults: version16, Burstable/Standard_B1ms, 32 GiB, backup7, HA Disabled,
-geo-backup/auto-grow false. Basic uses dedicated ACA NAT/restricted public PG;
-isolated uses Private Link/public PG disabled regardless of common allowlists.
-Typed operator ranges and existing PG DNS IDs have no string aliases.
+For enterprise deployments, explicitly select `NETWORK_ISOLATION=true` before
+first provision: PostgreSQL uses Private Link/private DNS with public access
+disabled regardless of common allowlists. Restricted public access is a
+[secondary Basic configuration option](postgresql.md#configure-either-provider),
+not the recommended enterprise path.
+
+Defaults remain version16, Burstable/Standard_B1ms, 32 GiB, backup7, HA Disabled,
+geo-backup/auto-grow false; these are a development profile, not a production SLA.
+Typed operator ranges and existing PostgreSQL DNS IDs have no string aliases.
 [Optional PostgreSQL](postgresql.md) lists all inputs, validations, flat agent-lz
 keys, manual SQL grants and independent-lock recovery/removal. It does not
 select MCP/NL2SQL or replace Cosmos; retrofit/disable/mode replacement are blocked.

@@ -7,24 +7,23 @@ Disabled deployments add no PostgreSQL resources or discovery settings.
 
 ## Expected outcome
 
-Your custom Container App reaches its application database through the selected
-network path. Basic restricts the public PostgreSQL endpoint to the dedicated NAT
-IP and explicitly allowed operator ranges. Isolation uses Private Link and
-private DNS, with public PostgreSQL access disabled. Both modes require Entra
-authentication, SQL grants and verified TLS.
+For enterprise deployments, use private connectivity: your custom Container App
+reaches PostgreSQL through an application Private Endpoint and private DNS,
+with public PostgreSQL access disabled. Select `NETWORK_ISOLATION=true`
+explicitly before first provision. Entra authentication, least-privilege SQL
+grants and verified TLS remain required.
 
 <div class="runbook-diagram" markdown="1">
 
 <div class="runbook-diagram__summary" markdown="1">
 
-**Choose the network mode before first provision.** Basic uses the application's
-dedicated NAT/static IPv4. Isolation uses an application Private Endpoint and
-private DNS instead. PostgreSQL serves your custom application; bundled runtime
-connections and Cosmos remain unchanged.
+**Use the private enterprise path.** An application Private Endpoint and private
+DNS connect your custom Container App to PostgreSQL without enabling public
+database access. Bundled runtime connections and Cosmos remain unchanged.
 
 </div>
 
-[![Two PostgreSQL network modes for a custom Container App: Basic uses dedicated NAT with a static public IPv4 and a restricted public endpoint; isolation uses an application Private Endpoint and private DNS with public access disabled. Both use Entra authentication and verified TLS.](../media/runbooks/postgresql.svg)](../media/runbooks/postgresql.svg){: .runbook-diagram__image aria-label="Open full-size PostgreSQL connectivity diagram"}
+[![Recommended private PostgreSQL connectivity: a custom Container App uses an application Private Endpoint and private DNS. Public PostgreSQL access is disabled; Entra authentication, least-privilege SQL grants and verified TLS are required.](../media/runbooks/postgresql.svg)](../media/runbooks/postgresql.svg){: .runbook-diagram__image aria-label="Open full-size PostgreSQL connectivity diagram"}
 
 [Open full-size diagram](../media/runbooks/postgresql.svg){: .runbook-diagram__open}
 
@@ -32,17 +31,11 @@ connections and Cosmos remain unchanged.
 
 ## Network and fresh-only scope
 
-| Mode | Application path | Operator path |
-| --- | --- | --- |
-| Basic (`NETWORK_ISOLATION=false`) | Fresh external workload-profiles ACA with VNet integration and dedicated Standard NAT/static public IPv4; restricted public PostgreSQL permits exactly the outbound NAT IP plus explicit operator ranges. | An explicitly allowed operator IPv4 source. ACA ingress IP is not egress IP. |
-| Isolated (`NETWORK_ISOLATION=true`) | Application Private Endpoint subnet and `privatelink.postgres.database.azure.com`; public PostgreSQL access disabled. | Authorized VNet-connected host with DNS/routes and Entra access. |
-
-Workload-profiles ACA requires a `Microsoft.App/environments` delegated subnet
-of at least /27; retain the /24 seed unless capacity is reviewed. A Consumption
-profile in that environment is not legacy Consumption-only ACA, which is
-unsupported. Forced default routes through NVA/firewall invalidate NAT SNAT and
-are rejected, not overwritten. Jumpbox NAT is separate and unchanged.
-Isolation adds neither a PostgreSQL delegated-server subnet nor Basic ACA NAT.
+With `NETWORK_ISOLATION=true`, the application uses its Private Endpoint subnet
+and `privatelink.postgres.database.azure.com`. Operators need an authorized
+VNet-connected host with working DNS/routes and Entra access; see
+[Private access (VPN)](private-access.md).
+Isolation adds neither a PostgreSQL delegated-server subnet nor a dedicated ACA NAT.
 BYO VNet/subnets and managed, existing or policy-managed DNS keep explicit
 ownership; existing-zone and policy ownership must not compete. The common
 service `allowedIpRanges` does not open isolated PostgreSQL.
@@ -61,14 +54,16 @@ directory-read and server-scope lock permissions.
 
 ```sh
 azd env set DEPLOY_POSTGRESQL true
-azd env set NETWORK_ISOLATION false
+azd env set NETWORK_ISOLATION true
 azd env set POSTGRESQL_ADMINISTRATOR_OBJECT_ID <administrator-object-id>
 azd env set POSTGRESQL_ADMINISTRATOR_PRINCIPAL_NAME <administrator-principal-name>
 azd env set POSTGRESQL_ADMINISTRATOR_PRINCIPAL_TYPE Group
 azd provision
 ```
 
-Group is an example, not a default. Choose isolation before provision if required.
+Group is an example, not a default. This example explicitly selects the
+recommended private design; the shipped `NETWORK_ISOLATION` default remains
+`false`. PostgreSQL itself remains disabled unless explicitly enabled.
 Boolean inputs accept only true/false; integers reject floats and Booleans.
 Whole-value root placeholders resolve once; explicit environment inputs override
 corresponding native values.
@@ -76,6 +71,7 @@ corresponding native values.
 | Native input | Environment input | Default |
 | --- | --- | --- |
 | `deployPostgreSql` | `DEPLOY_POSTGRESQL` | false |
+| `networkIsolation` | `NETWORK_ISOLATION` | false; explicitly set true for the recommended private design |
 | `postgreSqlServerName` | `POSTGRESQL_SERVER_NAME` | Deterministic deployment-context name; explicit name supported |
 | `postgreSqlDatabaseName` | `POSTGRESQL_DATABASE_NAME` | agentlz |
 | `postgreSqlVersion` | `POSTGRESQL_VERSION` | 16 |
@@ -89,18 +85,43 @@ corresponding native values.
 | `postgreSqlAdministratorObjectId` | `POSTGRESQL_ADMINISTRATOR_OBJECT_ID` | Required enabled |
 | `postgreSqlAdministratorPrincipalName` | `POSTGRESQL_ADMINISTRATOR_PRINCIPAL_NAME` | Required enabled |
 | `postgreSqlAdministratorPrincipalType` | `POSTGRESQL_ADMINISTRATOR_PRINCIPAL_TYPE` | Required enabled |
-| `postgreSqlAllowedIpRanges` | Typed root JSON, no string alias | Empty array |
+| `postgreSqlAllowedIpRanges` | Typed root JSON, no string alias | Empty array; Basic option only |
 | `existingPrivateDnsZonePostgreSqlResourceId` | Typed native input, no string alias | Empty |
 
-For Basic operator access set, for example,
-`"postgreSqlAllowedIpRanges": {"value": ["203.0.113.8", "198.51.100.0/24"]}`
-in root `main.parameters.json`. These are documentation addresses, not real
-operator IPs. IPv4/CIDRs are normalized to network ranges; IPv6, 0.0.0.0, /0 and Azure-services
-exceptions are prohibited. Application NAT output is separate.
 HA accepts Disabled/SameZone/ZoneRedundant; Burstable requires Disabled. Storage
 is a power of two from 32..65536 GiB; backup retention 7..35 days. No silent
 SKU/HA downgrade occurs. Validate region capacity and subscription policy;
 the pinned Bicep AVM uses a preview server API, not an assumed policy exception.
+
+<details markdown="1">
+<summary>Optional configuration: restricted public access (Basic)</summary>
+
+Use this alternative only where your organization's network and data policies
+explicitly permit a public database endpoint. It is not the recommended
+enterprise path and does not provide private connectivity. Before first
+provision, select `NETWORK_ISOLATION=false` instead of the private setting above.
+Do not switch an existing PostgreSQL binding between network modes.
+
+Basic requires fresh external workload-profiles ACA with VNet integration and
+a dedicated Standard NAT/static public IPv4. PostgreSQL's public firewall
+permits only that outbound NAT IP plus explicit operator ranges. The NAT and
+its Public IP belong to the networking resource group; jumpbox NAT is separate
+and unchanged. ACA ingress IP is not egress IP.
+
+The ACA subnet must be delegated to `Microsoft.App/environments` and at least
+/27; retain the /24 seed unless capacity is reviewed. A Consumption profile
+in a workload-profiles environment is supported; legacy Consumption-only ACA
+is not. Forced default routes through NVA/firewall invalidate NAT SNAT and
+are rejected, not overwritten.
+
+For operator access set, for example,
+`"postgreSqlAllowedIpRanges": {"value": ["203.0.113.8", "198.51.100.0/24"]}`
+in root `main.parameters.json`. These are documentation addresses, not real
+operator IPs. IPv4/CIDRs are normalized to network ranges; IPv6, 0.0.0.0, /0
+and Azure-services exceptions are prohibited. Entra authentication, SQL grants
+and verified TLS are still required.
+
+</details>
 
 ## Discovery for custom applications
 
@@ -209,8 +230,9 @@ cleanup command is provided.
 ## Cost and acceptance
 
 Defaults are a development profile, not a production SLA. Budget compute/storage/
-backup, Basic dedicated NAT hourly/data-processing/static IPv4 or isolated PE/DNS,
-transfer, monitoring and custom app usage. HA/geo-backup/larger SKUs/retention can
+backup, Private Endpoints/private DNS, transfer, monitoring and custom app usage.
+The optional Basic configuration instead adds dedicated NAT hourly/data-processing
+and static IPv4 costs. HA/geo-backup/larger SKUs/retention can
 increase cost. This optional extension is not priced by the sizing planner.
 Offline compilation/mocks do not establish live parity. Before production, verify
 each provider/mode's actual NAT source/private DNS, positive/negative SQL/network
