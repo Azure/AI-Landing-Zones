@@ -40,3 +40,15 @@ Deselection stops initialization but does not delete retained catalog data or
 automatically revoke old grants. Review retirement explicitly; recovery does not run direct SQL
 inside the orchestrator. Embedding model/dimension changes need reindexing,
 not just a runtime-setting refresh.
+
+## PostgreSQL data protection
+
+[Optional PostgreSQL recovery/removal](postgresql.md#protection-recovery-and-deliberate-removal)
+requires the original immutable creation-intent record and independent server
+CanNotDelete lock outside both provider graphs/state. Same-binding protection
+recovery is supported; missing/corrupt records are not adoption/deletion permission.
+Down/disable/replacement stop before either provider teardown. Manual removal
+needs backup/PITR review, exact inventory, consumer shutdown, data-owner approval
+and state/discovery reconciliation; preserve shared DNS/RGs. Privileged bypass
+and the partial-provision window remain risks. SQL bootstrap is manual and
+restartable across two databases, not cross-database atomic.

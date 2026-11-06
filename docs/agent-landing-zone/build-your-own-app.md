@@ -167,6 +167,15 @@ before Azure resource creation. The `preprovision` hook repeats validation for s
 resource group. Run `azd hooks run preup` first for that safeguard.
 Do not edit a binding to force another application into an existing environment.
 
+### Optional relational persistence
+
+For fresh custom ACA, [optional PostgreSQL](postgresql.md) supplies foundation
+resources and verified flat `AGENTLZ_POSTGRESQL_*` metadata under `agent-lz`.
+Closed outputs v1/bundled runtimes stay unchanged. Your app owns driver, SQL role,
+verify-full TLS trust, token renewal/pooling and migrations. Bootstrap uses its
+managed-identity service-principal object ID, not client ID/display name; schema
+belongs to the actual DDL owner and app receives CRUD only, never DDL/admin.
+
 ### Reference components and custom applications
 
 `DEPLOY_INGESTION_CONTAINER_APP` selects Agent Application composition, not components in

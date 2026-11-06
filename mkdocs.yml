@@ -71,6 +71,7 @@ nav:
           - "Troubleshooting": agent-landing-zone/troubleshooting.md
       - Reference:
           - "Deployment settings": agent-landing-zone/configuration.md
+          - "Optional PostgreSQL": agent-landing-zone/postgresql.md
           - "Resource naming": agent-landing-zone/resource-naming.md
       - Agent Application:
           - "Overview": agent-landing-zone/application.md

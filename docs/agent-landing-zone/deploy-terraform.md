@@ -18,3 +18,6 @@ Choose the Agent Landing Zone guide by outcome:
 shared azd lifecycle. The separate
 [AI Landing Zone Terraform foundation reference](../terraform/index.md)
 covers direct foundation composition with the shared AVM pattern.
+
+[Optional PostgreSQL](postgresql.md) for fresh custom consumers uses this same
+product-root lifecycle; direct foundation calls omit protection/bootstrap guards.

@@ -30,3 +30,6 @@ For supported settings and naming, use [Deployment settings](configuration.md) a
 the [foundation parameter reference](../bicep/parameterization.md).
 Run the supported lifecycle from the platform root: calling `infra/bicep/main.bicep`
 directly omits required validation, configuration and application work.
+
+[Optional PostgreSQL](postgresql.md) for fresh custom consumers uses this same
+product-root lifecycle; direct foundation calls omit protection/bootstrap guards.

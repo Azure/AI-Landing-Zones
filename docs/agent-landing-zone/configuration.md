@@ -362,6 +362,18 @@ set it to `true` when application storage is needed. For an existing deployment,
 review the provision preview and retain the account until its consumers and
 data-retention requirements have been reviewed.
 
+### Optional application PostgreSQL
+
+`DEPLOY_POSTGRESQL=false` is the strict default-off selector for both providers.
+Fresh custom ACA deployments explicitly supply administrator OID/name/type.
+Defaults: version16, Burstable/Standard_B1ms, 32 GiB, backup7, HA Disabled,
+geo-backup/auto-grow false. Basic uses dedicated ACA NAT/restricted public PG;
+isolated uses Private Link/public PG disabled regardless of common allowlists.
+Typed operator ranges and existing PG DNS IDs have no string aliases.
+[Optional PostgreSQL](postgresql.md) lists all inputs, validations, flat agent-lz
+keys, manual SQL grants and independent-lock recovery/removal. It does not
+select MCP/NL2SQL or replace Cosmos; retrofit/disable/mode replacement are blocked.
+
 ### Agent App MCP Server selection
 
 | Variable | Default | Effect |

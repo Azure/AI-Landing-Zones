@@ -36,6 +36,17 @@ identity checks or weaken the network to recover a failure.
 <span id="connected-host-requirements"></span>
 <span id="image-builds-in-isolated-deployments"></span>
 
+## Optional PostgreSQL paths
+
+[Optional PostgreSQL](postgresql.md) is fresh-only and default off. Basic adds
+external workload-profiles ACA VNet integration and dedicated Standard NAT/static
+outbound IPv4, allowing that exact PG source plus explicit operator ranges.
+Legacy Consumption-only and forced default routes that bypass NAT are rejected;
+corporate routes and jumpbox NAT are not overwritten. Isolation uses app PE/DNS
+and public PG disabled regardless of common allowlists, with no PG delegated
+server subnet. Agree BYO/managed/existing/policy DNS ownership and operator access.
+Network readiness does not grant SQL permissions; OID-bound bootstrap is manual.
+
 ## Plan each connectivity path
 
 | Path | What must be reachable | Planning consequence |

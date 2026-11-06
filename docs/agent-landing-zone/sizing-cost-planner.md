@@ -205,3 +205,13 @@ hide:
 <script src="../../javascripts/planner/guidance.js" defer></script>
 <script src="../../javascripts/planner/scenario.js?v=3" defer></script>
 <script src="../../javascripts/planner/planner.js?v=6" defer></script>
+
+## Optional PostgreSQL costs outside this planner
+
+[Optional PostgreSQL](postgresql.md) is not priced in this planner inventory.
+Development defaults are version16, Burstable/Standard_B1ms, 32 GiB, backup7
+and HA/geo-backup/auto-grow off, not a production SLA. Budget compute/storage/
+backup and Basic dedicated Standard ACA NAT hourly/data-processing/static IPv4
+or isolated PE/DNS, transfer, app usage and logs. HA/larger SKUs/geo-backup/
+retention add cost; regional capacity/policy may block a profile, never silently
+downgrade it. Disabled deployments have no feature-owned resource cost.
