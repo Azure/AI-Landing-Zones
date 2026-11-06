@@ -70,7 +70,7 @@ corresponding native values.
 For Basic operator access set, for example,
 `"postgreSqlAllowedIpRanges": {"value": ["203.0.113.8", "198.51.100.0/24"]}`
 in root `main.parameters.json`. These are documentation addresses, not real
-operator IPs. Require aligned IPv4/CIDRs; IPv6, 0.0.0.0, /0 and Azure-services
+operator IPs. IPv4/CIDRs are normalized to network ranges; IPv6, 0.0.0.0, /0 and Azure-services
 exceptions are prohibited. Application NAT output is separate.
 HA accepts Disabled/SameZone/ZoneRedundant; Burstable requires Disabled. Storage
 is a power of two from 32..65536 GiB; backup retention 7..35 days. No silent
@@ -79,11 +79,20 @@ the pinned Bicep AVM uses a preview server API, not an assumed policy exception.
 
 ## Discovery for custom applications
 
-Native outputs are `POSTGRESQL_SERVER_RESOURCE_ID`, `POSTGRESQL_HOST`,
+The shared post-provision lifecycle persists azd environment metadata
+`POSTGRESQL_SERVER_RESOURCE_ID`, `POSTGRESQL_HOST`,
 `POSTGRESQL_PORT`, `POSTGRESQL_DATABASE_NAME` and
-`CONTAINER_APPS_POSTGRESQL_EGRESS_IP`. Disabled values are empty; isolated egress
-is empty. Shared lifecycle verifies actual server/database, tenant, Entra-only
-authentication, ownership and independent lock before publishing readiness.
+`CONTAINER_APPS_POSTGRESQL_EGRESS_IP`. Fresh disabled deployments add no
+metadata; isolated egress is empty. The Bicep root preserves its existing
+64 outputs (the ARM limit); PostgreSQL metadata is derived from immutable
+creation intent and verified Azure resource reads, not extra root outputs.
+Terraform also exposes native outputs, which the common adapter checks
+against the same live binding. Basic egress follows the actual ACA
+subnet-to-dedicated-NAT-to-static-IPv4 association, never the ingress address.
+Shared lifecycle verifies actual server/database, tenant, Entra-only
+authentication, ownership and independent lock before persisting metadata
+and publishing discovery. A failed verification or azd write fails the hook;
+correct the cause and rerun post-provision with the same binding.
 
 Read these flat keys only under App Configuration label `agent-lz`:
 
@@ -104,7 +113,7 @@ Azure RBAC alone does not grant SQL permissions.
 
 From the reviewed platform source, use Python >=3.10 and
 `python -m pip install -r util/requirements.txt`, including
-`psycopg[binary]==3.3.8`. Authenticate with `az login` and arrange operator
+`psycopg[binary]==3.3.6`. Authenticate with `az login` and arrange operator
 network access. Configure libpq trust with `PGSSLROOTCERT` pointing to an
 operator-reviewed Azure server CA bundle (or the reviewed libpq default root
 certificate location). The utility never downloads trust material or disables
