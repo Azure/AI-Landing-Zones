@@ -105,7 +105,10 @@ Azure RBAC alone does not grant SQL permissions.
 From the reviewed platform source, use Python >=3.10 and
 `python -m pip install -r util/requirements.txt`, including
 `psycopg[binary]==3.3.8`. Authenticate with `az login` and arrange operator
-network access. As the configured Entra administrator, initialize a dedicated
+network access. Configure libpq trust with `PGSSLROOTCERT` pointing to an
+operator-reviewed Azure server CA bundle (or the reviewed libpq default root
+certificate location). The utility never downloads trust material or disables
+hostname/certificate verification. As the configured Entra administrator, initialize a dedicated
 application schema owned by the actual future migration-object creator.
 Never target a shared database/schema or reassign ownership. The managed
 identity must already exist; use its service-principal **object ID**, not client
