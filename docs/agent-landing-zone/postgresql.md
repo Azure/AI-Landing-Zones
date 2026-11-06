@@ -122,6 +122,11 @@ application schema owned by the actual future migration-object creator.
 Never target a shared database/schema or reassign ownership. The managed
 identity must already exist; use its service-principal **object ID**, not client
 ID or display-name lookup.
+For a Group administrator, the operator must also be authorized to read its
+transitive Microsoft Graph membership (including hidden membership where
+applicable). The utility checks every page and rejects an application identity
+that inherits that administrative group. Missing permissions, invalid paging
+or an incomplete bounded directory read fail before SQL bootstrap.
 
 Run on either platform (one line avoids shell continuation differences):
 
