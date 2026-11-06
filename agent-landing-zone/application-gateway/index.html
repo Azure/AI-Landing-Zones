@@ -5800,7 +5800,7 @@ routes. Keep application authentication and route authorization enabled.</p>
 <h2 id="expected-outcome">Expected outcome</h2>
 <p>Approved users reach the web UI through Application Gateway and its WAF;
 the UI and Foundry retain their private backend paths.</p>
-<p><img alt="An approved user's browser reaches the public HTTPS frontend of Application Gateway. The gateway forwards to the private UI Container App, which calls Foundry through a private endpoint." src="../../media/runbooks/application-gateway.png" /></p>
+<p><img alt="Application flow from approved users through Application Gateway to the private UI and Foundry APIs. Dashed lines associate the gateway, Container Apps Environment, and private endpoint with their respective VNet subnets, and the public IP with the gateway frontend." src="../../media/runbooks/application-gateway.png" /></p>
 <p>The UI makes the authenticated Foundry call server-side. This gateway does not
 publish Foundry project APIs, hosted-agent endpoints, or Foundry IQ knowledge
 bases. Their private connectivity, authentication, and authorization still apply.</p>
