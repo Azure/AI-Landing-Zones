@@ -125,8 +125,9 @@ creates the nonadmin mapping. Exact tenant/OID/type/admin mapping is read back;
 conflicts/unmapped roles are rejected, never remapped by a duplicate-role catch.
 
 In the app DB the utility verifies schema/object ownership and rejects privileged
-roles, memberships/SET ROLE, shared-schema and executable SECURITY DEFINER
-bypasses. Grants are CONNECT, schema USAGE, table SELECT/INSERT/UPDATE/DELETE,
+roles, memberships/SET ROLE, shared-schema and user SECURITY DEFINER
+function/trigger bypasses. Schema objects must be base tables/sequences owned
+by the declared DDL owner, not views, materialized views or foreign wrappers. Grants are CONNECT, schema USAGE, table SELECT/INSERT/UPDATE/DELETE,
 sequence USAGE/SELECT and actual-DDL-owner future defaults. PUBLIC CREATE/TEMP
 on this dedicated DB and PUBLIC CREATE on public/app schemas are removed.
 Effective permissions and global/PUBLIC defaults are checked. No DDL/admin,
