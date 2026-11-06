@@ -31,9 +31,9 @@ Deployment and redeployment belong to the
 
 </div>
 
-[![A signed-in user reaches the Container Apps UI, which checks admission and ownership before delegated Foundry invocation. Protected retrieval requires a separate source-specific authorization integration. Foundry invocation alone does not establish document access.](../media/runbooks/application-auth.svg?v=c14716bbd1e1)](../media/runbooks/application-auth.svg?v=c14716bbd1e1){: .runbook-diagram__image aria-label="Open full-size application access diagram"}
+[![Entra sign-in reaches the Container Apps UI, which checks admission and ownership. The UI uses OBO to invoke Foundry under the user's delegated identity and caller RBAC. The hosted agent uses the managed Foundry Toolbox to retrieve through Azure AI Search, where source and document permissions apply. Required user delegation fails closed when unavailable.](../media/runbooks/application-auth.svg?v=3e62c999471f)](../media/runbooks/application-auth.svg?v=3e62c999471f){: .runbook-diagram__image aria-label="Open full-size application access diagram"}
 
-[Open full-size diagram](../media/runbooks/application-auth.svg?v=c14716bbd1e1){: .runbook-diagram__open}
+[Open full-size diagram](../media/runbooks/application-auth.svg?v=3e62c999471f){: .runbook-diagram__open}
 
 </div>
 

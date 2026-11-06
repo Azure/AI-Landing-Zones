@@ -22,9 +22,9 @@ validation and read-only database execution.
 
 </div>
 
-[![Agent App MCP Server contains the explicitly selected natural-language-to-SQL toolset. It reads approved source and vector metadata from application Cosmos, generates and validates SQL, then queries an approved read-only database. A separate managed-identity importer activates catalog versions. Admitted users share the approved dataset without per-user database delegation. The default server exposes zero tools and Search is not a dependency.](../media/runbooks/nl2sql.svg?v=68231007a78d)](../media/runbooks/nl2sql.svg?v=68231007a78d){: .runbook-diagram__image aria-label="Open full-size NL2SQL ownership and execution diagram"}
+[![An agent or workflow invokes the selected NL2SQL toolset on Agent App MCP Server. The server reads approved metadata from the application Cosmos catalog, generates and validates read-only SQL, then queries approved Azure SQL or SQL Server tables and views under its read-only identity. A separate importer activates metadata versions. SQL authorization is not delegated per user.](../media/runbooks/nl2sql.svg?v=88c029a7c8da)](../media/runbooks/nl2sql.svg?v=88c029a7c8da){: .runbook-diagram__image aria-label="Open full-size NL2SQL ownership and execution diagram"}
 
-[Open full-size diagram](../media/runbooks/nl2sql.svg?v=68231007a78d){: .runbook-diagram__open}
+[Open full-size diagram](../media/runbooks/nl2sql.svg?v=88c029a7c8da){: .runbook-diagram__open}
 
 </div>
 

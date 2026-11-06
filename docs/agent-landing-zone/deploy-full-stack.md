@@ -42,9 +42,9 @@ Select these optional features in Step 3, before you provision Azure resources.
 
 </div>
 
-[![The default hosted application spans application, Foundry and network resource groups. The diagram illustrates private networking and marks Bastion or jumpbox access as optional.](../media/runbooks/deploy-full-stack.png)](../media/runbooks/deploy-full-stack.png){: .runbook-diagram__image aria-label="Open full-size hosted application diagram"}
+[![The hosted Agent Application is grouped by application, Foundry and network resource groups. In the illustrated NETWORK_ISOLATION=true layout, the Container Apps Environment is associated with its infrastructure subnet and private endpoints with a separate subnet. Foundry IQ and operator access are optional. Resource-group boundaries do not represent network containment.](../media/runbooks/deploy-full-stack.png?v=10807310d1ee)](../media/runbooks/deploy-full-stack.png?v=10807310d1ee){: .runbook-diagram__image aria-label="Open full-size hosted application diagram"}
 
-[Open full-size diagram](../media/runbooks/deploy-full-stack.png){: .runbook-diagram__open}
+[Open full-size diagram](../media/runbooks/deploy-full-stack.png?v=10807310d1ee){: .runbook-diagram__open}
 
 </div>
 

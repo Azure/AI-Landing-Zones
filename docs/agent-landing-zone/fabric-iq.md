@@ -28,9 +28,9 @@ connect and test.
 
 </div>
 
-[![Fabric integration recipe: a Search knowledge base calls either a published Fabric data agent or an ontology. A compatible user-delegation path must be implemented or configured; Fabric enforces underlying data permissions. The reference source flags register objects, not a turnkey application connection.](../media/runbooks/fabric-iq.svg?v=e4ef1fa6f079)](../media/runbooks/fabric-iq.svg?v=e4ef1fa6f079){: .runbook-diagram__image aria-label="Open full-size Fabric source choice diagram"}
+[![An agent or workflow calls a Search knowledge base through its knowledge-base tool. The registered Fabric source queries either a published data agent or an ontology. Fabric enforces user item and data permissions and applicable row-level security without indexing the corpus. People and dashed lines show connection, source registration, publication and access setup. Registration alone does not establish user access.](../media/runbooks/fabric-iq.svg?v=6768e0debb3a)](../media/runbooks/fabric-iq.svg?v=6768e0debb3a){: .runbook-diagram__image aria-label="Open full-size Fabric retrieval and setup diagram"}
 
-[Open full-size diagram](../media/runbooks/fabric-iq.svg?v=e4ef1fa6f079){: .runbook-diagram__open}
+[Open full-size diagram](../media/runbooks/fabric-iq.svg?v=6768e0debb3a){: .runbook-diagram__open}
 
 </div>
 

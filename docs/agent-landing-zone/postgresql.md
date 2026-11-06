@@ -24,9 +24,9 @@ connections and Cosmos remain unchanged.
 
 </div>
 
-[![Two PostgreSQL network modes for a custom Container App: Basic uses dedicated NAT with a static public IPv4 and a restricted public endpoint; isolation uses an application Private Endpoint and private DNS with public access disabled. Both use Entra authentication and verified TLS.](../media/runbooks/postgresql.svg)](../media/runbooks/postgresql.svg){: .runbook-diagram__image aria-label="Open full-size PostgreSQL connectivity diagram"}
+[![Basic and isolated PostgreSQL connectivity for a custom Container App. Basic associates NAT and a static public IPv4 with the Container Apps Environment subnet. Isolation uses a private endpoint in a separate subnet and private DNS, with public PostgreSQL access disabled. Dashed lines show subnet associations. Both modes use Entra authentication and verified TLS.](../media/runbooks/postgresql.svg?v=6d07587f2ff6)](../media/runbooks/postgresql.svg?v=6d07587f2ff6){: .runbook-diagram__image aria-label="Open full-size PostgreSQL connectivity diagram"}
 
-[Open full-size diagram](../media/runbooks/postgresql.svg){: .runbook-diagram__open}
+[Open full-size diagram](../media/runbooks/postgresql.svg?v=6d07587f2ff6){: .runbook-diagram__open}
 
 </div>
 

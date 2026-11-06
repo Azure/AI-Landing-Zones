@@ -1,56 +1,66 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="790" viewBox="0 0 1000 790" role="img" aria-labelledby="title desc">
-  <title id="title">Who answers a Fabric analytical question?</title>
-  <desc id="desc">An application integration queries a Search knowledge base with source-compatible delegated user authorization. Choose a published Fabric data agent or an ontology using its workspace and item IDs. Fabric owns analytical execution and underlying data permissions, including applicable row-level security. Source templates are shipped. Source registration does not connect the application. The application owner must connect the application to Search and test user delegation. MCP NL2SQL is a separate SQL route.</desc>
-  <defs>
-    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#32698e"/></marker>
-    <marker id="setup-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#766798"/></marker>
-    <!-- Intact Microsoft Azure public icon: https://learn.microsoft.com/azure/architecture/icons/ -->
-    <g id="search-icon"><svg id="f470e112-f1d8-4c18-a381-9b54e11a9ca3" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><defs><linearGradient id="b198f9ad-224e-4f37-99bb-f1c5a20d3916" x1="9" y1="0.36" x2="9" y2="18.31" gradientUnits="userSpaceOnUse"><stop offset="0.18" stop-color="#5ea0ef" /><stop offset="1" stop-color="#0078d4" /></linearGradient></defs><title>Icon-web-44</title><path d="M18,11.32a4.12,4.12,0,0,0-3.51-4,5.15,5.15,0,0,0-5.25-5,5.25,5.25,0,0,0-5,3.49A4.86,4.86,0,0,0,0,10.59a5,5,0,0,0,5.07,4.82l.44,0h8.21a.78.78,0,0,0,.22,0A4.13,4.13,0,0,0,18,11.32Z" fill="url(#b198f9ad-224e-4f37-99bb-f1c5a20d3916)" /><path d="M12.33,6.59a3.07,3.07,0,0,0-5.61.85,3.16,3.16,0,0,0,.33,2.27L4.71,12.08a.79.79,0,0,0,0,1.12.78.78,0,0,0,.56.23.76.76,0,0,0,.56-.23l2.33-2.36a3.14,3.14,0,0,0,.81.33,3.08,3.08,0,0,0,3.36-4.58Zm-.54,2.1A2.16,2.16,0,0,1,9.7,10.34a1.79,1.79,0,0,1-.51-.07,1.87,1.87,0,0,1-.7-.32,2.13,2.13,0,0,1-.56-.56,2.17,2.17,0,0,1-.31-1.73A2.14,2.14,0,0,1,9.7,6a2.31,2.31,0,0,1,.52.06,2.18,2.18,0,0,1,1.32,1A2.13,2.13,0,0,1,11.79,8.69Z" fill="#f2f2f2" /><ellipse cx="9.69" cy="8.18" rx="2.15" ry="2.16" fill="#83b9f9" /></svg></g>
-  </defs>
-  <style>text{font-family:"Segoe UI",sans-serif;fill:#1e3646;font-size:20px}.title{font-size:28px;font-weight:700}.head{font-size:22px;font-weight:600}.node{fill:#fff;stroke:#9bb2c4;stroke-width:1.5}.group{fill:#f3f8fc;stroke:#9bb2c4;stroke-width:1.5}.header{fill:#e1edf4;stroke:#9bb2c4;stroke-width:1.5}.flow{fill:none;stroke:#32698e;stroke-width:2;marker-end:url(#arrow)}.setup{fill:none;stroke:#766798;stroke-width:2;stroke-dasharray:7 5;marker-end:url(#setup-arrow)}</style>
-  <rect width="1000" height="790" fill="#fff"/>
-  <text x="32" y="46" class="title">Who answers a Fabric analytical question?</text>
-  <text x="32" y="80">Source templates are shipped; application delegation is an explicit integration task</text>
-  <rect x="32" y="184" width="238" height="202" class="node"/>
-  <text x="52" y="220" class="head">Application</text>
-  <text x="52" y="247" class="head">integration</text>
-  <text x="52" y="286">Native tool connection</text>
-  <text x="52" y="316">or custom connector</text>
-  <text x="52" y="346">Prove user delegation</text>
-  <rect x="366" y="136" width="242" height="300" class="group"/>
-  <rect x="366" y="136" width="242" height="44" class="header"/>
-  <text x="384" y="165" class="head">Azure AI Search</text>
-  <rect x="382" y="200" width="210" height="214" class="node"/>
-  <use href="#search-icon" transform="translate(462 220) scale(2.6)"/>
-  <text x="402" y="303" class="head">Knowledge base</text>
-  <text x="402" y="342">Bound Fabric source</text>
-  <text x="402" y="378">Preview integration</text>
-  <rect x="704" y="118" width="264" height="338" class="group"/>
-  <rect x="704" y="118" width="264" height="44" class="header"/>
-  <text x="722" y="147" class="head">Fabric: choose a source</text>
-  <rect x="720" y="184" width="232" height="108" class="node"/>
-  <text x="740" y="219" class="head">Data agent</text>
-  <text x="740" y="252">Analytical answers</text>
-  <text x="740" y="280">Published + shared</text>
-  <rect x="720" y="324" width="232" height="108" class="node"/>
-  <text x="740" y="359" class="head">Ontology</text>
-  <text x="740" y="392">Business relationships</text>
-  <text x="815" y="316">OR</text>
-  <path d="M270 286H382" class="flow"/>
-  <text x="282" y="242">Authorized</text>
-  <text x="282" y="268">retrieve</text>
-  <path d="M592 286H657V238H720" class="flow"/>
-  <path d="M657 286V378H720" class="flow"/>
-  <text x="624" y="205">Query</text>
-  <text x="32" y="498">Fabric enforces item + underlying data permissions and applicable row-level security.</text>
-  <text x="32" y="532">Direct connector recipe: delegated Search token; workload token authenticates transport only.</text>
-  <path d="M32 556H968" stroke="#9bb2c4" stroke-dasharray="4 4"/>
-  <rect x="32" y="582" width="280" height="90" class="node"/>
-  <text x="52" y="617" class="head">Fabric + Search owners</text>
-  <text x="52" y="648">Publish, share, bind source</text>
-  <text x="550" y="613">No landing-zone corpus copy.</text>
-  <text x="550" y="645">App-managed SQL tools are a separate route.</text>
-  <text x="32" y="704">Blue arrows show the retrieval request path.</text>
-  <text x="32" y="736">The application owner must connect the application to Search and test user delegation.</text>
-  <text x="32" y="768">Before application testing: publish the Fabric source, bind it to Search, and grant user access.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1020" viewBox="0 0 1600 1020" role="img" aria-labelledby="title description">
+<title id="title">Fabric IQ: agent access through a knowledge base</title>
+<desc id="description">Logical retrieval flow, not a credential-transport diagram. The agent calls a knowledge-base tool and the Search knowledge base calls either a published Fabric data agent or an ontology. Native Foundry connections and custom direct connectors have separate authorization contracts, described in the Fabric IQ guide, section 4. Source registration does not establish that user-authorization path in the reference app. The application team connects the tool. User-authorization implementation and acceptance checks remain in the guide, not in this architecture diagram. Fabric enforces user item and data permissions and applicable row-level security. The source corpus is not indexed locally.</desc>
+<defs><style>text { font-family: "Segoe UI", Arial, sans-serif; fill: #1e3646; }</style></defs>
+<rect width="1600" height="1020" fill="white"/>
+<text x="40" y="61" font-size="30" font-weight="700" text-anchor="start">Fabric IQ: agent access through a knowledge base</text>
+<text x="40" y="108" font-size="19" font-weight="400" text-anchor="start">Source registration alone does not enable user access.</text>
+<rect x="40" y="270" width="310" height="210" fill="white" stroke="#9bb2c4" stroke-width="1.5"/>
+<image href="data:image/svg+xml;base64,PG5zMDpzdmcgeG1sbnM6bnMwPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDE4IDE4IiB3aWR0aD0iNTQiIGhlaWdodD0iNTQiPjxuczA6c3ZnIGlkPSJ1dWlkLWY5ZGJiNzRjLWJiNjUtNDRmNS1hMGYyLTE4NTU0MWM4ZjJlMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgMTggMTgiPjxuczA6ZGVmcz48bnMwOmxpbmVhckdyYWRpZW50IGlkPSJ1dWlkLWM0MWExYjVkLWMzZWUtNDQxMy1iZWYyLWY1YTA3MmJhOTM2ZSIgeDE9IjcuMjgiIHkxPSIyNzIuODQiIHgyPSIuMzkiIHkyPSIyNjcuODciIGdyYWRpZW50VHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAyODApIHNjYWxlKDEgLTEpIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PG5zMDpzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzRmNDJmZCIgLz48bnMwOnN0b3Agb2Zmc2V0PSIuOCIgc3RvcC1jb2xvcj0iIzcyNzRmZiIgLz48L25zMDpsaW5lYXJHcmFkaWVudD48bnMwOmxpbmVhckdyYWRpZW50IGlkPSJ1dWlkLTdhODM5N2JiLWY4MmUtNGI0ZS04ZmIxLWM0OWRjMjBlYWU1MiIgeDE9IjEwLjE5IiB5MT0iMjY4LjQxIiB4Mj0iNC4zOCIgeTI9IjI2NS4xNiIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSgwIDI4MCkgc2NhbGUoMSAtMSkiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48bnMwOnN0b3Agb2Zmc2V0PSIuMjUiIHN0b3AtY29sb3I9IiM0ZjQyZmQiIC8+PG5zMDpzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzJjMDhhYyIgLz48L25zMDpsaW5lYXJHcmFkaWVudD48bnMwOmxpbmVhckdyYWRpZW50IGlkPSJ1dWlkLTM2NGNiMzhiLTI1ZTYtNGQ0NS1hNWYzLTdmNzU2N2NmMTk0NyIgeDE9IjE3LjQzIiB5MT0iMjY3LjAyIiB4Mj0iNS4wOCIgeTI9IjI2NC45OCIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSgwIDI4MCkgc2NhbGUoMSAtMSkiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48bnMwOnN0b3Agb2Zmc2V0PSIuMiIgc3RvcC1jb2xvcj0iIzcyNzRmZiIgLz48bnMwOnN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNGY0MmZkIiAvPjwvbnMwOmxpbmVhckdyYWRpZW50PjxuczA6bGluZWFyR3JhZGllbnQgaWQ9InV1aWQtZmIzMmUzMzQtODY3ZC00ZWRlLWJlZDEtNTZhZWNhZTc2MmNiIiB4MT0iMTAuMTUiIHkxPSIyNzMuNDEiIHgyPSIxNi44NyIgeTI9IjI2OS43MSIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSgwIDI4MCkgc2NhbGUoMSAtMSkiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48bnMwOnN0b3Agb2Zmc2V0PSIuMjUiIHN0b3AtY29sb3I9IiM0ZjQyZmQiIC8+PG5zMDpzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzJjMDhhYyIgLz48L25zMDpsaW5lYXJHcmFkaWVudD48bnMwOmxpbmVhckdyYWRpZW50IGlkPSJ1dWlkLTI1N2JlZGViLWNiNGUtNDhlYy05NzhkLTY2N2Q5NDNkNDg4NyIgeDE9IjE3LjY4IiB5MT0iMjcwLjU3IiB4Mj0iOC42OCIgeTI9IjI3OS40MyIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSgwIDI4MCkgc2NhbGUoMSAtMSkiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48bnMwOnN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjNGY0MmZkIiAvPjxuczA6c3RvcCBvZmZzZXQ9Ii44IiBzdG9wLWNvbG9yPSIjNzI3NGZmIiAvPjwvbnMwOmxpbmVhckdyYWRpZW50PjxuczA6bGluZWFyR3JhZGllbnQgaWQ9InV1aWQtZDI0YjNmMmItNTViZC00NzMxLThkODItMmNjYjNhOTQ5ZGE3IiB4MT0iNi42NCIgeTE9IjI3MS4wMiIgeDI9IjYuNjQiIHkyPSIyNzguMTIiIGdyYWRpZW50VHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAyODApIHNjYWxlKDEgLTEpIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PG5zMDpzdG9wIG9mZnNldD0iLjI1IiBzdG9wLWNvbG9yPSIjNGY0MmZkIiAvPjxuczA6c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMyYzA4YWMiIC8+PC9uczA6bGluZWFyR3JhZGllbnQ+PC9uczA6ZGVmcz48bnMwOnBhdGggZD0iTTUuMDIsMTUuMzFsLTIuODItMS42M2MtLjY2LS4zOC0xLjA2LTEuMDgtMS4wNi0xLjgzdi01LjY5YzAtLjc2LjQtMS40NiwxLjA2LTEuODNsMS41My0uODhjLjEtLjA2LjI0LjAxLjI0LjE0djkuOTFjMCwuMzcuMS43My4yOCwxLjA0LjE4LjMyLjQ1LjU5Ljc4Ljc4aDBaIiBmaWxsPSJ1cmwoI3V1aWQtYzQxYTFiNWQtYzNlZS00NDEzLWJlZjItZjVhMDcyYmE5MzZlKSIgLz48bnMwOnBhdGggZD0iTTEwLjE0LDEwLjU5djEuNzZjMCwuNzYtLjQsMS40Ni0xLjA2LDEuODNsLTEuOTQsMS4xMmMtLjY1LjM4LTEuNDYuMzgtMi4xMiwwLS4zMy0uMTktLjU5LS40Ni0uNzgtLjc4LS4xOC0uMzEtLjI4LS42Ny0uMjgtMS4wNHYtLjQyYzAsLjM2LjM5LjU5LjcxLjRsNS4yMy0zLjAyYy4xLS4wNi4yNC4wMS4yNC4xNFoiIGZpbGw9InVybCgjdXVpZC03YTgzOTdiYi1mODJlLTRiNGUtOGZiMS1jNDlkYzIwZWFlNTIpIiAvPjxuczA6cGF0aCBkPSJNMTYuODYsOS41M3YzLjI2YzAsLjc2LS40LDEuNDYtMS4wNiwxLjgzbC00LjkzLDIuODRjLS42NS4zOC0xLjQ2LjM4LTIuMTIsMGwtMS41My0uODhjLS4xLS4wNi0uMS0uMjEsMC0uMjdsOC41OS00Ljk2Yy4zMi0uMTkuNTgtLjQ1Ljc2LS43Ny4xOC0uMzIuMjgtLjY4LjI4LTEuMDZaIiBmaWxsPSJ1cmwoI3V1aWQtMzY0Y2IzOGItMjVlNi00ZDQ1LWE1ZjMtN2Y3NTY3Y2YxOTQ3KSIgLz48bnMwOnBhdGggZD0iTTEwLjIyLDcuNDZsMS41My0uODhjLjY1LS4zOCwxLjQ2LS4zOCwyLjEyLDBsMS45NCwxLjEyYy42NS4zOCwxLjA2LDEuMDgsMS4wNiwxLjgzLDAsLjM4LS4xLjc0LS4yOCwxLjA2LS4xOC4zMS0uNDQuNTgtLjc2Ljc3bC0uMzYuMjFjLjMxLS4xOC4zMS0uNjMsMC0uODFsLTUuMjMtMy4wMmMtLjEtLjA2LS4xLS4yMSwwLS4yN1oiIGZpbGw9InVybCgjdXVpZC1mYjMyZTMzNC04NjdkLTRlZGUtYmVkMS01NmFlY2FlNzYyY2IpIiAvPjxuczA6cGF0aCBkPSJNNS45NCwyLjE2bDIuODItMS42M2MuNjYtLjM4LDEuNDYtLjM4LDIuMTIsMGw0LjkzLDIuODRjLjY1LjM4LDEuMDYsMS4wOCwxLjA2LDEuODN2MS43NmMwLC4xMi0uMTMuMi0uMjQuMTRMOC4wNCwyLjE2Yy0uMzItLjE4LS42OC0uMjgtMS4wNS0uMjgtLjM3LDAtLjczLjA5LTEuMDYuMjhoMFoiIGZpbGw9InVybCgjdXVpZC0yNTdiZWRlYi1jYjRlLTQ4ZWMtOTc4ZC02NjdkOTQzZDQ4ODcpIiAvPjxuczA6cGF0aCBkPSJNNy40Nyw4Ljk1bC0xLjUzLS44OGMtLjY2LS4zOC0xLjA2LTEuMDgtMS4wNi0xLjgzdi0yLjI0YzAtLjc2LjQtMS40NiwxLjA2LTEuODMuMzMtLjE5LjY5LS4yOCwxLjA2LS4yOHMuNzIuMDksMS4wNC4yOGwuMzYuMjFjLS4zMS0uMTgtLjcuMDUtLjcuNDF2Ni4wNGMwLC4xMi0uMTMuMi0uMjQuMTRoMFoiIGZpbGw9InVybCgjdXVpZC1kMjRiM2YyYi01NWJkLTQ3MzEtOGQ4Mi0yY2NiM2E5NDlkYTcpIiAvPjwvbnMwOnN2Zz4KICAgIDwvbnMwOnN2Zz4=" x="171.0" y="288" width="48" height="48" preserveAspectRatio="xMidYMid meet"/>
+<text x="195.0" y="372" font-size="23" font-weight="700" text-anchor="middle">Agent / workflow</text>
+<text x="195.0" y="403" font-size="18" font-weight="400" text-anchor="middle">User question</text>
+<rect x="590" y="190" width="400" height="330" fill="#f3f8fc" stroke="#9bb2c4" stroke-width="1.5"/>
+<rect x="590" y="190" width="400" height="46" fill="#e1edf4" stroke="#9bb2c4" stroke-width="1.5"/>
+<text x="608" y="221" font-size="22" font-weight="700" text-anchor="start">Azure AI Search</text>
+<rect x="610" y="270" width="360" height="210" fill="white" stroke="#9bb2c4" stroke-width="1.5"/>
+<image href="data:image/svg+xml;base64,PG5zMDpzdmcgeG1sbnM6bnMwPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDE4IDE4IiB3aWR0aD0iNTQiIGhlaWdodD0iNTQiPjxuczA6ZGVmcz48bnMwOmxpbmVhckdyYWRpZW50IGlkPSJiMTk4ZjlhZC0yMjRlLTRmMzctOTliYi1mMWM1YTIwZDM5MTYiIHgxPSI5IiB5MT0iMC4zNiIgeDI9IjkiIHkyPSIxOC4zMSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxuczA6c3RvcCBvZmZzZXQ9IjAuMTgiIHN0b3AtY29sb3I9IiM1ZWEwZWYiIC8+PG5zMDpzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAwNzhkNCIgLz48L25zMDpsaW5lYXJHcmFkaWVudD48L25zMDpkZWZzPjxuczA6cGF0aCBkPSJNMTgsMTEuMzJhNC4xMiw0LjEyLDAsMCwwLTMuNTEtNCw1LjE1LDUuMTUsMCwwLDAtNS4yNS01LDUuMjUsNS4yNSwwLDAsMC01LDMuNDlBNC44Niw0Ljg2LDAsMCwwLDAsMTAuNTlhNSw1LDAsMCwwLDUuMDcsNC44MmwuNDQsMGg4LjIxYS43OC43OCwwLDAsMCwuMjIsMEE0LjEzLDQuMTMsMCwwLDAsMTgsMTEuMzJaIiBmaWxsPSJ1cmwoI2IxOThmOWFkLTIyNGUtNGYzNy05OWJiLWYxYzVhMjBkMzkxNikiIC8+PG5zMDpwYXRoIGQ9Ik0xMi4zMyw2LjU5YTMuMDcsMy4wNywwLDAsMC01LjYxLjg1LDMuMTYsMy4xNiwwLDAsMCwuMzMsMi4yN0w0LjcxLDEyLjA4YS43OS43OSwwLDAsMCwwLDEuMTIuNzguNzgsMCwwLDAsLjU2LjIzLjc2Ljc2LDAsMCwwLC41Ni0uMjNsMi4zMy0yLjM2YTMuMTQsMy4xNCwwLDAsMCwuODEuMzMsMy4wOCwzLjA4LDAsMCwwLDMuMzYtNC41OFptLS41NCwyLjFBMi4xNiwyLjE2LDAsMCwxLDkuNywxMC4zNGExLjc5LDEuNzksMCwwLDEtLjUxLS4wNywxLjg3LDEuODcsMCwwLDEtLjctLjMyLDIuMTMsMi4xMywwLDAsMS0uNTYtLjU2LDIuMTcsMi4xNywwLDAsMS0uMzEtMS43M0EyLjE0LDIuMTQsMCwwLDEsOS43LDZhMi4zMSwyLjMxLDAsMCwxLC41Mi4wNiwyLjE4LDIuMTgsMCwwLDEsMS4zMiwxQTIuMTMsMi4xMywwLDAsMSwxMS43OSw4LjY5WiIgZmlsbD0iI2YyZjJmMiIgLz48bnMwOmVsbGlwc2UgY3g9IjkuNjkiIGN5PSI4LjE4IiByeD0iMi4xNSIgcnk9IjIuMTYiIGZpbGw9IiM4M2I5ZjkiIC8+CiAgICA8L25zMDpzdmc+" x="766.0" y="288" width="48" height="48" preserveAspectRatio="xMidYMid meet"/>
+<text x="790.0" y="372" font-size="23" font-weight="700" text-anchor="middle">Knowledge base</text>
+<text x="790.0" y="403" font-size="18" font-weight="400" text-anchor="middle">Registered Fabric source</text>
+<rect x="1140" y="140" width="420" height="500" fill="#f3f8fc" stroke="#9bb2c4" stroke-width="1.5"/>
+<rect x="1140" y="140" width="420" height="46" fill="#e1edf4" stroke="#9bb2c4" stroke-width="1.5"/>
+<text x="1158" y="171" font-size="22" font-weight="700" text-anchor="start">Microsoft Fabric</text>
+<rect x="1160" y="210" width="380" height="110" fill="white" stroke="#9bb2c4" stroke-width="1.5"/>
+<text x="1350.0" y="246" font-size="22" font-weight="700" text-anchor="middle">Published data agent</text>
+<text x="1350.0" y="277" font-size="18" font-weight="400" text-anchor="middle">Analytical answers</text>
+<text x="1350" y="360" font-size="22" font-weight="700" text-anchor="middle">OR</text>
+<rect x="1160" y="395" width="380" height="110" fill="white" stroke="#9bb2c4" stroke-width="1.5"/>
+<text x="1350.0" y="431" font-size="22" font-weight="700" text-anchor="middle">Ontology</text>
+<text x="1350.0" y="462" font-size="18" font-weight="400" text-anchor="middle">Entities + relationships</text>
+<text x="1350" y="550" font-size="18" font-weight="400" text-anchor="middle">User&#x27;s item + data permissions</text>
+<text x="1350" y="582" font-size="18" font-weight="400" text-anchor="middle">Row-level security where applicable</text>
+<text x="1350" y="614" font-size="17" font-weight="400" text-anchor="middle">No corpus indexing</text>
+<polyline points="350,375 610,375" fill="none" stroke="#32698e" stroke-width="2"/>
+<polygon points="610.00,375.00 599.00,370.00 599.00,380.00" fill="#32698e"/>
+<text x="480" y="357" font-size="18" font-weight="400" text-anchor="middle">Knowledge-base tool</text>
+<polyline points="970,375 1050,375 1050,265 1160,265" fill="none" stroke="#32698e" stroke-width="2"/>
+<polygon points="1160.00,265.00 1149.00,260.00 1149.00,270.00" fill="#32698e"/>
+<polyline points="1050,375 1050,450 1160,450" fill="none" stroke="#32698e" stroke-width="2"/>
+<polygon points="1160.00,450.00 1149.00,445.00 1149.00,455.00" fill="#32698e"/>
+<text x="1050" y="239" font-size="18" font-weight="400" text-anchor="middle">Query</text>
+<rect x="40" y="740" width="420" height="190" fill="white" stroke="#9bb2c4" stroke-width="1.5"/>
+<image href="data:image/svg+xml;base64,PG5zMDpzdmcgeG1sbnM6bnMwPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDE4IDE4IiB3aWR0aD0iNTQiIGhlaWdodD0iNTQiPjxuczA6c3ZnIGlkPSJlMjQ2NzFmNi1mNTAxLTQ5NTItYTJkYi04YjBiMWQzMjljMTciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDE4IDE4Ij48bnMwOmRlZnM+PG5zMDpsaW5lYXJHcmFkaWVudCBpZD0iYmU5MjkwMWItZWMzMy00YzY1LWFkZjEtOWIwZWVkMDZkNjc3IiB4MT0iOSIgeTE9IjYuODgiIHgyPSI5IiB5Mj0iMjAuNDUiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48bnMwOnN0b3Agb2Zmc2V0PSIwLjIyIiBzdG9wLWNvbG9yPSIjMzJkNGY1IiAvPjxuczA6c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxOThhYjMiIC8+PC9uczA6bGluZWFyR3JhZGllbnQ+PG5zMDpsaW5lYXJHcmFkaWVudCBpZD0iYjQ2ZmMyNDYtMjVkOC00Mzk4LTg3NzktMTA0MmU4Y2FjYWU3IiB4MT0iOC42MSIgeTE9Ii0wLjQiIHgyPSI5LjYiIHkyPSIxMS45MiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxuczA6c3RvcCBvZmZzZXQ9IjAuMjIiIHN0b3AtY29sb3I9IiMzMmQ0ZjUiIC8+PG5zMDpzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzE5OGFiMyIgLz48L25zMDpsaW5lYXJHcmFkaWVudD48L25zMDpkZWZzPjxuczA6dGl0bGU+SWNvbi1pZGVudGl0eS0yMzA8L25zMDp0aXRsZT48bnMwOnBhdGggZD0iTTE1LjcyLDE4YTEuNDUsMS40NSwwLDAsMCwxLjQ1LTEuNDUuNDcuNDcsMCwwLDAsMC0uMTdDMTYuNTksMTEuODEsMTQsOC4wOSw5LDguMDlTMS4zNCwxMS4yNC44MywxNi4zOUExLjQ2LDEuNDYsMCwwLDAsMi4xNCwxOEgxNS43MloiIGZpbGw9InVybCgjYmU5MjkwMWItZWMzMy00YzY1LWFkZjEtOWIwZWVkMDZkNjc3KSIgLz48bnMwOnBhdGggZD0iTTksOS4xN2E0LjU5LDQuNTksMCwwLDEtMi40OC0uNzNMOSwxNC44NmwyLjQ0LTYuMzhBNC41Myw0LjUzLDAsMCwxLDksOS4xN1oiIGZpbGw9IiNmZmYiIG9wYWNpdHk9IjAuOCIgLz48bnMwOmNpcmNsZSBjeD0iOS4wMSIgY3k9IjQuNTgiIHI9IjQuNTgiIGZpbGw9InVybCgjYjQ2ZmMyNDYtMjVkOC00Mzk4LTg3NzktMTA0MmU4Y2FjYWU3KSIgLz48L25zMDpzdmc+CiAgICA8L25zMDpzdmc+" x="226.0" y="758" width="48" height="48" preserveAspectRatio="xMidYMid meet"/>
+<text x="250.0" y="842" font-size="22" font-weight="700" text-anchor="middle">Application team</text>
+<text x="250.0" y="873" font-size="18" font-weight="400" text-anchor="middle">Connect agent to knowledge-base tool</text>
+<rect x="590" y="740" width="420" height="190" fill="white" stroke="#9bb2c4" stroke-width="1.5"/>
+<image href="data:image/svg+xml;base64,PG5zMDpzdmcgeG1sbnM6bnMwPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDE4IDE4IiB3aWR0aD0iNTQiIGhlaWdodD0iNTQiPjxuczA6c3ZnIGlkPSJlMjQ2NzFmNi1mNTAxLTQ5NTItYTJkYi04YjBiMWQzMjljMTciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDE4IDE4Ij48bnMwOmRlZnM+PG5zMDpsaW5lYXJHcmFkaWVudCBpZD0iYmU5MjkwMWItZWMzMy00YzY1LWFkZjEtOWIwZWVkMDZkNjc3IiB4MT0iOSIgeTE9IjYuODgiIHgyPSI5IiB5Mj0iMjAuNDUiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48bnMwOnN0b3Agb2Zmc2V0PSIwLjIyIiBzdG9wLWNvbG9yPSIjMzJkNGY1IiAvPjxuczA6c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxOThhYjMiIC8+PC9uczA6bGluZWFyR3JhZGllbnQ+PG5zMDpsaW5lYXJHcmFkaWVudCBpZD0iYjQ2ZmMyNDYtMjVkOC00Mzk4LTg3NzktMTA0MmU4Y2FjYWU3IiB4MT0iOC42MSIgeTE9Ii0wLjQiIHgyPSI5LjYiIHkyPSIxMS45MiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxuczA6c3RvcCBvZmZzZXQ9IjAuMjIiIHN0b3AtY29sb3I9IiMzMmQ0ZjUiIC8+PG5zMDpzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzE5OGFiMyIgLz48L25zMDpsaW5lYXJHcmFkaWVudD48L25zMDpkZWZzPjxuczA6dGl0bGU+SWNvbi1pZGVudGl0eS0yMzA8L25zMDp0aXRsZT48bnMwOnBhdGggZD0iTTE1LjcyLDE4YTEuNDUsMS40NSwwLDAsMCwxLjQ1LTEuNDUuNDcuNDcsMCwwLDAsMC0uMTdDMTYuNTksMTEuODEsMTQsOC4wOSw5LDguMDlTMS4zNCwxMS4yNC44MywxNi4zOUExLjQ2LDEuNDYsMCwwLDAsMi4xNCwxOEgxNS43MloiIGZpbGw9InVybCgjYmU5MjkwMWItZWMzMy00YzY1LWFkZjEtOWIwZWVkMDZkNjc3KSIgLz48bnMwOnBhdGggZD0iTTksOS4xN2E0LjU5LDQuNTksMCwwLDEtMi40OC0uNzNMOSwxNC44NmwyLjQ0LTYuMzhBNC41Myw0LjUzLDAsMCwxLDksOS4xN1oiIGZpbGw9IiNmZmYiIG9wYWNpdHk9IjAuOCIgLz48bnMwOmNpcmNsZSBjeD0iOS4wMSIgY3k9IjQuNTgiIHI9IjQuNTgiIGZpbGw9InVybCgjYjQ2ZmMyNDYtMjVkOC00Mzk4LTg3NzktMTA0MmU4Y2FjYWU3KSIgLz48L25zMDpzdmc+CiAgICA8L25zMDpzdmc+" x="776.0" y="758" width="48" height="48" preserveAspectRatio="xMidYMid meet"/>
+<text x="800.0" y="842" font-size="22" font-weight="700" text-anchor="middle">Search administrator</text>
+<text x="800.0" y="873" font-size="18" font-weight="400" text-anchor="middle">Register Fabric source</text>
+<text x="800.0" y="900" font-size="18" font-weight="400" text-anchor="middle">Bind source to knowledge base</text>
+<rect x="1140" y="740" width="420" height="190" fill="white" stroke="#9bb2c4" stroke-width="1.5"/>
+<image href="data:image/svg+xml;base64,PG5zMDpzdmcgeG1sbnM6bnMwPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDE4IDE4IiB3aWR0aD0iNTQiIGhlaWdodD0iNTQiPjxuczA6c3ZnIGlkPSJlMjQ2NzFmNi1mNTAxLTQ5NTItYTJkYi04YjBiMWQzMjljMTciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDE4IDE4Ij48bnMwOmRlZnM+PG5zMDpsaW5lYXJHcmFkaWVudCBpZD0iYmU5MjkwMWItZWMzMy00YzY1LWFkZjEtOWIwZWVkMDZkNjc3IiB4MT0iOSIgeTE9IjYuODgiIHgyPSI5IiB5Mj0iMjAuNDUiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48bnMwOnN0b3Agb2Zmc2V0PSIwLjIyIiBzdG9wLWNvbG9yPSIjMzJkNGY1IiAvPjxuczA6c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxOThhYjMiIC8+PC9uczA6bGluZWFyR3JhZGllbnQ+PG5zMDpsaW5lYXJHcmFkaWVudCBpZD0iYjQ2ZmMyNDYtMjVkOC00Mzk4LTg3NzktMTA0MmU4Y2FjYWU3IiB4MT0iOC42MSIgeTE9Ii0wLjQiIHgyPSI5LjYiIHkyPSIxMS45MiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxuczA6c3RvcCBvZmZzZXQ9IjAuMjIiIHN0b3AtY29sb3I9IiMzMmQ0ZjUiIC8+PG5zMDpzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzE5OGFiMyIgLz48L25zMDpsaW5lYXJHcmFkaWVudD48L25zMDpkZWZzPjxuczA6dGl0bGU+SWNvbi1pZGVudGl0eS0yMzA8L25zMDp0aXRsZT48bnMwOnBhdGggZD0iTTE1LjcyLDE4YTEuNDUsMS40NSwwLDAsMCwxLjQ1LTEuNDUuNDcuNDcsMCwwLDAsMC0uMTdDMTYuNTksMTEuODEsMTQsOC4wOSw5LDguMDlTMS4zNCwxMS4yNC44MywxNi4zOUExLjQ2LDEuNDYsMCwwLDAsMi4xNCwxOEgxNS43MloiIGZpbGw9InVybCgjYmU5MjkwMWItZWMzMy00YzY1LWFkZjEtOWIwZWVkMDZkNjc3KSIgLz48bnMwOnBhdGggZD0iTTksOS4xN2E0LjU5LDQuNTksMCwwLDEtMi40OC0uNzNMOSwxNC44NmwyLjQ0LTYuMzhBNC41Myw0LjUzLDAsMCwxLDksOS4xN1oiIGZpbGw9IiNmZmYiIG9wYWNpdHk9IjAuOCIgLz48bnMwOmNpcmNsZSBjeD0iOS4wMSIgY3k9IjQuNTgiIHI9IjQuNTgiIGZpbGw9InVybCgjYjQ2ZmMyNDYtMjVkOC00Mzk4LTg3NzktMTA0MmU4Y2FjYWU3KSIgLz48L25zMDpzdmc+CiAgICA8L25zMDpzdmc+" x="1326.0" y="758" width="48" height="48" preserveAspectRatio="xMidYMid meet"/>
+<text x="1350.0" y="842" font-size="22" font-weight="700" text-anchor="middle">Fabric author / data owner</text>
+<text x="1350.0" y="873" font-size="18" font-weight="400" text-anchor="middle">Publish + share Fabric item</text>
+<text x="1350.0" y="900" font-size="18" font-weight="400" text-anchor="middle">Grant item + data access</text>
+<polyline points="250,740 250,620 480,620 480,375" fill="none" stroke="#766398" stroke-width="2" stroke-dasharray="7 5"/>
+<polygon points="480.00,375.00 475.00,386.00 485.00,386.00" fill="#766398"/>
+<polyline points="800,740 800,480" fill="none" stroke="#766398" stroke-width="2" stroke-dasharray="7 5"/>
+<polygon points="800.00,480.00 795.00,491.00 805.00,491.00" fill="#766398"/>
+<polyline points="1350,740 1350,640" fill="none" stroke="#766398" stroke-width="2" stroke-dasharray="7 5"/>
+<polygon points="1350.00,640.00 1345.00,651.00 1355.00,651.00" fill="#766398"/>
+<polyline points="40,984 100,984" fill="none" stroke="#32698e" stroke-width="2"/>
+<polygon points="100.00,984.00 89.00,979.00 89.00,989.00" fill="#32698e"/>
+<text x="115" y="990" font-size="17" font-weight="400" text-anchor="start">Tool / source request</text>
+<polyline points="600,984 660,984" fill="none" stroke="#766398" stroke-width="2" stroke-dasharray="7 5"/>
+<polygon points="660.00,984.00 649.00,979.00 649.00,989.00" fill="#766398"/>
+<text x="675" y="990" font-size="17" font-weight="400" text-anchor="start">Setup / configuration</text>
 </svg>

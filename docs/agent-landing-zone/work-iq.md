@@ -24,9 +24,9 @@ support from the application integration you must implement and validate.
 
 </div>
 
-[![Work IQ integration recipe: a trusted application sends a Work IQ app-audience user assertion to Search, separately from workload transport authentication. Search exchanges it for delegated Microsoft 365 access. Source registration and tenant consent are setup, not an installed native application path.](../media/runbooks/work-iq.svg?v=766010d711f9)](../media/runbooks/work-iq.svg?v=766010d711f9){: .runbook-diagram__image aria-label="Open full-size Work IQ identity diagram"}
+[![An agent or workflow calls a Search knowledge base through its knowledge-base tool. The registered Work IQ source retrieves Microsoft 365 context under the signed-in user's permissions without indexing the corpus. People and dashed lines show agent connection, source registration and tenant setup. Source registration alone does not establish user access.](../media/runbooks/work-iq.svg?v=d4663bcb0d81)](../media/runbooks/work-iq.svg?v=d4663bcb0d81){: .runbook-diagram__image aria-label="Open full-size Work IQ retrieval and setup diagram"}
 
-[Open full-size diagram](../media/runbooks/work-iq.svg?v=766010d711f9){: .runbook-diagram__open}
+[Open full-size diagram](../media/runbooks/work-iq.svg?v=d4663bcb0d81){: .runbook-diagram__open}
 
 </div>
 

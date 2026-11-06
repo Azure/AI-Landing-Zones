@@ -23,9 +23,9 @@ Deployment follows the [full-stack deployment guide](deploy-full-stack.md).
 
 </div>
 
-[![A native Agent uses the managed Foundry Toolbox to reach a Search knowledge base through its RemoteTool project connection. Native Blob ingestion owns its generated index and an existing index keeps its ingestion owner. Each source enforces its authorization contract, with explicit errors when required user delegation is unavailable.](../media/runbooks/foundry-iq.svg?v=51b2f3b8149c)](../media/runbooks/foundry-iq.svg?v=51b2f3b8149c){: .runbook-diagram__image aria-label="Open full-size Foundry IQ connection diagram"}
+[![A native agent uses the managed Foundry Toolbox to reach a Search knowledge base through its RemoteTool project connection. Search manages native Blob indexing. An existing index retains its content and permission owner. A dashed setup path connects the application owner to the tool binding. Each source enforces its authorization contract, and required user delegation fails closed.](../media/runbooks/foundry-iq.svg?v=dcce3142c4bf)](../media/runbooks/foundry-iq.svg?v=dcce3142c4bf){: .runbook-diagram__image aria-label="Open full-size Foundry IQ connection diagram"}
 
-[Open full-size diagram](../media/runbooks/foundry-iq.svg?v=51b2f3b8149c){: .runbook-diagram__open}
+[Open full-size diagram](../media/runbooks/foundry-iq.svg?v=dcce3142c4bf){: .runbook-diagram__open}
 
 </div>
 

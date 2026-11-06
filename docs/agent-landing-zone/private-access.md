@@ -15,7 +15,7 @@ jumpbox are not required for this path**.
 Your computer connected to the private VNet through a VPN, without Bastion
 or a jumpbox.
 
-![A computer reaches workload services through a VPN Gateway and private endpoint, with a reachable DNS resolver and private DNS zones.](../media/runbooks/private-access-vpn.png)
+![A workstation reaches workload private endpoints over a P2S VPN. DNS queries use an Azure DNS Private Resolver inbound endpoint and linked private zones. Dashed lines associate the VPN Gateway, resolver inbound endpoint and private endpoint with their separate VNet subnets.](../media/runbooks/private-access-vpn.png?v=4bdaf0043416)
 
 The figure shows a standalone gateway. An approved hub VPN can provide the
 same access with the appropriate peering, gateway transit, client routes and DNS.

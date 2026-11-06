@@ -35,9 +35,9 @@ authenticated Power Automate flow.
 
 </div>
 
-[![Copilot Studio and Power Automate are in the Power Platform environment. The flow uses a dedicated delegated subnet in your Azure VNet to reach the Foundry private endpoint in a separate subnet, then the Foundry Responses API.](../media/runbooks/connect-copilot-studio.png)](../media/runbooks/connect-copilot-studio.png){: .runbook-diagram__image aria-label="Open full-size Copilot Studio private-relay diagram"}
+[![A Copilot Studio agent invokes a Power Automate flow in Power Platform. The flow reaches the Foundry Responses API through a private endpoint, using the shared connection user's identity. Dashed lines show the enterprise policy's delegated-subnet association and the private endpoint's separate subnet.](../media/runbooks/connect-copilot-studio.png?v=f88158f146c8)](../media/runbooks/connect-copilot-studio.png?v=f88158f146c8){: .runbook-diagram__image aria-label="Open full-size Copilot Studio private-relay diagram"}
 
-[Open full-size diagram](../media/runbooks/connect-copilot-studio.png){: .runbook-diagram__open}
+[Open full-size diagram](../media/runbooks/connect-copilot-studio.png?v=f88158f146c8){: .runbook-diagram__open}
 
 </div>
 
