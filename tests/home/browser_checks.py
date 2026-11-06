@@ -111,6 +111,12 @@ def check_lifecycle_navigation(page, base, screenshots):
                 "Reference": ["Deployment settings", "Resource naming"],
             }[name]
             assert [label.strip() for label in actual] == expected, (name, actual)
+        if name == "Deploy":
+            companions = expand_navigation_group(page, branch, "Companion guides")
+            actual = companions.locator(":scope > ul > li > a .md-ellipsis").all_text_contents()
+            assert [label.strip() for label in actual] == [
+                "Application Gateway", "Private access (VPN)", "PostgreSQL",
+            ], actual
     if screenshots:
         page.screenshot(path=str(screenshots / "lifecycle-navigation-desktop.png"), animations="disabled")
     for name in ("Plan", "Reference"):
@@ -136,6 +142,9 @@ def check_lifecycle_navigation(page, base, screenshots):
         ("agent-landing-zone/terraform/", ("Agent Landing Zone", "Deploy", "Terraform")),
         ("agent-landing-zone/deploy-terraform-infra-only/", ("Agent Landing Zone", "Deploy", "Terraform")),
         ("agent-landing-zone/deploy-terraform-full-stack/", ("Agent Landing Zone", "Deploy", "Terraform")),
+        ("agent-landing-zone/application-gateway/", ("Agent Landing Zone", "Deploy", "Companion guides")),
+        ("agent-landing-zone/private-access/", ("Agent Landing Zone", "Deploy", "Companion guides")),
+        ("agent-landing-zone/postgresql/", ("Agent Landing Zone", "Deploy", "Companion guides")),
         ("agent-landing-zone/deployment-operations/", ("Agent Landing Zone", "Operate")),
         ("agent-landing-zone/troubleshooting/", ("Agent Landing Zone", "Operate")),
         ("agent-landing-zone/application/", ("Agent Landing Zone", "Agent Application")),

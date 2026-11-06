@@ -914,6 +914,20 @@ Do not delete the environment as rollback.
 
 <a id="clean-up"></a>
 
+## Optional PostgreSQL before first provision
+
+For a fresh custom consumer, choose Basic dedicated ACA NAT/restricted public PG
+or isolated PE/DNS, then supply the explicit Entra admin. Follow
+[Optional PostgreSQL](postgresql.md) for inputs/defaults, operator access and
+manual OID-bound schema CRUD. No bundled runtime/NL2SQL/Cosmos migration occurs.
+
+Preserve `.azure/<environment>/postgresql-binding.json`. Protection/readback
+precedes additive discovery; same-binding recovery is supported. Retrofit,
+disable and immutable replacement/down are blocked, including Terraform
+state-scoped destruction. The independent lock is outside both provider graphs.
+Review backups/exact ownership before separately approved removal. Privileged
+bypass and the pre-lock partial-provision window remain risks.
+
 ## Remove an environment
 
 !!! warning "Destructive action"

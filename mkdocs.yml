@@ -64,8 +64,10 @@ nav:
               - "Deploy full stack": agent-landing-zone/deploy-terraform-full-stack.md
           - "Deploy via portal": agent-landing-zone/portal.md
           - "Azure DevOps": agent-landing-zone/azure-devops.md
-          - "Application Gateway": agent-landing-zone/application-gateway.md
-          - "Private access (VPN)": agent-landing-zone/private-access.md
+          - "Companion guides":
+              - "Application Gateway": agent-landing-zone/application-gateway.md
+              - "Private access (VPN)": agent-landing-zone/private-access.md
+              - "PostgreSQL": agent-landing-zone/postgresql.md
       - Operate:
           - "Updates & recovery": agent-landing-zone/deployment-operations.md
           - "Troubleshooting": agent-landing-zone/troubleshooting.md

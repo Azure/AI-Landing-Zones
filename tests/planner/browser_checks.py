@@ -300,8 +300,11 @@ def run(base, candidate=None):
         nav = page.locator(".md-sidebar--primary")
         assert not nav.locator("a").evaluate_all(
             "links=>links.some(a=>/\\/(sizing|cost-planning)\\/$/.test(new URL(a.href).pathname))")
+        # The integrated page TOC is not a second primary navigation destination.
         assert nav.locator("a").evaluate_all(
-            "links=>links.filter(a=>new URL(a.href).pathname.endsWith('/sizing-cost-planner/')).length") == 1
+            """links=>links.filter(a=>
+              !a.closest('.md-nav--secondary') &&
+              new URL(a.href).pathname.endsWith('/sizing-cost-planner/')).length""") == 1
         baseline = page.evaluate("planner.snapshot.sum.total")
         for field in ("searchPartitions", "backingPartitions"):
             control = page.locator(f'[data-field="{field}"]')
