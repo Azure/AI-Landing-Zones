@@ -13,7 +13,7 @@
       
       
       
-        <link rel="prev" href="../private-access/">
+        <link rel="prev" href="../postgresql/">
       
       
         <link rel="next" href="../troubleshooting/">
@@ -915,6 +915,53 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_5" id="__nav_2_5_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Companion guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Companion guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../application-gateway/" class="md-nav__link">
         
@@ -960,6 +1007,42 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../postgresql/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PostgreSQL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1038,6 +1121,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Updates & recovery
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -1054,6 +1155,36 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#postgresql-data-protection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PostgreSQL data protection
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -5319,6 +5450,25 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#postgresql-data-protection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PostgreSQL data protection
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -5413,6 +5563,16 @@ Provision matching dependencies and restart/redeploy after toolset changes.</p>
 automatically revoke old grants. Review retirement explicitly; recovery does not run direct SQL
 inside the orchestrator. Embedding model/dimension changes need reindexing,
 not just a runtime-setting refresh.</p>
+<h2 id="postgresql-data-protection">PostgreSQL data protection</h2>
+<p><a href="../postgresql/#protection-recovery-and-deliberate-removal">Optional PostgreSQL recovery/removal</a>
+requires the original immutable creation-intent record and independent server
+CanNotDelete lock outside both provider graphs/state. Same-binding protection
+recovery is supported; missing/corrupt records are not adoption/deletion permission.
+Down/disable/replacement stop before either provider teardown. Manual removal
+needs backup/PITR review, exact inventory, consumer shutdown, data-owner approval
+and state/discovery reconciliation; preserve shared DNS/RGs. Privileged bypass
+and the partial-provision window remain risks. SQL bootstrap is manual and
+restartable across two databases, not cross-database atomic.</p>
 
 
 

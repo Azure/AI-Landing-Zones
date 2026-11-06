@@ -915,6 +915,53 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_5" id="__nav_2_5_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Companion guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Companion guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../application-gateway/" class="md-nav__link">
         
@@ -960,6 +1007,42 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../postgresql/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PostgreSQL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1364,6 +1447,17 @@
         
       </ul>
     </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-application-postgresql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional application PostgreSQL
+      
+    </span>
+  </a>
   
 </li>
         
@@ -6132,6 +6226,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#optional-application-postgresql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional application PostgreSQL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#agent-app-mcp-server-selection" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7106,6 +7211,16 @@ Generic Cosmos by itself does not enable vector search.</p>
 set it to <code>true</code> when application storage is needed. For an existing deployment,
 review the provision preview and retain the account until its consumers and
 data-retention requirements have been reviewed.</p>
+<h3 id="optional-application-postgresql">Optional application PostgreSQL</h3>
+<p><code>DEPLOY_POSTGRESQL=false</code> is the strict default-off selector for both providers.
+Fresh custom ACA deployments explicitly supply administrator OID/name/type.
+Defaults: version16, Burstable/Standard_B1ms, 32 GiB, backup7, HA Disabled,
+geo-backup/auto-grow false. Basic uses dedicated ACA NAT/restricted public PG;
+isolated uses Private Link/public PG disabled regardless of common allowlists.
+Typed operator ranges and existing PG DNS IDs have no string aliases.
+<a href="../postgresql/">Optional PostgreSQL</a> lists all inputs, validations, flat agent-lz
+keys, manual SQL grants and independent-lock recovery/removal. It does not
+select MCP/NL2SQL or replace Cosmos; retrofit/disable/mode replacement are blocked.</p>
 <h3 id="agent-app-mcp-server-selection">Agent App MCP Server selection</h3>
 <table>
 <thead>

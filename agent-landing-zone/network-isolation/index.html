@@ -572,6 +572,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#optional-postgresql-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional PostgreSQL paths
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#plan-each-connectivity-path" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1052,6 +1063,53 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_5" id="__nav_2_5_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Companion guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Companion guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../application-gateway/" class="md-nav__link">
         
@@ -1097,6 +1155,42 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../postgresql/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PostgreSQL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -5462,6 +5556,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#optional-postgresql-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional PostgreSQL paths
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#plan-each-connectivity-path" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5586,6 +5691,15 @@ identity checks or weaken the network to recover a failure.</p>
 <span id="reach-the-private-network"></span>
 <span id="connected-host-requirements"></span>
 <span id="image-builds-in-isolated-deployments"></span></p>
+<h2 id="optional-postgresql-paths">Optional PostgreSQL paths</h2>
+<p><a href="../postgresql/">Optional PostgreSQL</a> is fresh-only and default off. Basic adds
+external workload-profiles ACA VNet integration and dedicated Standard NAT/static
+outbound IPv4, allowing that exact PG source plus explicit operator ranges.
+Legacy Consumption-only and forced default routes that bypass NAT are rejected;
+corporate routes and jumpbox NAT are not overwritten. Isolation uses app PE/DNS
+and public PG disabled regardless of common allowlists, with no PG delegated
+server subnet. Agree BYO/managed/existing/policy DNS ownership and operator access.
+Network readiness does not grant SQL permissions; OID-bound bootstrap is manual.</p>
 <h2 id="plan-each-connectivity-path">Plan each connectivity path</h2>
 <table>
 <thead>

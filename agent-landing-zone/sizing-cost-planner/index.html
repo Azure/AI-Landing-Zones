@@ -81,6 +81,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#optional-postgresql-costs-outside-this-planner" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -533,6 +538,24 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sizing & cost planner
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -549,6 +572,34 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#optional-postgresql-costs-outside-this-planner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional PostgreSQL costs outside this planner
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -922,6 +973,53 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_5" id="__nav_2_5_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Companion guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Companion guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../application-gateway/" class="md-nav__link">
         
@@ -967,6 +1065,42 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../postgresql/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PostgreSQL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -5314,6 +5448,25 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#optional-postgresql-costs-outside-this-planner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional PostgreSQL costs outside this planner
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -5535,6 +5688,15 @@
 <script src="../../javascripts/planner/guidance.js" defer></script>
 <script src="../../javascripts/planner/scenario.js?v=3" defer></script>
 <script src="../../javascripts/planner/planner.js?v=6" defer></script>
+
+<h2 id="optional-postgresql-costs-outside-this-planner">Optional PostgreSQL costs outside this planner</h2>
+<p><a href="../postgresql/">Optional PostgreSQL</a> is not priced in this planner inventory.
+Development defaults are version16, Burstable/Standard_B1ms, 32 GiB, backup7
+and HA/geo-backup/auto-grow off, not a production SLA. Budget compute/storage/
+backup and Basic dedicated Standard ACA NAT hourly/data-processing/static IPv4
+or isolated PE/DNS, transfer, app usage and logs. HA/larger SKUs/geo-backup/
+retention add cost; regional capacity/policy may block a profile, never silently
+downgrade it. Disabled deployments have no feature-owned resource cost.</p>
 
 
 

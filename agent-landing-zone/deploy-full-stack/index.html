@@ -1199,6 +1199,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#optional-postgresql-before-first-provision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional PostgreSQL before first provision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#remove-an-environment" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1438,6 +1449,53 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_5" id="__nav_2_5_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Companion guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Companion guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../application-gateway/" class="md-nav__link">
         
@@ -1483,6 +1541,42 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../postgresql/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PostgreSQL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -6287,6 +6381,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#optional-postgresql-before-first-provision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional PostgreSQL before first provision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#remove-an-environment" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7190,6 +7295,17 @@ Follow the <a href="../deploy-infra-only/#review-component-egress">review proced
 If rollback is unsupported, arrange an approved repair or service-specific recovery.
 Do not delete the environment as rollback.</p>
 <p><a id="clean-up"></a></p>
+<h2 id="optional-postgresql-before-first-provision">Optional PostgreSQL before first provision</h2>
+<p>For a fresh custom consumer, choose Basic dedicated ACA NAT/restricted public PG
+or isolated PE/DNS, then supply the explicit Entra admin. Follow
+<a href="../postgresql/">Optional PostgreSQL</a> for inputs/defaults, operator access and
+manual OID-bound schema CRUD. No bundled runtime/NL2SQL/Cosmos migration occurs.</p>
+<p>Preserve <code>.azure/&lt;environment&gt;/postgresql-binding.json</code>. Protection/readback
+precedes additive discovery; same-binding recovery is supported. Retrofit,
+disable and immutable replacement/down are blocked, including Terraform
+state-scoped destruction. The independent lock is outside both provider graphs.
+Review backups/exact ownership before separately approved removal. Privileged
+bypass and the pre-lock partial-provision window remain risks.</p>
 <h2 id="remove-an-environment">Remove an environment</h2>
 <div class="admonition warning">
 <p class="admonition-title">Destructive action</p>

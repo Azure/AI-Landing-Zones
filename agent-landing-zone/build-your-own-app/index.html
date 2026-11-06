@@ -915,6 +915,53 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_5" id="__nav_2_5_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Companion guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Companion guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../application-gateway/" class="md-nav__link">
         
@@ -960,6 +1007,42 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../postgresql/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PostgreSQL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -2518,6 +2601,17 @@
     <span class="md-ellipsis">
       
         Application binding and selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-relational-persistence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional relational persistence
       
     </span>
   </a>
@@ -5775,6 +5869,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#optional-relational-persistence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional relational persistence
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#reference-components-and-custom-applications" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6179,6 +6284,13 @@ before Azure resource creation. The <code>preprovision</code> hook repeats valid
 <code>azd provision</code>, but cannot guarantee rejection before azd initializes its
 resource group. Run <code>azd hooks run preup</code> first for that safeguard.
 Do not edit a binding to force another application into an existing environment.</p>
+<h3 id="optional-relational-persistence">Optional relational persistence</h3>
+<p>For fresh custom ACA, <a href="../postgresql/">optional PostgreSQL</a> supplies foundation
+resources and verified flat <code>AGENTLZ_POSTGRESQL_*</code> metadata under <code>agent-lz</code>.
+Closed outputs v1/bundled runtimes stay unchanged. Your app owns driver, SQL role,
+verify-full TLS trust, token renewal/pooling and migrations. Bootstrap uses its
+managed-identity service-principal object ID, not client ID/display name; schema
+belongs to the actual DDL owner and app receives CRUD only, never DDL/admin.</p>
 <h3 id="reference-components-and-custom-applications">Reference components and custom applications</h3>
 <p><code>DEPLOY_INGESTION_CONTAINER_APP</code> selects Agent Application composition, not components in
 an explicit custom definition. A custom-only definition contributes only its
