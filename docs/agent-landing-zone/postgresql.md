@@ -5,6 +5,31 @@ owner-supplied custom Container App. This is a default-off foundation extension,
 not a Cosmos replacement, migration, NL2SQL integration or bundled runtime consumer.
 Disabled deployments add no PostgreSQL resources or discovery settings.
 
+## Expected outcome
+
+Your custom Container App reaches its application database through the selected
+network path. Basic restricts the public PostgreSQL endpoint to the dedicated NAT
+IP and explicitly allowed operator ranges. Isolation uses Private Link and
+private DNS, with public PostgreSQL access disabled. Both modes require Entra
+authentication, SQL grants and verified TLS.
+
+<div class="runbook-diagram" markdown="1">
+
+<div class="runbook-diagram__summary" markdown="1">
+
+**Choose the network mode before first provision.** Basic uses the application's
+dedicated NAT/static IPv4. Isolation uses an application Private Endpoint and
+private DNS instead. PostgreSQL serves your custom application; bundled runtime
+connections and Cosmos remain unchanged.
+
+</div>
+
+[![Two PostgreSQL network modes for a custom Container App: Basic uses dedicated NAT with a static public IPv4 and a restricted public endpoint; isolation uses an application Private Endpoint and private DNS with public access disabled. Both use Entra authentication and verified TLS.](../media/runbooks/postgresql.svg)](../media/runbooks/postgresql.svg){: .runbook-diagram__image aria-label="Open full-size PostgreSQL connectivity diagram"}
+
+[Open full-size diagram](../media/runbooks/postgresql.svg){: .runbook-diagram__open}
+
+</div>
+
 ## Network and fresh-only scope
 
 | Mode | Application path | Operator path |
