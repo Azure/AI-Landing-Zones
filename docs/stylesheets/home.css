@@ -163,6 +163,6 @@ html:has(.home-diagram-viewer[open]) { overflow: hidden; }
 @media (max-width: 360px) {
   .alz-home .architecture-workbench { padding: 0 12px 8px; }
   .alz-home .architecture-workbench .home-tabs { margin: 0 -8px; flex-wrap: nowrap; }
-  .alz-home .architecture-workbench .home-tabs button { flex: 1; padding: 12px 4px; font-size: 12px; white-space: nowrap; }
+  .alz-home .architecture-workbench .home-tabs button { flex: 1; min-width: 0; padding: 12px 4px; font-size: 12px; }
   .alz-home .home-footer-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; column-gap: 24px; }
 }
