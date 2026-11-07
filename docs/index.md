@@ -62,25 +62,25 @@ Reference architectures and deployable Azure foundations for your AI application
 
 ## Reference architectures. { #reference-architectures }
 
-Explore Agent Landing Zone connected to a platform hub, integrated with AI Gateway Landing Zone, or on its own.
+Explore Agent Landing Zone, integrated with AI Gateway Landing Zone, or on its own.
 
 <div class="architecture-workbench" data-home-tabs markdown="1">
 <div class="home-tabs" role="tablist" aria-label="Reference architecture" hidden>
-<button type="button" role="tab" id="tab-hub" aria-selected="true" aria-controls="architecture-hub">Platform Hub</button>
-<button type="button" role="tab" id="tab-gateway" aria-selected="false" aria-controls="architecture-gateway" tabindex="-1">AI Gateway</button>
+<button type="button" role="tab" id="tab-hub" aria-selected="true" aria-controls="architecture-hub">Agent Landing Zone</button>
+<button type="button" role="tab" id="tab-gateway" aria-selected="false" aria-controls="architecture-gateway" tabindex="-1">AI Gateway Landing Zone</button>
 <button type="button" role="tab" id="tab-standalone" aria-selected="false" aria-controls="architecture-standalone" tabindex="-1">Standalone</button>
 </div>
 
 <div id="architecture-hub" class="architecture-panel" role="tabpanel" aria-labelledby="tab-hub" tabindex="0" markdown="1">
 <div class="home-anchor" id="with-platform-hub"></div>
-<h3 class="home-panel-title" id="platform-hub-panel-title">Agent Landing Zone with Platform Hub</h3>
+<h3 class="home-panel-title" id="platform-hub-panel-title">Agent Landing Zone</h3>
 
-Agent Landing Zone connects to a platform hub that provides shared connectivity, DNS and egress services.
+Agent Landing Zone connects to a platform that provides shared connectivity, DNS and egress services.
 
 <figure class="architecture-figure" markdown="1">
-![Agent Landing Zone with Platform Hub reference architecture](architecture/media/AI-Landing-Zone-with-platform.png?v=e868bb76bceb){ width=6400 height=3822 loading=lazy }
+![Agent Landing Zone reference architecture](architecture/media/AI-Landing-Zone-with-platform.png?v=e868bb76bceb){ width=6400 height=3822 loading=lazy }
 <figcaption markdown="block">
-[Enlarge the platform hub diagram](architecture/media/AI-Landing-Zone-with-platform.png?v=e868bb76bceb)
+[Enlarge the Agent Landing Zone diagram](architecture/media/AI-Landing-Zone-with-platform.png?v=e868bb76bceb)
 
 Resource selection and reuse depend on your implementation and settings. This reference shows the default hosted application without application Cosmos DB or its private endpoint; Foundry Agent Service's separate backing resources are retained.
 </figcaption>
@@ -90,10 +90,10 @@ Resource selection and reuse depend on your implementation and settings. This re
 <div id="architecture-gateway" class="architecture-panel" role="tabpanel" aria-labelledby="tab-gateway" tabindex="0" markdown="1">
 <h3 class="home-panel-title">Agent Landing Zone with AI Gateway</h3>
 
-Combine Agent Landing Zone, a platform hub and a separate AI Gateway Landing Zone. The gateway has its own deployment and connectivity requirements; Agent Landing Zone does not provision it automatically.
+Combine many Agent Landing Zones as spokes for agents to an AI Gateway Landing Zone as hub for models. The gateway has its own deployment and connectivity requirements; Agent Landing Zone does not provision it automatically.
 
 <figure class="architecture-figure" markdown="1">
-![AI Gateway and Platform Hub integrated reference architecture](architecture/media/AI-Landing-Zones-APIM.png?v=27769aa5cbf0){ width=6400 height=5867 loading=lazy }
+![AI Gateway Landing Zone reference architecture](architecture/media/AI-Landing-Zones-APIM.png?v=27769aa5cbf0){ width=6400 height=5867 loading=lazy }
 <figcaption markdown="block">
 [Enlarge the integrated gateway diagram](architecture/media/AI-Landing-Zones-APIM.png?v=27769aa5cbf0)
 
