@@ -29,13 +29,18 @@ def check_diagram_controls(page, base, screenshots=None):
             expect(control).to_be_visible()
             control.scroll_into_view_if_needed()
             expect(control).to_be_enabled(timeout=30000)
+            figure = page.locator(".alz-diagram")
+            diagram = figure.locator("img").first
+            summary = figure.locator(".runbook-diagram__summary")
+            content = summary if summary.is_visible() else diagram
+            expect(content).to_be_visible(timeout=15000)
+            if content == diagram:
+                expect(diagram).to_have_js_property("complete", True, timeout=15000)
+                assert diagram.evaluate("image => image.naturalWidth > 0"), (guide, width)
+            control.scroll_into_view_if_needed()
             bounds = control.bounding_box()
             assert bounds["width"] >= 44 and bounds["height"] >= 44, (guide, width)
             assert bounds["x"] >= 0 and bounds["x"] + bounds["width"] <= width, (guide, width)
-            figure = page.locator(".alz-diagram")
-            diagram = figure.locator("img").first
-            content = diagram if diagram.is_visible() else figure.locator(".runbook-diagram__summary")
-            expect(content).to_be_visible()
             content_bounds = content.bounding_box()
             figure_bounds = figure.bounding_box()
             assert bounds["y"] >= content_bounds["y"] + content_bounds["height"] - 1, (
