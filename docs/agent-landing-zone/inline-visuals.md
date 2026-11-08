@@ -5,12 +5,6 @@
 Show useful cards, tables and charts beside an agent's text answer in Chainlit.
 Inline visuals are **off by default** and enabled separately for each agent.
 
-!!! note "Candidate feature — unreleased"
-
-    These instructions describe a proposed, locally implemented feature, not
-    availability in the current release. Use matched orchestrator, UI and
-    contract versions before enabling it. No release version is announced here.
-
 ## Expected outcome
 
 When a supported typed tool result supplies suitable data, the agent can select:
@@ -36,9 +30,9 @@ service, CDN or separate conversation store.
 
 </div>
 
-[![Authorized typed tool results and per-agent settings feed tool-free selection and deterministic validation, then existing native state and owner-admitted Chainlit visuals with readable text. The disabled path skips the extra stage.](../media/runbooks/inline-visuals.png)](../media/runbooks/inline-visuals.png){: .runbook-diagram__image aria-label="Open full-size inline visuals delivery diagram"}
+[![Authorized typed tool results and per-agent settings feed tool-free selection and deterministic validation, then existing native state and owner-admitted Chainlit visuals with readable text. The disabled path skips the extra stage.](../media/runbooks/inline-visuals.svg)](../media/runbooks/inline-visuals.svg){: .runbook-diagram__image aria-label="Open full-size inline visuals delivery diagram"}
 
-[Open full-size diagram](../media/runbooks/inline-visuals.png){: .runbook-diagram__open}
+[Open full-size diagram](../media/runbooks/inline-visuals.svg){: .runbook-diagram__open}
 </div>
 
 ## When to use
@@ -50,7 +44,7 @@ Copilot, Copilot Studio or other clients.
 
 ## Prerequisites
 
-- Matched candidate orchestrator, Chainlit UI and v1 presentation contracts.
+- Orchestrator and Chainlit UI with matching v1 presentation contracts.
 - A registered agent and authorized tools returning supported typed results.
 - Access to the ordinary nonsecret [application settings](application-settings.md)
   declaration. Existing authentication and tool permissions stay unchanged.
@@ -98,8 +92,8 @@ Ask for an answer backed by a supported typed tool result, then:
 
 ![Light theme: synthetic monthly revenue answer with March value card, ascending revenue table, filter and copy controls, row follow-ups and line chart in actual Chainlit 2.12.0.](../media/inline-visuals-chat-light.png)
 
-*Synthetic data in actual Chainlit 2.12.0 with a local mock agent, not Azure
-deployment evidence. The user requested monthly revenue with a card, table and
+*Synthetic data in actual Chainlit 2.12.0 with a local mock agent. The user
+requested monthly revenue with a card, table and
 chart and sorted Revenue USD ascending: March 9.750, January 10.125, February
 12.500. The card retains 9.750 USD; the chart also lists exact values as text.*
 
@@ -121,12 +115,6 @@ Use controlled local tool results and restored native history to check:
 | Suggestion or identified row follow-up | One ordinary authorized new user message |
 | Invalid, unsupported or oversized presentation | Readable authorized text, not a raw envelope |
 | Disable after saving a visual answer | New answers are text-only; authorized saved history remains readable |
-
-!!! note "Local acceptance, not deployment certification"
-
-    The maintainer removed Azure LIVE validation as an implementation gate.
-    Azure persistence, ACL enforcement and deployed parity remain unverified
-    risks, not deferred mandatory checks. Local tests do not prove deployment.
 
 ### Troubleshooting
 

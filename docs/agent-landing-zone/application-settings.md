@@ -70,7 +70,7 @@ Apply the installation's retention policy separately.
 
 ## Configure an agent capability
 
-For the **unreleased** [Inline visuals](inline-visuals.md) candidate, use its
+For [Inline visuals](inline-visuals.md), use the
 per-agent `AGENT_PRESENTATION_SETTINGS` example through the same declaration
 path below. It is off by default and needs no new presentation resources.
 

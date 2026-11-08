@@ -225,7 +225,7 @@ Its current NL2SQL tools have their own SQL onboarding procedure.
 
 Configure [sign-in and access](application-auth.md),
 [conversations and files](conversations.md), and [user feedback](user-feedback.md).
-For the **unreleased**, opt-in Chainlit presentation candidate, see
+For opt-in Chainlit presentations, see
 [Inline visuals](inline-visuals.md): cards, typed tables and source-backed charts,
 off by default.
 To reach users elsewhere, [embed chat in a portal](embed-chat.md),

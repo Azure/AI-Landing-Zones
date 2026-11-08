@@ -1,14 +1,11 @@
 # Inline visual contracts
 
-!!! note "Candidate contract — unreleased"
-
-    This reference accompanies [Inline visuals](inline-visuals.md). It does not
-    announce a released package or a compatible current manifest combination.
+This reference accompanies [Inline visuals](inline-visuals.md).
 
 ## Configuration schema
 
 The umbrella repository owns the three canonical v1 JSON schemas under
-`contracts/`. Candidate orchestrator and UI wheels package
+`contracts/`. Orchestrator and UI wheels package
 the same bytes; do not maintain another schema or parser in a customer adapter.
 
 | Schema | SHA-256 |

@@ -106,7 +106,7 @@ def check_application_guides(page, base, screenshots=None, only_guides=None):
                         guide, href, "Broken configuration or procedure anchor"
                     )
             if guide in DIAGRAM_GUIDES:
-                extension = ".png" if guide == "inline-visuals" else ".svg"
+                extension = ".svg"
                 asset = "media/runbooks/" + guide + extension
                 image = content.locator(f"img[src*='{asset}']")
                 assert image.count() == 1, (guide, "Missing or duplicate contextual diagram")
@@ -196,9 +196,12 @@ def check_inline_visuals_source():
     for required in (
         "AGENT_PRESENTATION_SETTINGS", "off by default", "grouped-bar", "business ID",
         "native tooltip", "no zoom, pan or chart drill-down", "synthetic data",
-        "actual Chainlit 2.12.0", "local mock agent", "unreleased",
+        "actual Chainlit 2.12.0", "local mock agent",
     ):
         assert required in text, required
+    for status_warning in ("Candidate feature", "not deployment certification",
+                           "unverified", "not ready", "validation missing"):
+        assert status_warning not in text, status_warning
     assert text.index("runbook-diagram") < text.index("## When to use")
     assert "../media/runbooks/inline-visuals-chat" not in text, (
         "Chat captures must not receive the site's automatic runbook diagram controls"

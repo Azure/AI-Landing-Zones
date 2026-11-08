@@ -10,7 +10,7 @@
   </defs>
   <rect width="1600" height="850" fill="white"/>
   <text x="40" y="61" font-size="30" font-weight="700">Inline visuals from authorized tool results to Chainlit</text>
-  <text x="40" y="101" font-size="22">Candidate delivery · source values stay exact · existing authentication and native state</text>
+  <text x="40" y="101" font-size="22">Inline delivery · source values stay exact · existing authentication and native state</text>
   <g stroke="#9bb2c4" stroke-width="1.5">
     <rect x="40" y="170" width="340" height="475" fill="#f3f8fc"/><rect x="40" y="170" width="340" height="46" fill="#e1edf4"/>
     <rect x="60" y="240" width="300" height="155" fill="white"/><rect x="60" y="425" width="300" height="195" fill="white"/>
@@ -45,5 +45,5 @@
   </g>
   <text x="40" y="705" font-size="22" font-weight="700">Off by default: Normal text skips the extra selection stage</text>
   <text x="40" y="750" font-size="20">Solid arrows: enabled delivery. Dashed arrow: disabled path into existing native state.</text>
-  <text x="40" y="795" font-size="20">No new Azure resources · no CDN · no duplicate storage · local evidence does not prove Azure deployment</text>
+  <text x="40" y="795" font-size="20">No new Azure resources · no CDN · no duplicate storage</text>
 </svg>
