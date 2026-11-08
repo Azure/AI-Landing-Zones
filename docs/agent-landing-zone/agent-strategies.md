@@ -1,5 +1,9 @@
 # Agents & prompts
 
+For candidate per-agent presentation settings, see
+[Inline visuals: enable one agent](inline-visuals.md#step-1-enable-one-agent).
+This is unreleased; it does not select a host or grant tool/source access.
+
 Microsoft Agent Framework (MAF) provides two application building blocks:
 an **Agent** for a conversation and a **Workflow** for a process with explicit
 steps, conditions and human input. Hosting and tools are separate choices.

@@ -12,7 +12,7 @@ DIAGRAM_PAGES = (
     "connect-copilot-studio", "conversations", "deploy-full-stack",
     "fabric-iq", "foundry-iq", "hosted-agents", "ingestion", "nl2sql",
     "postgresql", "private-access", "publish-to-teams", "sharepoint",
-    "user-feedback", "work-iq", "workflows",
+    "user-feedback", "work-iq", "workflows", "inline-visuals",
 )
 
 

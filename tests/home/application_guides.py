@@ -1,6 +1,7 @@
 """Rendered contracts for the Agent Application newcomer guides and diagrams."""
 
 import re
+from pathlib import Path
 from urllib.parse import unquote, urlsplit
 import xml.etree.ElementTree as ET
 
@@ -9,16 +10,19 @@ APPLICATION_GUIDES = (
     "application", "hosted-agents", "agent-strategies", "workflows",
     "agent-tools", "agent-app-mcp", "application-auth", "conversations",
     "embed-chat", "user-feedback", "publish-to-teams", "connect-copilot-studio",
+    "inline-visuals",
     "foundry-iq", "work-iq", "fabric-iq", "sharepoint", "nl2sql",
     "ingestion", "multimodality", "ingestion-jobs", "application-settings",
     "operations", "application-monitoring", "agentops", "local-development",
     "customize-components", "application-api", "application-testing",
+    "inline-visuals-contract",
     "build-your-own-app",
 )
 DIAGRAM_GUIDES = (
     "workflows", "hosted-agents", "agent-strategies", "agent-tools",
     "agent-app-mcp", "application-auth", "conversations", "user-feedback",
     "foundry-iq", "work-iq", "fabric-iq", "sharepoint", "nl2sql", "ingestion",
+    "inline-visuals",
 )
 SVG = "{http://www.w3.org/2000/svg}"
 PROCEDURE = re.compile(
@@ -28,8 +32,9 @@ PROCEDURE = re.compile(
 )
 
 
-def check_application_guides(page, base, screenshots=None):
+def check_application_guides(page, base, screenshots=None, only_guides=None):
     """Every application page is instructional and every requested diagram opens."""
+    check_inline_visuals_source()
     page.goto(base + "agent-landing-zone/application/", wait_until="domcontentloaded")
     branch = (
         page.locator(".md-nav--primary label.md-nav__link")
@@ -44,8 +49,11 @@ def check_application_guides(page, base, screenshots=None):
     assert actual == set(APPLICATION_GUIDES), (
         "Application navigation changed; review every guide", actual
     )
+    selected_guides = APPLICATION_GUIDES if only_guides is None else tuple(only_guides)
+    assert set(selected_guides) <= set(APPLICATION_GUIDES), "Unknown focused guide"
+    selected_diagrams = tuple(guide for guide in DIAGRAM_GUIDES if guide in selected_guides)
     target_ids = {}
-    for guide in APPLICATION_GUIDES:
+    for guide in selected_guides:
         for width in (1440, 390, 320):
             page.set_viewport_size({"width": width, "height": 1000})
             response = page.goto(
@@ -98,7 +106,8 @@ def check_application_guides(page, base, screenshots=None):
                         guide, href, "Broken configuration or procedure anchor"
                     )
             if guide in DIAGRAM_GUIDES:
-                asset = "media/runbooks/" + guide + ".svg"
+                extension = ".png" if guide == "inline-visuals" else ".svg"
+                asset = "media/runbooks/" + guide + extension
                 image = content.locator(f"img[src*='{asset}']")
                 assert image.count() == 1, (guide, "Missing or duplicate contextual diagram")
                 assert len((image.get_attribute("alt") or "").split()) >= 5, (
@@ -113,7 +122,7 @@ def check_application_guides(page, base, screenshots=None):
                 content.screenshot(path=str(screenshots / f"{guide}-article.png"))
 
     page.set_viewport_size({"width": 1200, "height": 1100})
-    for guide in DIAGRAM_GUIDES:
+    for guide in selected_diagrams:
         url = base + "media/runbooks/" + guide + ".svg"
         response = page.request.get(url)
         assert response.status == 200, guide
@@ -169,6 +178,47 @@ def check_application_guides(page, base, screenshots=None):
                 path=str(screenshots / f"{guide}-diagram.png")
             )
     print(
-        f"PASS: {len(APPLICATION_GUIDES)} instructional Agent Application guides, "
-        f"{len(DIAGRAM_GUIDES)} accessible self-contained diagrams and three viewports"
+        f"PASS: {len(selected_guides)} instructional Agent Application guides, "
+        f"{len(selected_diagrams)} accessible self-contained diagrams and three viewports"
     )
+
+
+def check_inline_visuals_source():
+    """Candidate runbook mirrors the channel guides without inventing capabilities."""
+    root = Path(__file__).resolve().parents[2]
+    text = (root / "docs/agent-landing-zone/inline-visuals.md").read_text(encoding="utf-8")
+    headings = (
+        "## Objective", "## Expected outcome", "## When to use", "## Prerequisites",
+        "## Procedure", "## Validation", "### Troubleshooting", "## Rollback",
+    )
+    positions = [text.index(heading) for heading in headings]
+    assert positions == sorted(positions), "Channel runbook section order changed"
+    for required in (
+        "AGENT_PRESENTATION_SETTINGS", "off by default", "grouped-bar", "business ID",
+        "native tooltip", "no zoom, pan or chart drill-down", "synthetic data",
+        "actual Chainlit 2.12.0", "local mock agent", "unreleased",
+    ):
+        assert required in text, required
+    assert text.index("runbook-diagram") < text.index("## When to use")
+    assert "../media/runbooks/inline-visuals-chat" not in text, (
+        "Chat captures must not receive the site's automatic runbook diagram controls"
+    )
+    reference = (root / "docs/agent-landing-zone/inline-visuals-contract.md").read_text(
+        encoding="utf-8"
+    )
+    assert len(re.findall(r"^[123]\. ", reference, re.MULTILINE)) >= 3, (
+        "Text-only customer integration needs concrete ordered instructions"
+    )
+    svg = ET.parse(root / "docs/media/runbooks/inline-visuals.svg").getroot()
+    assert svg.find(SVG + "title") is not None and svg.find(SVG + "desc") is not None
+    labels = " ".join(svg.itertext())
+    for required in ("Typed tool results", "App Configuration", "Tool-free selection",
+                     "Hydrate", "Responses", "Owner admission", "Normal text"):
+        assert required in labels, required
+    assert svg.find(".//" + SVG + "script") is None
+    assert svg.find(".//" + SVG + "foreignObject") is None
+    for element in svg.iter():
+        assert not any(name.rsplit("}", 1)[-1].startswith("on") for name in element.attrib)
+        for name, value in element.attrib.items():
+            if name.rsplit("}", 1)[-1] == "href":
+                assert value.startswith("#"), "Diagram must have only local symbol references"
