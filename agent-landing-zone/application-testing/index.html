@@ -13,7 +13,7 @@
       
       
       
-        <link rel="prev" href="../application-api/">
+        <link rel="prev" href="../inline-visuals-contract/">
       
       
         <link rel="next" href="../build-your-own-app/">
@@ -1604,6 +1604,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../inline-visuals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inline visuals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../application-auth/" class="md-nav__link">
         
   
@@ -2394,6 +2422,34 @@
     
   
     API reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../inline-visuals-contract/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inline visual contracts
   
 
     
@@ -5782,12 +5838,35 @@ fresh matching reports. The protected target owns evaluator and tool pins.
 A target without an evaluator deliberately blocks a normal green bootstrap
 claim.</p>
 <h2 id="ui">UI</h2>
+<p>The inline-visual integration test uses the real orchestrator source with
+mocked model and Azure calls. Check out the qualified source next to the UI
+checkout and enable the test before running the suite. In PowerShell:</p>
+<div class="highlight"><pre><span></span><code><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">://</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">Azure</span><span class="p">/</span><span class="n">agent-app-orchestrator</span><span class="p">.</span><span class="n">git</span> <span class="p">..\</span><span class="n">agent-app-orchestrator-tests</span>
+<span class="n">git</span> <span class="n">-C</span> <span class="p">..\</span><span class="n">agent-app-orchestrator-tests</span> <span class="n">checkout</span> <span class="n">a2e60129fcb4ccb3c1a41989d2aeeef601c18331</span>
+<span class="nv">$env:INLINE_ORCH_TESTS</span> <span class="p">=</span> <span class="s2">"1"</span>
+<span class="nv">$env:INLINE_ORCH_TEST_ROOT</span> <span class="p">=</span> <span class="p">(</span><span class="nb">Resolve-Path</span> <span class="p">..\</span><span class="n">agent-app-orchestrator-tests</span><span class="p">).</span><span class="n">Path</span>
+<span class="n">python</span> <span class="n">-m</span> <span class="n">venv</span> <span class="p">.</span><span class="n">artifacts</span><span class="p">\</span><span class="n">orchestrator-test-env</span>
+<span class="nv">$env:INLINE_ORCH_TEST_PYTHON</span> <span class="p">=</span> <span class="p">(</span><span class="nb">Resolve-Path</span> <span class="p">.</span><span class="n">artifacts</span><span class="p">\</span><span class="n">orchestrator-test-env</span><span class="p">\</span><span class="n">Scripts</span><span class="p">\</span><span class="n">python</span><span class="p">.</span><span class="n">exe</span><span class="p">).</span><span class="n">Path</span>
+<span class="p">&amp;</span> <span class="nv">$env:INLINE_ORCH_TEST_PYTHON</span> <span class="n">-m</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">-r</span> <span class="p">..\</span><span class="n">agent-app-orchestrator-tests</span><span class="p">\</span><span class="n">requirements-hosted</span><span class="p">.</span><span class="n">txt</span> <span class="n">-r</span> <span class="n">tests</span><span class="p">\</span><span class="n">requirements-orchestrator</span><span class="p">.</span><span class="n">txt</span>
+<span class="p">&amp;</span> <span class="nv">$env:INLINE_ORCH_TEST_PYTHON</span> <span class="n">-m</span> <span class="n">pip</span> <span class="n">check</span>
+</code></pre></div>
+<p>In another shell, export the same three environment variables using absolute
+paths. CI checks out that exact commit automatically. The UI and orchestrator
+run in separate test environments and exchange serialized native responses.
+These sources
+are test inputs, not part of the installed UI package or production image.</p>
 <p>Install the runtime requirements, contributor tools, and editable package:</p>
-<div class="highlight"><pre><span></span><code>python -m pip install -r requirements.txt
+<div class="highlight"><pre><span></span><code>python -m pip install -r requirements.txt -r requirements-test.txt
 python -m pip install -r requirements-quality.txt
+python -m pip check
 python -m pip install --no-deps -e .
+python -m playwright install chromium
 python -m unittest discover -s tests -v
 </code></pre></div>
+<p>On Linux, use <code>python -m playwright install --with-deps chromium</code> to install
+the browser's system dependencies too. Playwright and Chromium are test tools,
+not production dependencies. Browser tests use synthetic data and run offline
+after these tools are installed.</p>
 <p>The UI uses standard <code>unittest</code>, not a replacement pytest discovery command.
 Focused package acceptance:</p>
 <div class="highlight"><pre><span></span><code>python -m pip wheel --no-deps --wheel-dir .artifacts/wheel .
@@ -5796,8 +5875,8 @@ python -m unittest discover -s tests -p test_installed_package.py -v
 python -m unittest discover -s tests -p test_quality_policy.py -v
 </code></pre></div>
 <p>Installed-package acceptance creates a clean non-editable environment, installs
-runtime requirements, runs <code>pip check</code>, and verifies canonical and compatibility
-import origins outside the checkout. It copies tests, not runtime sources.
+runtime and test requirements, runs <code>pip check</code>, and verifies canonical and
+compatibility import origins outside the checkout. It copies tests, not runtime sources.
 This can install dependencies and needs package-feed access. It does not prove
 a Linux container or Azure integration.</p>
 <p>For protected quality checks, create one run ID and use the evidence runner:</p>
@@ -5824,8 +5903,10 @@ and tool pins without installing candidate application code there.
 <code>quality-gate</code> requires real unit-test, quality-matrix, and <code>container-tests</code>
 results plus fresh bound reports and the unittest receipt.</p>
 <p><code>container-tests</code>
-builds an ephemeral Linux image and runs <code>tests/container_smoke.py</code> with no
-network and read-only mounted tests. It checks installed imports, staged
+builds the production image, adds browser tools in an ephemeral test image,
+and runs <code>tests/container_smoke.py</code> with no
+network and read-only mounted UI tests and qualified orchestrator sources.
+It checks installed imports, staged
 resources, startup, and offline behavior. It publishes and deploys no image.</p>
 <h2 id="quality-policy-and-evidence">Quality policy and evidence</h2>
 <p>All three checkers support <code>all</code>, <code>lint</code>, <code>typing</code>, <code>architecture</code>, <code>exceptions</code>,
