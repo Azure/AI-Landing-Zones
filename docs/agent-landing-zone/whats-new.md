@@ -3,16 +3,11 @@
 Major updates by month. See the [release notes](https://github.com/Azure/agent-landing-zone/releases)
 for all changes and fixes.
 
-## Upcoming
-
-| Release | Highlights |
-| --- | --- |
-| Upcoming | [Inline visuals](inline-visuals.md) for Chainlit: per-agent opt-in, off by default, with cards, typed tables, bar/grouped-bar/line charts and source-backed follow-ups. No new Azure resources. |
-
 ## November 2026
 
 | Release | Highlights |
 | --- | --- |
+| [v7.3.0](https://github.com/Azure/agent-landing-zone/releases/tag/v7.3.0) | [Inline visuals](inline-visuals.md) in chat: optional per-agent cards, tables and charts with source-backed follow-ups and restored conversation history. Off by default, with no new Azure resources. |
 | [v7.2.0](https://github.com/Azure/agent-landing-zone/releases/tag/v7.2.0) | Optional Entra-only [PostgreSQL](postgresql.md) for fresh custom-application deployments in Bicep and Terraform. Basic uses restricted public access through dedicated NAT; isolation uses Private Link. SQL grants are manual, with independent data-protection locks and guarded recovery/removal. |
 | [v7.1.0](https://github.com/Azure/agent-landing-zone/releases/tag/v7.1.0) | Optional [service-identity authentication](application-auth.md) with OBO still the default. [Foundry IQ](foundry-iq.md) uses the managed knowledge Toolbox. Sources enforce their own authorization, with explicit missing-OBO and tool errors rather than source allowlists or identity fallback. |
 | [v7.0.0](https://github.com/Azure/agent-landing-zone/releases/tag/v7.0.0) | [Agent App MCP Server](agent-app-mcp.md) with explicit, empty-by-default toolsets. [NL2SQL](nl2sql.md) runs through two authenticated MCP tools instead of direct orchestrator SQL. Applications declare their own tools and dependencies above the [reusable foundation](build-your-own-app.md). |
