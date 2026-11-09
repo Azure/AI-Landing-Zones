@@ -70,6 +70,10 @@ Apply the installation's retention policy separately.
 
 ## Configure an agent capability
 
+For [Inline visuals](inline-visuals.md), use the
+per-agent `AGENT_PRESENTATION_SETTINGS` example through the same declaration
+path below. It is off by default and needs no new presentation resources.
+
 Agent capabilities such as Foundry IQ have application keys and separate
 resource prerequisites. Complete the selected capability's guide before
 enabling its key. For example, [Foundry IQ](foundry-iq.md) explains the

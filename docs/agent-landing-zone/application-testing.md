@@ -163,14 +163,42 @@ claim.
 
 ## UI
 
+The inline-visual integration test uses the real orchestrator source with
+mocked model and Azure calls. Check out the qualified source next to the UI
+checkout and enable the test before running the suite. In PowerShell:
+
+```powershell
+git clone https://github.com/Azure/agent-app-orchestrator.git ..\agent-app-orchestrator-tests
+git -C ..\agent-app-orchestrator-tests checkout a2e60129fcb4ccb3c1a41989d2aeeef601c18331
+$env:INLINE_ORCH_TESTS = "1"
+$env:INLINE_ORCH_TEST_ROOT = (Resolve-Path ..\agent-app-orchestrator-tests).Path
+python -m venv .artifacts\orchestrator-test-env
+$env:INLINE_ORCH_TEST_PYTHON = (Resolve-Path .artifacts\orchestrator-test-env\Scripts\python.exe).Path
+& $env:INLINE_ORCH_TEST_PYTHON -m pip install -r ..\agent-app-orchestrator-tests\requirements-hosted.txt -r tests\requirements-orchestrator.txt
+& $env:INLINE_ORCH_TEST_PYTHON -m pip check
+```
+
+In another shell, export the same three environment variables using absolute
+paths. CI checks out that exact commit automatically. The UI and orchestrator
+run in separate test environments and exchange serialized native responses.
+These sources
+are test inputs, not part of the installed UI package or production image.
+
 Install the runtime requirements, contributor tools, and editable package:
 
 ```text
-python -m pip install -r requirements.txt
+python -m pip install -r requirements.txt -r requirements-test.txt
 python -m pip install -r requirements-quality.txt
+python -m pip check
 python -m pip install --no-deps -e .
+python -m playwright install chromium
 python -m unittest discover -s tests -v
 ```
+
+On Linux, use `python -m playwright install --with-deps chromium` to install
+the browser's system dependencies too. Playwright and Chromium are test tools,
+not production dependencies. Browser tests use synthetic data and run offline
+after these tools are installed.
 
 The UI uses standard `unittest`, not a replacement pytest discovery command.
 Focused package acceptance:
@@ -183,8 +211,8 @@ python -m unittest discover -s tests -p test_quality_policy.py -v
 ```
 
 Installed-package acceptance creates a clean non-editable environment, installs
-runtime requirements, runs `pip check`, and verifies canonical and compatibility
-import origins outside the checkout. It copies tests, not runtime sources.
+runtime and test requirements, runs `pip check`, and verifies canonical and
+compatibility import origins outside the checkout. It copies tests, not runtime sources.
 This can install dependencies and needs package-feed access. It does not prove
 a Linux container or Azure integration.
 
@@ -221,8 +249,10 @@ and tool pins without installing candidate application code there.
 results plus fresh bound reports and the unittest receipt.
 
 `container-tests`
-builds an ephemeral Linux image and runs `tests/container_smoke.py` with no
-network and read-only mounted tests. It checks installed imports, staged
+builds the production image, adds browser tools in an ephemeral test image,
+and runs `tests/container_smoke.py` with no
+network and read-only mounted UI tests and qualified orchestrator sources.
+It checks installed imports, staged
 resources, startup, and offline behavior. It publishes and deploys no image.
 
 ## Quality policy and evidence

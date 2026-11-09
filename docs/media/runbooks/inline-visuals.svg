@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="850" viewBox="0 0 1600 850" role="img" aria-labelledby="title description" font-family="Segoe UI, Arial, sans-serif" fill="#1e3646">
+  <title id="title">Inline visuals from authorized tool results to Chainlit</title>
+  <desc id="description">When enabled for an agent, typed tool results and a frozen functional settings snapshot feed bounded tool-free selection, then deterministic validation and hydration. Native Responses assistant messages or typed workflow results remain in existing state. The UI admits the owner and renders visuals with readable text. Disabled agents skip the extra stage and return normal text. Authentication remains current; no separate store, CDN or new Azure resources are added.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="10" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L11 5L0 10Z" fill="#32698e"/></marker>
+    <symbol id="data" viewBox="0 0 64 64"><rect x="8" y="8" width="48" height="48" rx="3" fill="#e1edf4" stroke="#32698e" stroke-width="3"/><path d="M8 24H56M8 40H56M26 8V56" stroke="#32698e" stroke-width="3"/></symbol>
+    <symbol id="settings" viewBox="0 0 64 64"><path d="M8 16H56M8 32H56M8 48H56" stroke="#32698e" stroke-width="3"/><circle cx="22" cy="16" r="6" fill="#e1edf4" stroke="#32698e" stroke-width="3"/><circle cx="42" cy="32" r="6" fill="#e1edf4" stroke="#32698e" stroke-width="3"/><circle cx="28" cy="48" r="6" fill="#e1edf4" stroke="#32698e" stroke-width="3"/></symbol>
+    <symbol id="check" viewBox="0 0 64 64"><rect x="8" y="8" width="48" height="48" rx="3" fill="#e1edf4" stroke="#32698e" stroke-width="3"/><path d="M18 32L28 42L47 21" fill="none" stroke="#32698e" stroke-width="4"/></symbol>
+    <symbol id="chat" viewBox="0 0 64 64"><path d="M8 8H56V45H28L16 56V45H8Z" fill="#e1edf4" stroke="#32698e" stroke-width="3"/><path d="M18 20H46M18 30H40" stroke="#32698e" stroke-width="3"/></symbol>
+  </defs>
+  <rect width="1600" height="850" fill="white"/>
+  <text x="40" y="61" font-size="30" font-weight="700">Inline visuals from authorized tool results to Chainlit</text>
+  <text x="40" y="101" font-size="22">Inline delivery · source values stay exact · existing authentication and native state</text>
+  <g stroke="#9bb2c4" stroke-width="1.5">
+    <rect x="40" y="170" width="340" height="475" fill="#f3f8fc"/><rect x="40" y="170" width="340" height="46" fill="#e1edf4"/>
+    <rect x="60" y="240" width="300" height="155" fill="white"/><rect x="60" y="425" width="300" height="195" fill="white"/>
+    <rect x="450" y="170" width="650" height="260" fill="#f3f8fc"/><rect x="450" y="170" width="650" height="46" fill="#e1edf4"/>
+    <rect x="470" y="240" width="270" height="165" fill="white"/><rect x="790" y="240" width="290" height="165" fill="white"/>
+    <rect x="450" y="490" width="650" height="155" fill="#f3f8fc"/><rect x="450" y="490" width="650" height="46" fill="#e1edf4"/>
+    <rect x="1160" y="170" width="400" height="475" fill="#f3f8fc"/><rect x="1160" y="170" width="400" height="46" fill="#e1edf4"/>
+    <rect x="1180" y="240" width="360" height="155" fill="white"/><rect x="1180" y="425" width="360" height="195" fill="white"/>
+  </g>
+  <g font-size="22" font-weight="700">
+    <text x="58" y="201">Authorized inputs</text><text x="468" y="201">Orchestrator · enabled agents only</text><text x="1178" y="201">Chainlit UI</text>
+    <text x="468" y="521">Existing native state</text>
+  </g>
+  <use href="#data" x="80" y="255" width="48" height="48"/><use href="#settings" x="80" y="443" width="48" height="48"/>
+  <use href="#check" x="811" y="255" width="48" height="48"/><use href="#chat" x="1200" y="255" width="48" height="48"/>
+  <g font-size="21" font-weight="700">
+    <text x="80" y="335">Typed tool results</text><text x="80" y="522">App Configuration</text>
+    <text x="490" y="282">Tool-free selection</text><text x="811" y="335">Validate + Hydrate</text>
+    <text x="1200" y="335">Owner admission</text><text x="1200" y="465">Cards · typed tables</text><text x="1200" y="501">Local SVG charts</text>
+  </g>
+  <g font-size="20">
+    <text x="80" y="368">Source values and units</text><text x="80" y="555">Per-agent turn snapshot</text><text x="80" y="588">Functional settings frozen</text>
+    <text x="490" y="323">Bounded layout / bindings</text><text x="490" y="359">No invented measurements</text><text x="490" y="389">No tools in this stage</text>
+    <text x="811" y="368">Insert exact source values</text><text x="811" y="394">Reject unsafe output</text>
+    <text x="470" y="571">Responses assistant message / typed workflow result</text><text x="470" y="610">Same native history · no second transcript store</text>
+    <text x="1200" y="368">Current authorization</text><text x="1200" y="545">Readable text fallback</text><text x="1200" y="585">Ordinary user follow-ups</text>
+  </g>
+  <g fill="none" stroke="#32698e" stroke-width="2" marker-end="url(#arrow)">
+    <path d="M360 315H470"/><path d="M360 465H410V375H470"/><path d="M740 320H790"/>
+    <path d="M775 430V490"/><path d="M1100 570H1130V315H1180"/><path d="M1360 395V425"/>
+    <path d="M360 590H415V610H450" stroke-dasharray="7 5"/>
+  </g>
+  <text x="40" y="705" font-size="22" font-weight="700">Off by default: Normal text skips the extra selection stage</text>
+  <text x="40" y="750" font-size="20">Solid arrows: enabled delivery. Dashed arrow: disabled path into existing native state.</text>
+  <text x="40" y="795" font-size="20">No new Azure resources · no CDN · no duplicate storage</text>
+</svg>

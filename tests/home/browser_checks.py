@@ -597,7 +597,9 @@ def run(base, screenshots):
         expect(page.locator(".hero h1")).to_have_text("Build AI.On solid ground.")
         expect(page.locator(".home-button--primary")).to_have_text("Deploy AI Landing Zone")
         architecture = page.locator(".architecture-workbench")
-        expect(architecture.get_by_role("tab")).to_have_text(["Platform Hub", "AI Gateway", "Standalone"])
+        expect(architecture.get_by_role("tab")).to_have_text(
+            ["Agent Landing Zone", "AI Gateway Landing Zone", "Standalone"]
+        )
         expect(page.locator("#tab-hub")).to_have_attribute("aria-selected", "true")
         expect(page.locator("#architecture-hub")).to_be_visible()
         expect(page.locator("#architecture-standalone > p")).to_have_text(

@@ -3,6 +3,12 @@
 Major updates by month. See the [release notes](https://github.com/Azure/agent-landing-zone/releases)
 for all changes and fixes.
 
+## Upcoming
+
+| Release | Highlights |
+| --- | --- |
+| Upcoming | [Inline visuals](inline-visuals.md) for Chainlit: per-agent opt-in, off by default, with cards, typed tables, bar/grouped-bar/line charts and source-backed follow-ups. No new Azure resources. |
+
 ## November 2026
 
 | Release | Highlights |
