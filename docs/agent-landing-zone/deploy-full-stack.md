@@ -789,6 +789,13 @@ Unknown explicit build modes fail.
 The hosted orchestrator build is separate.
 It always uses ACR Tasks, even when `BUILD_MODE=local`.
 
+The platform hooks first verify native `DEPLOYMENT_METADATA` against the
+selected environment, original inputs and live resources. Preserve deployment
+output and selected ARM/identity read permissions, as well as configuration
+rights. This discovery does not use App Configuration.
+See [metadata recovery](deployment-operations.md#verify-deployment-metadata).
+
+The bundled runtime and its component scripts still require App Configuration.
 Before invoking component scripts, confirm `APP_CONFIG_ENDPOINT`.
 A nonempty shell value overrides the azd environment value.
 The scripts read `AZURE_APP_RESOURCE_GROUP` from App Configuration under `agent-lz`.

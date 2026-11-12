@@ -347,7 +347,7 @@ Test connectivity after provisioning and application behavior after deploying
 your selected application.
 
 Provisioning completes validation and binding, foundation deployment, then
-service configuration, role reconciliation and App Configuration publication
+service configuration, role reconciliation and selected runtime publication
 unless explicitly deferred. It does not build or deploy application images.
 
 Selected Container Apps can run placeholder images at this point.
@@ -361,7 +361,19 @@ continue to [Validation](#validation). Use lifecycle tasks only when needed.
 
 ### Platform outputs
 
-After configuration completes, App Configuration publishes the JSON
+Deployment discovery uses the native `DEPLOYMENT_METADATA` output. Hooks read
+the selected successful Bicep deployment and verify its original inputs,
+application/group bindings and live resource destinations before configuration.
+The executor needs deployment-output and selected ARM/identity read permissions,
+plus each selected operation's existing configuration permissions.
+See [metadata recovery](deployment-operations.md#verify-deployment-metadata).
+
+Custom applications can omit the store using
+[runtime configuration mode](configuration.md#runtime-configuration-mode).
+Required selected service setup still runs. This does not change the bundled
+application or sample runtime prerequisites.
+
+In `appConfig` mode, after configuration completes, App Configuration publishes the JSON
 `AGENTLZ_PLATFORM_OUTPUTS` and matching flat keys under label `agent-lz`.
 Search and Cosmos sections are omitted when their endpoints are absent;
 other required fields must validate. These derived keys are not written back

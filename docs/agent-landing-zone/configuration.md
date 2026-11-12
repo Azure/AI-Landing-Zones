@@ -20,7 +20,7 @@ Read individual nonsecret keys rather than dumping whole environments.
 | Mapped environment input | The selected `azd` environment. | Use the documented variable name. Tables below give its default or condition. |
 | Native root parameter | `parameters.<name>.value` in root `main.parameters.json`. | Use typed JSON. A native parameter does not automatically have an environment mapping. |
 | Generated provider input | Bicep's `infra/bicep/main.parameters.json` or Terraform's `infra/terraform/main.tfvars.json`. | Read for diagnosis, never edit resolved values as the source of a change. |
-| Generated metadata or script state | Provisioning outputs, App Configuration or local deployment records. | Let the owning workflow produce it. See [generated values](#generated-values-and-script-state). |
+| Generated metadata or script state | Native provider outputs or workflow-owned local records. | Let the owning workflow produce it. App Configuration is not deployment discovery authority. See [generated values](#generated-values-and-script-state). |
 | Application runtime setting | Normally App Configuration under `agent-lz`. | Follow its [application guide](application-settings.md), including ownership and reload requirements. |
 
 Both providers resolve the root inputs before provision. Bicep's tracked seed
@@ -33,6 +33,12 @@ Keep booleans, numbers, arrays and objects as their native JSON types.
 For example, the root parameter `allowedIpRanges` takes an array.
 There is no implied `ALLOWED_IP_RANGES` environment binding.
 Retain the same reviewed root document on every authorized runner.
+
+Keep four authorities separate: declared inputs select the deployment, provider
+`DEPLOYMENT_METADATA` identifies its evaluated resources, runtime settings
+configure the application, and Key Vault holds secret values. Runtime settings
+and cached azd output aliases cannot redirect deployment resource or identity
+bindings.
 
 ### Initialization and setting order
 
@@ -285,7 +291,7 @@ When unset, they use the template defaults shown below.
 | `DEPLOYMENT_MODE` | `standalone` | Declares deployment intent for tags and preflight. `ailz-integrated` does not automatically attach a hub or override component flags. Supply the hub, routing, resource reuse and DNS inputs explicitly. |
 | `POLICY_MANAGED_PRIVATE_DNS` | `false` | Delegates private DNS zone groups/records to Azure Policy. Use instead of BYO private DNS zone IDs; agree policy coverage, VNet links and readiness with the DNS owner. |
 | `RESOURCE_NAMING_MODE` | `caf` | Uses Cloud Adoption Framework prefixes and naming tokens. See [Resource naming](resource-naming.md). |
-| `APP_RUNTIME_CONFIGURATION_MODE` | `appConfig` | The Agent Application reads runtime settings from App Configuration. |
+| `APP_RUNTIME_CONFIGURATION_MODE` | `appConfig` | Selects runtime delivery, not deployment discovery. See [runtime configuration mode](#runtime-configuration-mode). |
 | `DEPLOY_COSMOS_DB` | `false` without a required consumer; selected automatically when required | Generic application Cosmos can also be explicitly selected without MCP or the orchestrator. Foundry backing storage is separate. |
 | `ENABLE_COSMOS_ANALYTICAL_STORAGE` | `false` | Enables the Agent Application Cosmos DB analytical store. |
 | `AZURE_SEARCH_LOCATION` | Empty | Region for both the Agent Application Search service and the separate Foundry Agent Service Search service. Leave empty to use `AZURE_LOCATION`. |
@@ -300,6 +306,28 @@ Foundry backing-service reuse uses the
 [native parameters below](#foundry-backing-resources).
 A supported resource ID selects reuse; naming and deployment flags control
 resource creation.
+
+#### Runtime configuration mode
+
+| Mode | Store selection | Runtime delivery |
+| --- | --- | --- |
+| `appConfig` | Requires a provisioned, usable store | Existing centralized settings, feature flags and Key Vault references under `agent-lz` |
+| `containerEnv` | `deployAppConfig` may be false or true | Curated Container App environment settings and secret references, without store discovery or publication |
+| `none` | Independent of store presence | No new runtime configuration injection |
+
+Set `APP_RUNTIME_CONFIGURATION_MODE` in the selected azd environment. To omit
+the store, set `parameters.deployAppConfig.value` to the JSON boolean `false`
+in root `main.parameters.json`. There is no implied environment mapping for
+that native parameter. A provisioned store does not select `appConfig` mode.
+
+Both providers still run selected Foundry, Search, governance, Container Apps
+and panel configuration using verified metadata. Selected features retain their
+real prerequisites, including Key Vault operations and private connectivity.
+The bundled Agent Application, Agent App MCP Server and current custom
+application samples require App Configuration. A custom store-free application
+must own compatible runtime configuration and declare its dependencies.
+This setting does not delete an existing store or migrate an application's
+runtime mode in place.
 
 #### Application Cosmos DB
 
@@ -1304,6 +1332,7 @@ These are not freely editable provisioning controls.
 
 | Value or record | Owner and use |
 | --- | --- |
+| `DEPLOYMENT_METADATA` | Versioned native Bicep/Terraform output for deployment discovery. Contains context, resource states, model/app/identity mappings and named data children, not runtime settings or secret values. |
 | Generated Hosted preparation/deployment state | Script-managed handoff, not a public host boolean. Do not set internal flags to bypass missing foundation or image prerequisites. |
 | `RETRIEVAL_AUTH_MODE` | Platform-published `native_search` authorization contract, not an operator permission bypass. See [delegated retrieval](foundry-iq.md#delegated-native-retrieval). |
 | `KEY_VAULT_URI` | Infrastructure output for the deployed vault, empty when absent. Use the actual URI for bootstrap rather than constructing a cloud DNS suffix. |
@@ -1348,10 +1377,22 @@ tasks and effective-value checks. [Conversations & files](conversations.md)
 covers native-state and product-metadata ownership. The declarations below describe how deployment
 publishes and owns those values.
 
-Post-provision publishes runtime settings to Azure App Configuration with
+In `appConfig` mode, post-provision publishes runtime settings to Azure App Configuration with
 the label `agent-lz`. That is the label for platform-owned settings.
 Reprovisioning is not application publication and must preserve the images
 and revisions managed by the application deployment workflow.
+
+Deployment tooling reads `DEPLOYMENT_METADATA` from the selected successful
+Bicep deployment or the original initialized Terraform backend. It verifies
+the environment, application, declared inputs, destinations and live resource
+bindings before dependent changes. Preserve read access to deployment outputs,
+selected ARM resources and identities, in addition to the configuration
+permissions required by each selected operation. Terraform also needs its
+existing Entra-authenticated backend access.
+
+`AGENTLZ_PLATFORM_OUTPUTS` remains a separate runtime-v1 document published
+under `agent-lz` only in `appConfig` mode. It is not the deployment metadata
+contract. Hosted preparation/publication handoffs also remain separate.
 
 ### Configuration ownership and declarations
 

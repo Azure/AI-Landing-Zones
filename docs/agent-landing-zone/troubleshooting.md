@@ -581,6 +581,26 @@ Resolve missing or conflicting values in their provisioning source.
 preserves container-scoped grants. Compare the resolved names with the
 provisioned resources and keep permissions scoped to the required containers.
 
+#### Deployment metadata verification failed
+
+**Symptom:** A `schema`, `source`, `context`, `cache`, `resource` or
+`prerequisite` diagnostic stops post-provision, pre-deploy or direct setup.
+
+**Diagnose:** Run the
+[read-only metadata check](deployment-operations.md#verify-deployment-metadata).
+Deployment discovery uses native provider output, not App Configuration keys.
+A missing store is valid in a compatible `containerEnv` selection, but not for
+a selected store-dependent runtime or feature.
+
+**Correct:** Restore the intended environment and immutable bindings. Refresh
+stale cached outputs. For missing/old metadata, reprovision with compatible
+hooks and the same provider, inputs and backend. Repair exact resource/identity
+permissions, backend access and private connectivity when those checks fail.
+Do not hand-copy metadata, change backend bindings or grant broader roles to
+bypass verification.
+
+**Verify:** The metadata check succeeds before retrying the selected operation.
+
 #### Missing endpoint output
 
 **Symptom:**

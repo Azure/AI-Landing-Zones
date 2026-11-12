@@ -389,6 +389,17 @@ alone cannot. Follow the recovery link above.
 
 ### Reading platform outputs at runtime
 
+Platform deployment discovers resources through the provider's verified
+`DEPLOYMENT_METADATA`, separately from application runtime delivery. A custom
+application can select `containerEnv` or `none` and omit App Configuration when
+its runtime and selected features support that choice. Configure the native
+`deployAppConfig` input explicitly and retain required Key Vault, identity and
+network access. See [runtime configuration mode](configuration.md#runtime-configuration-mode).
+
+Both current custom application examples remain store-dependent. They read the
+unchanged runtime-v1 document, not `DEPLOYMENT_METADATA`. Do not copy deployment
+metadata into runtime settings or use it to deliver secret values.
+
 Read `AGENTLZ_PLATFORM_OUTPUTS` from `APP_CONFIG_ENDPOINT` with label `agent-lz`,
 as both custom application examples demonstrate. The publisher exposes selected Container App
 client IDs; hosted instance identities are unavailable during foundation

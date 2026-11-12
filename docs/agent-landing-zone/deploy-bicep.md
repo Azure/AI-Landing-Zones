@@ -31,5 +31,10 @@ the [foundation parameter reference](../bicep/parameterization.md).
 Run the supported lifecycle from the platform root: calling `infra/bicep/main.bicep`
 directly omits required validation, configuration and application work.
 
+Shared hooks discover resources through verified native `DEPLOYMENT_METADATA`,
+not App Configuration. Runtime delivery is selected separately.
+See [runtime configuration modes](configuration.md#runtime-configuration-mode)
+and [metadata recovery](deployment-operations.md#verify-deployment-metadata).
+
 [Optional PostgreSQL](postgresql.md) for fresh custom consumers uses this same
 product-root lifecycle; direct foundation calls omit protection/bootstrap guards.
