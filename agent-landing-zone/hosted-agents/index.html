@@ -1537,6 +1537,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#platform-injected-and-reserved-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Platform-injected and reserved variables
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1561,6 +1572,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Runtime identities and access">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ai-gateway-allowlisting-and-external-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Gateway allowlisting and external models
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1622,6 +1650,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Configuration and telemetry">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scheduled-trace-evaluations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scheduled trace evaluations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -5725,6 +5770,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#platform-injected-and-reserved-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Platform-injected and reserved variables
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -5749,6 +5805,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Runtime identities and access">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ai-gateway-allowlisting-and-external-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Gateway allowlisting and external models
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -5810,6 +5883,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Configuration and telemetry">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scheduled-trace-evaluations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scheduled trace evaluations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -6029,6 +6119,16 @@ managed-identity scheduler binding:
 <code>Endpoint=&lt;actual output&gt;;TaskHub=agent-lz;Authentication=ManagedIdentity</code>.
 Keep the native worker and UI client aligned; do not change either component's
 binding independently.</p>
+<h3 id="platform-injected-and-reserved-variables">Platform-injected and reserved variables</h3>
+<p>Microsoft Foundry Hosted Agents automatically inject and reserve <code>FOUNDRY_*</code>
+(<code>FOUNDRY_PROJECT_ENDPOINT</code>, <code>FOUNDRY_PROJECT_ARM_ID</code>, <code>FOUNDRY_AGENT_NAME</code>,
+<code>FOUNDRY_AGENT_VERSION</code>, <code>FOUNDRY_AGENT_SESSION_ID</code>), <code>AGENT_*</code> and
+<code>APPLICATIONINSIGHTS_CONNECTION_STRING</code>.</p>
+<p><code>config.appdefinition</code> rejects overrides of those reserved variables in
+<code>azure.yaml</code> or <code>agent.yaml</code> during preflight validation before publish.
+Telemetry settings such as <code>APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL</code> and
+<code>OTEL_*</code> remain valid. See
+<a href="../build-your-own-app/#folder-layout-and-azureyaml">Bring your own app</a>.</p>
 <h2 id="validation-rules">Validation rules</h2>
 <p>Check a compatible <strong>published</strong> package set for the selected Python
 integrations, including explicit prereleases where needed. A source sample
@@ -6083,6 +6183,17 @@ scope. These service permissions are not end-user authorization.</p>
 deployment step before admitting traffic. Runtime startup does not create
 resources, grant roles or repair missing foundation configuration.
 See <a href="../deploy-full-stack/#recover-hosted-runtime-access">hosted access recovery</a>.</p>
+<h3 id="ai-gateway-allowlisting-and-external-models">AI Gateway allowlisting and external models</h3>
+<p>Each hosted agent publication creates a dedicated runtime managed identity on
+its first <code>azd deploy</code>, including two distinct runtime identities when
+<code>APPLICATION_MODE=both</code>. Allowlist each hosted agent's dedicated runtime
+identity at the AI Gateway rather than only the Foundry project identity.</p>
+<p>Deployments routing all model inference through an external AI Gateway set
+<code>DEPLOY_MODEL_DEPLOYMENTS=false</code> so local chat and embedding deployments and
+model quota preflight checks are skipped. Container Apps <code>profile_name</code>
+resolves dynamically against <code>WORKLOAD_PROFILES</code>. See
+<a href="../configuration/#model-deployments-and-external-ai-gateway">external AI Gateway mode</a>
+and <a href="../configuration/#container-apps-workload-profiles">workload profiles</a>.</p>
 <h2 id="calling-the-agent">Calling the agent</h2>
 <p><span id="configure-the-uis-delegated-authentication"></span></p>
 <h3 id="trusted-caller-context">Trusted caller context</h3>
@@ -6145,6 +6256,19 @@ refresh without rebuilding.</p>
 Keep sensitive content and credentials out of telemetry. Correlate owner-bound
 UI operations with native session/run and deployment identifiers under the
 approved logging policy. See <a href="../application-monitoring/">Monitoring &amp; audit</a>.</p>
+<h3 id="scheduled-trace-evaluations">Scheduled trace evaluations</h3>
+<p>Hosted agents use <strong>scheduled trace evaluations</strong> (<code>azure_ai_traces</code> over
+<code>invoke_agent</code> spans) rather than <code>responseCompleted</code> continuous evaluation
+rules, which are not supported for hosted agents. With
+<code>azure-ai-agentserver-responses</code>, persisted <code>GET /responses/{id}</code> lookups and
+GenAI OpenTelemetry <code>invoke_agent</code> spans emit automatically when
+<code>APPLICATIONINSIGHTS_CONNECTION_STRING</code> is injected.</p>
+<p>Check per-item agent version (<code>gen_ai.agent.version</code> or
+<code>FOUNDRY_AGENT_VERSION</code>) and non-empty assistant output across rolling trace
+lookback windows so older agent versions or empty startup probes do not skew
+evaluation scores. See
+<a href="../operations/#run-scheduled-trace-evaluations-on-hosted-agents">Administration</a>
+for opt-in evaluation RBAC.</p>
 
 
 

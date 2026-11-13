@@ -5842,6 +5842,11 @@ and exporter errors. A custom process override
 <code>ENABLE_INSTRUMENTATION=false</code> disables Agent Framework instrumentation.
 For Container Apps, start in Application Insights rather than expecting a
 Hosted-agent entry in Foundry.</p>
+<p>In isolated networks, <strong>Operate</strong> and <strong>Traces</strong> require workstation VPN or
+ExpressRoute DNS resolution to AMPLS endpoints alongside Azure Monitor reader
+roles. For hosted evaluations, use scheduled trace evaluations
+(<code>azure_ai_traces</code>). See
+<a href="../operations/#inspect-operate-and-traces-in-isolated-networks">Administration</a>.</p>
 <h3 id="traces-logs-and-content-are-separate">Traces, logs and content are separate</h3>
 <p>Basic traces do not require prompt or response-content capture.
 Keep that capture off unless its privacy and retention requirements have been

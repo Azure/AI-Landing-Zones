@@ -1495,6 +1495,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#model-deployments-and-external-ai-gateway" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model deployments and external AI Gateway
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#search-region-and-quota" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1782,6 +1793,17 @@
   
     <nav class="md-nav" aria-label="Native execution selection">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#container-apps-workload-profiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Container Apps workload profiles
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#hosted-foundation-and-publication-inputs" class="md-nav__link">
@@ -6337,6 +6359,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#model-deployments-and-external-ai-gateway" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model deployments and external AI Gateway
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#search-region-and-quota" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6624,6 +6657,17 @@
   
     <nav class="md-nav" aria-label="Native execution selection">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#container-apps-workload-profiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Container Apps workload profiles
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#hosted-foundation-and-publication-inputs" class="md-nav__link">
@@ -7005,12 +7049,12 @@ create a platform hub; existing BYO VNet, DNS and hub settings still apply.</p>
 <tr>
 <td><code>AZURE_APP_RESOURCE_GROUP</code></td>
 <td><code>&lt;AZURE_RESOURCE_GROUP&gt;-app</code></td>
-<td>Application destination: Container Apps, registry, App Configuration, Key Vault, application Cosmos DB and monitoring.</td>
+<td>Application destination (<code>applicationResourceGroupName</code>): Container Apps, registry, App Configuration, Key Vault, application Cosmos DB and monitoring.</td>
 </tr>
 <tr>
 <td><code>AZURE_NETWORK_RESOURCE_GROUP</code></td>
 <td><code>&lt;AZURE_RESOURCE_GROUP&gt;-network</code></td>
-<td>Destination for workload-owned network resources. Existing network/private-endpoint overrides retain their own contract.</td>
+<td>Destination (<code>networkResourceGroupName</code>) for workload-owned network resources. Existing network/private-endpoint overrides retain their own contract.</td>
 </tr>
 <tr>
 <td><code>CREATE_RESOURCE_GROUPS</code></td>
@@ -7232,7 +7276,7 @@ When unset, they use the template defaults shown below.</p>
 <tr>
 <td><code>AZURE_PE_RESOURCE_GROUP_NAME</code></td>
 <td>Empty</td>
-<td>Explicit private endpoint group override takes precedence. When empty, <code>USE_EXISTING_VNET=true</code> with <code>SIDE_BY_SIDE=false</code> uses the existing VNet's group; otherwise uses the resolved network group (<code>AZURE_NETWORK_RESOURCE_GROUP</code>). New Foundry-root environments initialize a separate network group; existing single-group environments retain their mapping.</td>
+<td>Explicit private endpoint group override (<code>privateEndpointResourceGroupName</code>) takes precedence. When empty, <code>USE_EXISTING_VNET=true</code> with <code>SIDE_BY_SIDE=false</code> uses the existing VNet's group; otherwise uses the resolved network group (<code>AZURE_NETWORK_RESOURCE_GROUP</code>). New Foundry-root environments initialize a separate network group; existing single-group environments retain their mapping.</td>
 </tr>
 <tr>
 <td><code>EXISTING_APPLICATION_INSIGHTS_CONNECTION_STRING</code></td>
@@ -7281,8 +7325,10 @@ that native parameter. A provisioned store does not select <code>appConfig</code
 <p>Both providers still run selected Foundry, Search, governance, Container Apps
 and panel configuration using verified metadata. Selected features retain their
 real prerequisites, including Key Vault operations and private connectivity.
-The bundled Agent Application, Agent App MCP Server and current custom
-application samples require App Configuration. A custom store-free application
+The bundled Agent Application, Agent App MCP Server and
+<code>samples/custom-app/containerapp</code> require App Configuration, while
+<code>samples/custom-app/hosted</code> reads platform-injected <code>FOUNDRY_PROJECT_ENDPOINT</code>
+directly without <code>APP_CONFIG_ENDPOINT</code>. A custom store-free application
 must own compatible runtime configuration and declare its dependencies.
 This setting does not delete an existing store or migrate an application's
 runtime mode in place.</p>
@@ -7459,6 +7505,32 @@ resource requirements; this reference selector does not add ingestion to them.</
 </table>
 <p>The source/index arrangement must support omission. See <a href="../ingestion/">Ingestion</a>
 for supported source combinations and the native private-input boundary.</p>
+<h3 id="model-deployments-and-external-ai-gateway">Model deployments and external AI Gateway</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEPLOY_MODEL_DEPLOYMENTS</code></td>
+<td><code>true</code></td>
+<td>Maps to <code>deployModelDeployments</code> across Bicep and Terraform. Set <code>false</code> when routing all model inference through an external AI Gateway with zero local Foundry model deployments.</td>
+</tr>
+</tbody>
+</table>
+<p>When <code>DEPLOY_MODEL_DEPLOYMENTS=false</code> (<code>deployModelDeployments = false</code>), neither
+Bicep nor Terraform provisions local chat or embedding deployments, and an empty
+native <code>modelDeploymentList = []</code> does not fall back to default deployments.
+Regional model quota preflight checks are skipped. <code>config.aifoundry.setup</code>
+still configures account-level Responsible AI (RAI) blocklists and policies
+while skipping local model deployment RAI attachment.</p>
+<p>Features that require a local Foundry planning or embedding deployment (such as
+Foundry IQ MCP planning models or NL2SQL vector embeddings unless externally
+satisfied) retain their validation guards.</p>
 <h3 id="search-region-and-quota">Search region and quota</h3>
 <p><code>AZURE_SEARCH_LOCATION</code> resolves the effective Bicep <code>searchServiceLocation</code>.
 An unset or empty value falls back to <code>AZURE_LOCATION</code>. Both newly created
@@ -8274,7 +8346,13 @@ or change hub resources automatically.</p>
 <code>EXISTING_PRIVATE_DNS_ZONE_&lt;ZONE&gt;_RESOURCE_ID</code>, where <code>&lt;ZONE&gt;</code> is one of:</p>
 <p><code>COGSVCS</code>, <code>OPENAI</code>, <code>AISERVICES</code>, <code>SEARCH</code>, <code>COSMOS</code>, <code>BLOB</code>, <code>KEYVAULT</code>, <code>APPCONFIG</code>, <code>CONTAINERAPPS</code>, <code>ACR</code>, <code>AZUREMONITOR</code>, <code>OMSOPSINSIGHTS</code>, <code>ODSOPSINSIGHTS</code>, <code>AZUREAUTOMATION</code>, <code>APPINSIGHTS</code>.</p>
 <p>Their owner must provide the required VNet links or resolver forwarding
-separately from network peering. With <code>POLICY_MANAGED_PRIVATE_DNS=true</code>,
+separately from network peering. See the
+<a href="../network-isolation/#byo-hub-private-dns-checklist">BYO hub Private DNS checklist</a>
+for AMPLS zone mapping (<code>privatelink.monitor.azure.com</code> rather than
+<code>privatelink.applicationinsights.io</code>, plus <code>privatelink.agentsvc.azure-automation.net</code>),
+Foundry backing Cosmos DB (<code>privatelink.documents.azure.com</code>), internal APIM
+(<code>privatelink.azure-api.net</code>) and internal Container Apps <code>&lt;defaultDomain&gt;</code>
+static <code>A</code> records. With <code>POLICY_MANAGED_PRIVATE_DNS=true</code>,
 Azure Policy manages DNS records instead of the template. Policy coverage
 and links need agreement with the DNS owner. Policy-managed DNS and explicit
 existing-zone IDs are mutually exclusive DNS arrangements.</p>
@@ -8467,6 +8545,19 @@ for the MIME, encoding and owner contract.</p>
 <p>Native Search, Foundry IQ, MCP and multimodal registration default to off;
 the integrated MCP lifecycle coordinates registration when selected.
 Configured infrastructure alone does not onboard SQL or populate its catalog.</p>
+<h3 id="container-apps-workload-profiles">Container Apps workload profiles</h3>
+<p>Container Apps <code>profile_name</code> resolves dynamically against effective
+<code>workloadProfiles</code> (<code>WORKLOAD_PROFILES</code> or native <code>workloadProfiles</code>) across
+Bicep and Terraform:</p>
+<ul>
+<li><strong><code>"main"</code></strong> when <code>"main"</code> is present in effective <code>workloadProfiles</code> (the default dedicated profile).</li>
+<li><strong><code>"Consumption"</code></strong> when overridden to Consumption-only (<code>[]</code> or <code>[{"name": "Consumption", "workloadProfileType": "Consumption"}]</code>).</li>
+<li><strong>Single custom dedicated profile</strong> when both <code>"main"</code> and <code>"Consumption"</code> are omitted and exactly one custom profile is declared.</li>
+</ul>
+<p>Explicit per-application <code>profile_name</code> selections are preserved when they
+match an effective profile. Unknown <code>profile_name</code> values or ambiguous
+multi-profile configurations without <code>"main"</code> or <code>"Consumption"</code> fail fast
+before deployment.</p>
 <h3 id="hosted-foundation-and-publication-inputs">Hosted foundation and publication inputs</h3>
 <p>These inputs prepare hosting resources and metadata.
 The <a href="../application/#default-deployment">default application layout</a>
@@ -8499,6 +8590,16 @@ and <a href="../hosted-agents/">Hosted agents</a> explain the application capabi
 <td><code>HOSTED_AGENT_CONTAINER_MEMORY</code></td>
 <td><code>4Gi</code></td>
 <td>Memory recorded in provisioning metadata. See the same constraint.</td>
+</tr>
+<tr>
+<td><code>GRANT_PROJECT_TRACE_EVALUATION_READER</code></td>
+<td><code>false</code></td>
+<td>Opt-in (<code>grantProjectTraceEvaluationReader</code>): grants the Foundry project managed identity <code>Reader</code> on Application Insights and <code>Log Analytics Data Reader</code> on the linked Log Analytics workspace for scheduled trace evaluations (<code>azure_ai_traces</code>).</td>
+</tr>
+<tr>
+<td><code>GRANT_PROJECT_PROTECTED_TRACE_CONTENT_READER</code></td>
+<td><code>false</code></td>
+<td>Strictly opt-in (<code>grantProjectProtectedTraceContentReader</code>): grants <code>Privileged Monitoring Data Reader</code> to the Foundry project managed identity with an Azure ABAC v2.0 condition restricting workspace table reads to <code>AppGenAIContent</code> when <code>Protected</code>.</td>
 </tr>
 </tbody>
 </table>

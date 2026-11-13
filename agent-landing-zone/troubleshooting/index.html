@@ -1334,6 +1334,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#custom-hosted-variable-or-workload-profile-validation-fails" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom hosted variable or workload profile validation fails
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#private-connectivity-checks" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1520,6 +1531,17 @@
     <span class="md-ellipsis">
       
         Quota check rejects an unchanged existing deployment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#foundry-network-injection-or-agent-subnet-change-fails" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Foundry network injection or agent subnet change fails
       
     </span>
   </a>
@@ -1752,6 +1774,17 @@
     <span class="md-ellipsis">
       
         Monitoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#foundry-portal-operate-traces-or-hosted-evaluations-fail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Foundry portal Operate, Traces or hosted evaluations fail
       
     </span>
   </a>
@@ -6244,6 +6277,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#custom-hosted-variable-or-workload-profile-validation-fails" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom hosted variable or workload profile validation fails
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#private-connectivity-checks" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6430,6 +6474,17 @@
     <span class="md-ellipsis">
       
         Quota check rejects an unchanged existing deployment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#foundry-network-injection-or-agent-subnet-change-fails" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Foundry network injection or agent subnet change fails
       
     </span>
   </a>
@@ -6668,6 +6723,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#foundry-portal-operate-traces-or-hosted-evaluations-fail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Foundry portal Operate, Traces or hosted evaluations fail
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -6775,6 +6841,10 @@ failure. Diagnose the failing stage before retrying or changing inputs.</p>
 <td><a href="#private-deployment-prerequisites-failed">Private prerequisites</a>, <a href="#package-installation-fails-inside-the-build-pool">package installation</a></td>
 </tr>
 <tr>
+<td>Foundry agent subnet change, reserved hosted variable or workload profile fails</td>
+<td><a href="#foundry-network-injection-or-agent-subnet-change-fails">Foundry network injection</a>, <a href="#custom-hosted-variable-or-workload-profile-validation-fails">definition and workload profile checks</a></td>
+</tr>
+<tr>
 <td>Configuration stops after provisioning</td>
 <td><a href="#provision-and-post-provision-stages">Post-provision diagnostics</a></td>
 </tr>
@@ -6783,8 +6853,12 @@ failure. Diagnose the failing stage before retrying or changing inputs.</p>
 <td><a href="#check-application-health">Revision health</a>, <a href="#deploy-succeeds-but-the-ui-or-administrative-panel-does-not-start">startup authentication</a></td>
 </tr>
 <tr>
-<td>Chat, history or authorization fails</td>
-<td><a href="#runtime">Runtime diagnostics</a></td>
+<td>Chat, history, AI Gateway or authorization fails</td>
+<td><a href="#runtime">Runtime diagnostics</a>, <a href="#access-denied-between-services">service access</a></td>
+</tr>
+<tr>
+<td>Foundry portal Operate, Traces or hosted evaluations fail</td>
+<td><a href="#foundry-portal-operate-traces-or-hosted-evaluations-fail">Operate, Traces and evaluations</a></td>
 </tr>
 </tbody>
 </table>
@@ -6844,10 +6918,13 @@ root <code>azure.yaml</code> provider/path before following the
 not evidence of successful provisioning or application deployment.</p>
 <h3 id="deploy-stage">Deploy stage</h3>
 <h4 id="resource-group-destination-checks">Resource group destination checks</h4>
-<p>For <strong>Agent Bicep/azd deployments</strong>, compare the selected environment's
-<code>AZURE_RESOURCE_GROUP</code>, <code>AZURE_APP_RESOURCE_GROUP</code> and
-<code>AZURE_NETWORK_RESOURCE_GROUP</code> with the approved
-<a href="../configuration/#resource-group-destinations">destination mapping</a>.
+<p>For <strong>Bicep and Terraform deployments</strong>, compare the selected environment's
+<code>AZURE_RESOURCE_GROUP</code>, <code>applicationResourceGroupName</code>
+(<code>AZURE_APP_RESOURCE_GROUP</code>), <code>networkResourceGroupName</code>
+(<code>AZURE_NETWORK_RESOURCE_GROUP</code>) and <code>privateEndpointResourceGroupName</code>
+(<code>AZURE_PE_RESOURCE_GROUP_NAME</code>) with the approved
+<a href="../configuration/#resource-group-destinations">destination mapping</a> and
+<a href="../network-isolation/#multi-resource-group-placement-checklist">placement checklist</a>.
 New environments initialize separate application and network destinations;
 existing single-group environments retain their mapping.</p>
 <p>With <code>CREATE_RESOURCE_GROUPS=false</code>, have the owner pre-create missing additional
@@ -6935,6 +7012,24 @@ resource scope separately.</p>
 the declared capabilities. Check the routed version before testing the agent.
 Keep registry authentication identity-based, grants narrowly scoped and
 delegated-user/OBO authentication intact.</p>
+<h4 id="custom-hosted-variable-or-workload-profile-validation-fails">Custom hosted variable or workload profile validation fails</h4>
+<p><strong>Symptom:</strong> <code>config.appdefinition</code> or preflight rejects a custom hosted
+environment override in <code>azure.yaml</code> or <code>agent.yaml</code>, or fails fast on
+Container Apps <code>profile_name</code> resolution before deployment.</p>
+<p><strong>Diagnose:</strong> Microsoft Foundry Hosted Agents reserve <code>FOUNDRY_*</code> (such as
+<code>FOUNDRY_PROJECT_ENDPOINT</code>, <code>FOUNDRY_PROJECT_ARM_ID</code>, <code>FOUNDRY_AGENT_NAME</code>,
+<code>FOUNDRY_AGENT_VERSION</code>, <code>FOUNDRY_AGENT_SESSION_ID</code>), <code>AGENT_*</code> and
+<code>APPLICATIONINSIGHTS_CONNECTION_STRING</code>. For Container Apps, <code>profile_name</code>
+resolves against effective <code>workloadProfiles</code> (<code>WORKLOAD_PROFILES</code>) and rejects
+unknown names or ambiguous multi-profile lists without <code>"main"</code> or
+<code>"Consumption"</code>.</p>
+<p><strong>Correct:</strong> Remove overrides of reserved <code>FOUNDRY_*</code>, <code>AGENT_*</code> and
+<code>APPLICATIONINSIGHTS_CONNECTION_STRING</code> entries from <code>azure.yaml</code> and
+<code>agent.yaml</code> (<code>APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL</code> and <code>OTEL_*</code> remain
+valid). For Container Apps, align <code>profile_name</code> and <code>WORKLOAD_PROFILES</code> using
+<a href="../configuration/#container-apps-workload-profiles">Container Apps workload profiles</a>.</p>
+<p><strong>Verify:</strong> Run <code>python -m config.appdefinition --validate</code> and confirm
+preflight succeeds before running <code>azd deploy</code>.</p>
 <h4 id="private-connectivity-checks">Private connectivity checks</h4>
 <p>Check service hostnames from the actual deployment runner, including
 <code>APP_CONFIG_ENDPOINT</code>. Test these boundaries separately:</p>
@@ -6967,6 +7062,15 @@ That check rejects mixed public/private, IPv6, loopback and link-local answers.<
 <p>The transport check sends no HTTP request or credential. Successful DNS,
 TCP and TLS are not proof of API or document authorization. Test those
 separately with the intended identities. Keep isolation and TLS verification.</p>
+<p>For BYO hub and central Private DNS topologies, also verify:</p>
+<ul>
+<li><code>privatelink.documents.azure.com</code> exists and links to the hub/spoke even when <code>DEPLOY_COSMOS_DB=false</code> if Foundry Agent Service provisions its enterprise memory Cosmos account.</li>
+<li>Internal Container Apps environments (<code>internal = true</code>) have a Private DNS zone for <code>&lt;defaultDomain&gt;</code> with static <code>A</code> records <code>*</code> and <code>@</code> pointing to <code>staticIp</code>, alongside <code>privatelink.&lt;region&gt;.azurecontainerapps.io</code>.</li>
+<li>Internal AI Gateway integrations resolve <code>privatelink.azure-api.net</code>.</li>
+<li>AMPLS zones include <code>privatelink.monitor.azure.com</code> (which maps Application Insights ingestion, live and query endpoints rather than <code>privatelink.applicationinsights.io</code>), <code>privatelink.oms.opinsights.azure.com</code>, <code>privatelink.ods.opinsights.azure.com</code>, exact hyphenated <code>privatelink.agentsvc.azure-automation.net</code> and <code>privatelink.blob.core.windows.net</code>.</li>
+<li>Both spoke-to-hub and reverse hub-to-spoke peerings enable <code>allowVirtualNetworkAccess</code> and <code>allowForwardedTraffic</code>, gateway transit matches, and VPN or ExpressRoute gateways advertise return routes for the spoke address space.</li>
+<li>BYO hub firewalls allow outbound HTTPS (<code>443</code>) to Azure Monitor ingestion and query endpoints (<code>*.loganalytics.io</code>, <code>*.applicationinsights.io</code>, <code>*.monitor.azure.com</code>, <code>*.in.applicationinsights.azure.com</code>, <code>*.ods.opinsights.azure.com</code>, <code>*.oms.opinsights.azure.com</code>). See the <a href="../network-isolation/#byo-hub-private-dns-checklist">BYO hub checklists</a>.</li>
+</ul>
 <h4 id="private-deployment-prerequisites-failed">Private deployment prerequisites failed</h4>
 <p><strong>Symptom:</strong></p>
 <div class="highlight"><pre><span></span><code>Private deployment prerequisites failed. Use a VPN/VNet-connected host; RUN_FROM_JUMPBOX is not a connectivity bypass.
@@ -7208,6 +7312,27 @@ sanitized account, region, model and capacity evidence.</p>
 <p><strong>Verify:</strong> Both preflight gates evaluate the intended incremental request.
 Retain the existing deployment, intended capacity and preflight gates.
 Model availability checks still apply.</p>
+<p>When routing all model inference through an external AI Gateway with zero local
+Foundry model deployments, set <code>DEPLOY_MODEL_DEPLOYMENTS=false</code>
+(<code>deployModelDeployments = false</code>) before provision so local chat and embedding
+deployments and regional model quota preflight checks are skipped while
+<code>config.aifoundry.setup</code> preserves account-level RAI policies. Features
+requiring a local Foundry planning or embedding deployment retain their
+validation guards. See
+<a href="../configuration/#model-deployments-and-external-ai-gateway">external AI Gateway mode</a>.</p>
+<h4 id="foundry-network-injection-or-agent-subnet-change-fails">Foundry network injection or agent subnet change fails</h4>
+<p><strong>Symptom:</strong> Reprovisioning fails when changing <code>EXISTING_VNET_RESOURCE_ID</code>,
+<code>agentSubnetName</code> (<code>AZURE_AGENT_SUBNET_NAME</code>) or Foundry Agent Service
+<code>networkInjections</code> on an existing Foundry account or capability host.</p>
+<p><strong>Diagnose:</strong> Microsoft Foundry Agent Service <code>networkInjections</code> (<code>agent-subnet</code>
+binding) is immutable after initial capability-host and account provisioning.
+Azure rejects in-place VNet or delegated agent-subnet changes.</p>
+<p><strong>Correct:</strong> Restore the original VNet and <code>agentSubnetName</code> to keep the
+existing Foundry resource, or plan an owner-approved replacement that recreates
+the Foundry resource in the target VNet and <code>agent-subnet</code> before capability-host
+provisioning.</p>
+<p><strong>Verify:</strong> Confirm the target VNet and <code>agentSubnetName</code> match the provisioned
+Foundry <code>networkInjections</code> binding and <code>azd provision</code> completes cleanly.</p>
 <h4 id="foundry-rejects-evaluation-api-key-creation">Foundry rejects evaluation API-key creation</h4>
 <p><strong>Symptom:</strong> <code>Failed to list key. disableLocalAuth is set to be true</code>.</p>
 <p><strong>Diagnose:</strong> The account requires Entra ID. Identify the caller still trying
@@ -7529,6 +7654,11 @@ capability permissions:</p>
 Hosted bootstrap, native invocation, product metadata and panel permissions are
 reconciled separately.
 Use the relevant workflow to grant only the roles required by the actual caller.</p>
+<p>When model or tool calls traverse an AI Gateway and return HTTP <code>401</code> or <code>403</code>,
+confirm that each hosted agent's <strong>dedicated runtime identity</strong> (created on
+first <code>azd deploy</code> publication, including both publications when
+<code>APPLICATION_MODE=both</code>) is allowlisted at the AI Gateway rather than only the
+Foundry project identity.</p>
 <p><strong>Verify:</strong> The same intended identity can perform the required operation while
 unauthorized users/documents remain denied.</p>
 <p><span id="collect-evidence"></span></p>
@@ -7582,6 +7712,26 @@ index write needs repair even when the chat continues. Confirm the expected
 owner-index record exists after retrying the write.</p>
 <p>Telemetry content capture is off by default. Keep prompts and answers private;
 diagnose with request references and dependency status.</p>
+<h4 id="foundry-portal-operate-traces-or-hosted-evaluations-fail">Foundry portal Operate, Traces or hosted evaluations fail</h4>
+<p><strong>Symptom:</strong> Foundry portal <strong>Operate</strong> or <strong>Traces</strong> views fail to load in an
+isolated network, <code>responseCompleted</code> continuous evaluation rules fail on hosted
+agents, or scheduled trace evaluations return authorization errors or skewed
+scores.</p>
+<p><strong>Diagnose:</strong> Separate human operator AMPLS connectivity and RBAC from hosted
+evaluation configuration:</p>
+<ul>
+<li><strong>Portal Operate and Traces in isolated networks:</strong> human operators need VPN or ExpressRoute connectivity with Private DNS Resolver forwarding to the AMPLS endpoints (<code>privatelink.monitor.azure.com</code> and companion <code>opinsights</code>, <code>agentsvc.azure-automation.net</code> and <code>blob</code> zones), BYO hub firewall HTTPS (<code>443</code>) access to Azure Monitor ingestion and query endpoints, and <code>Log Analytics Reader</code> on Application Insights and its workspace (plus <code>Privileged Monitoring Data Reader</code> when <code>AppGenAIContent</code> is <code>Protected</code>).</li>
+<li><strong>Hosted agent evaluations:</strong> <code>responseCompleted</code> continuous evaluation rules are not supported for hosted agents, and custom hosted handlers without <code>azure-ai-agentserver-responses</code> or OpenTelemetry <code>invoke_agent</code> spans produce no evaluation traces.</li>
+</ul>
+<p><strong>Correct:</strong></p>
+<ul>
+<li>Verify AMPLS DNS resolution, firewall query rules and operator Azure Monitor roles using <a href="../operations/#inspect-operate-and-traces-in-isolated-networks">Administration</a>.</li>
+<li>Switch hosted evaluations to <strong>scheduled trace evaluations</strong> (<code>azure_ai_traces</code>), ensure custom hosted agents use <code>azure-ai-agentserver-responses</code> (which serves persisted <code>GET /responses/{id}</code> lookups and emits <code>invoke_agent</code> spans automatically when <code>APPLICATIONINSIGHTS_CONNECTION_STRING</code> is injected), and check per-item <code>gen_ai.agent.version</code> (<code>FOUNDRY_AGENT_VERSION</code>) and non-empty output across rolling lookback windows.</li>
+<li>Opt in to <code>GRANT_PROJECT_TRACE_EVALUATION_READER=true</code> (and strictly opt-in <code>GRANT_PROJECT_PROTECTED_TRACE_CONTENT_READER=true</code> with its ABAC v2.0 <code>AppGenAIContent</code> condition only when protected content reads are approved) before running <code>azd provision</code>.</li>
+</ul>
+<p><strong>Verify:</strong> Confirm <strong>Operate</strong> and <strong>Traces</strong> render for an authorized
+connected operator and scheduled <code>azure_ai_traces</code> runs score only non-empty
+spans from the intended <code>FOUNDRY_AGENT_VERSION</code>.</p>
 <h2 id="validation">Validation</h2>
 <ol>
 <li>Repeat the exact operation that failed, from the intended host and identity.</li>

@@ -2298,6 +2298,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="How to inspect an application">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inspect-operate-and-traces-in-isolated-networks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inspect Operate and Traces in isolated networks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run-scheduled-trace-evaluations-on-hosted-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Run scheduled trace evaluations on hosted agents
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -5623,6 +5651,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="How to inspect an application">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inspect-operate-and-traces-in-isolated-networks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inspect Operate and Traces in isolated networks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run-scheduled-trace-evaluations-on-hosted-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Run scheduled trace evaluations on hosted agents
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -5787,6 +5843,30 @@ provision that dependency directly and grant access to its actual consumer.</p>
 permissions. Use the user's approved application path when acting on their
 session. Use the service's administrative access for resource health and
 diagnostics.</p>
+<h3 id="inspect-operate-and-traces-in-isolated-networks">Inspect Operate and Traces in isolated networks</h3>
+<p>Human operators inspecting <strong>Operate</strong> and <strong>Traces</strong> in the Foundry portal for
+an isolated deployment need both private DNS resolution and Azure Monitor read
+RBAC:</p>
+<ul>
+<li><strong>Private DNS and firewall path:</strong> resolve AMPLS zones (<code>privatelink.monitor.azure.com</code>, <code>privatelink.oms.opinsights.azure.com</code>, <code>privatelink.ods.opinsights.azure.com</code>, <code>privatelink.agentsvc.azure-automation.net</code> and <code>privatelink.blob.core.windows.net</code>) over VPN or ExpressRoute with Private DNS Resolver, and allow outbound HTTPS (<code>443</code>) to Azure Monitor ingestion and query endpoints. See the <a href="../network-isolation/#byo-hub-private-dns-checklist">BYO hub Private DNS checklist</a>.</li>
+<li><strong>Operator Azure Monitor RBAC:</strong> assign <code>Log Analytics Reader</code> on Application Insights and the linked Log Analytics workspace, plus <code>Privileged Monitoring Data Reader</code> when <code>AppGenAIContent</code> is <code>Protected</code>.</li>
+</ul>
+<h3 id="run-scheduled-trace-evaluations-on-hosted-agents">Run scheduled trace evaluations on hosted agents</h3>
+<p>Use <strong>scheduled trace evaluations</strong> (<code>azure_ai_traces</code>) for hosted agents
+instead of <code>responseCompleted</code> continuous evaluation rules, which are not
+supported for hosted agents. Check per-item agent version
+(<code>gen_ai.agent.version</code> or <code>FOUNDRY_AGENT_VERSION</code>) and non-empty output across
+rolling trace lookback windows so older versions or empty warm-up spans do not
+skew evaluation scores.</p>
+<p>Opt in before <code>azd provision</code> only to the least-privilege evaluation roles
+required by the Foundry project managed identity:</p>
+<ul>
+<li><strong><code>GRANT_PROJECT_TRACE_EVALUATION_READER=true</code></strong> (<code>grantProjectTraceEvaluationReader</code>): grants the Foundry project managed identity <code>Reader</code> on Application Insights and <code>Log Analytics Data Reader</code> on the linked Log Analytics workspace.</li>
+<li><strong><code>GRANT_PROJECT_PROTECTED_TRACE_CONTENT_READER=true</code></strong> (<code>grantProjectProtectedTraceContentReader</code>): strictly opt-in grant assigning <code>Privileged Monitoring Data Reader</code> conditioned with Azure ABAC v2.0 restricting workspace table reads to <code>AppGenAIContent</code> when <code>Protected</code>.</li>
+</ul>
+<p>When model calls traverse an AI Gateway, allowlist each hosted agent's
+dedicated runtime identity (created on first <code>azd deploy</code> publication) at the
+gateway rather than only the Foundry project identity.</p>
 <h2 id="conversations-workflows-and-feedback">Conversations, workflows and feedback</h2>
 <p>Use the selected host's official client and service operations to inspect
 native execution. Product-facing reads and actions must pass through the

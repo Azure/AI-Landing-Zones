@@ -6365,12 +6365,13 @@ own explicit component, runtime configuration, dependency and permission contrac
 owner mappings, exact byte/serialized limits and no corporate ingestion
 fallback. Workflow attachments are not supported by that native UI path.</p>
 <h3 id="deploy-a-different-application">Deploy a different application</h3>
-<p>Use <code>samples/custom-app/hosted/</code>. Its minimal Responses server demonstrates
-deployment and configuration access, not retrieval, conversation storage or
-the Agent App UI API. Microsoft's
+<p>Use <code>samples/custom-app/hosted/</code>. Its minimal Responses server reads the
+platform-injected <code>FOUNDRY_PROJECT_ENDPOINT</code> directly with zero
+<code>APP_CONFIG_ENDPOINT</code> dependency, rather than implementing retrieval,
+conversation storage or the Agent App UI API. Microsoft's
 <a href="https://learn.microsoft.com/azure/ai-foundry/agents/concepts/hosted-agents">Hosted agents documentation</a>
-describes service protocols and identities; the platform contracts below govern
-this release's deployment.</p>
+describes service protocols and identities, while the platform contracts below
+govern deployment.</p>
 <ol>
 <li>Inspect the custom hosted example's <code>app-definition.json</code>, <code>azure.yaml</code>
    and <code>src/main.py</code>.
@@ -6413,18 +6414,25 @@ azd<span class="w"> </span>hooks<span class="w"> </span>run<span class="w"> </sp
   contract, not the Agent Application hosted image-preparation handoff.</p>
 </li>
 <li>
-<p>With the custom hosted example's answer logic, confirm the response names
-   the intended project endpoint. A value of <code>unknown</code> or <code>unavailable</code> indicates
-   missing project configuration or failed configuration access. Check the
-   published outputs and logs, and resolve the issue before proceeding.
-   With your logic, verify actual application behavior and denied-access cases.</p>
+<p>With the custom hosted example's answer logic, confirm the response echoes
+   the intended <code>FOUNDRY_PROJECT_ENDPOINT</code> injected by the platform. A value of
+   <code>unknown</code> or <code>unavailable</code> indicates a missing project endpoint or broken
+   hosted invocation. Check the published agent version and logs before
+   proceeding. With your logic, verify actual application behavior and
+   denied-access cases.</p>
 </li>
 </ol>
-<p>The definition <code>id</code> binds the environment; <code>agent</code> names the component/service;
-<code>sample-hosted-agent</code> names the custom example's Foundry agent. The project endpoint
-URL is supplied separately at runtime. For a Container App instead, use
-<code>samples/custom-app/containerapp/</code> and its matching service file; changing only
-the hosted example's <code>kind</code> is insufficient.</p>
+<p>The definition <code>id</code> binds the environment, <code>agent</code> names the component/service,
+and <code>sample-hosted-agent</code> names the custom example's Foundry agent. Foundry
+injects <code>FOUNDRY_PROJECT_ENDPOINT</code> automatically at runtime. For a Container
+App instead, use <code>samples/custom-app/containerapp/</code> and its matching service
+file rather than changing only the hosted example's <code>kind</code>.</p>
+<p>When graduating a custom hosted agent from a minimal greeting smoke handler to
+production, adopt <code>azure-ai-agentserver-responses</code> for persisted
+<code>GET /responses/{id}</code> lookups and emit GenAI OpenTelemetry <code>invoke_agent</code> spans.
+<code>azure-ai-agentserver-responses</code> emits those spans automatically when
+<code>APPLICATIONINSIGHTS_CONNECTION_STRING</code> is injected, enabling Foundry trace
+views and scheduled trace evaluations.</p>
 <h3 id="verify-and-recover">Verify and recover</h3>
 <p>Retain the definition, service file, source/image pin and environment together.
 For HEAD mismatches, compare <code>git rev-parse HEAD</code> inside the source folder with
@@ -6498,6 +6506,22 @@ component and no project/service hooks. <code>components[].path</code> points to
 not another azd project; align the service's <code>project</code> with it.
 Hosted services need an explicit agent <code>name</code> and <code>responses</code> or <code>invocations</code>.
 Deployment reuses the selected environment and deploys each service by name.</p>
+<p>Microsoft Foundry Hosted Agents automatically inject and reserve <code>FOUNDRY_*</code>
+(<code>FOUNDRY_PROJECT_ENDPOINT</code>, <code>FOUNDRY_PROJECT_ARM_ID</code>, <code>FOUNDRY_AGENT_NAME</code>,
+<code>FOUNDRY_AGENT_VERSION</code>, <code>FOUNDRY_AGENT_SESSION_ID</code>), <code>AGENT_*</code> and
+<code>APPLICATIONINSIGHTS_CONNECTION_STRING</code>. <code>config.appdefinition</code> rejects
+overrides of those reserved variables in <code>azure.yaml</code> or <code>agent.yaml</code> during
+preflight validation before publish, while
+<code>APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL</code> and <code>OTEL_*</code> remain valid.</p>
+<p>Container Apps <code>profile_name</code> resolves dynamically against effective
+<code>workloadProfiles</code> (<code>WORKLOAD_PROFILES</code>): <code>"main"</code> by default, <code>"Consumption"</code>
+when overridden to Consumption-only, or the single custom dedicated profile
+when <code>"main"</code> and <code>"Consumption"</code> are omitted, preserving explicit per-app
+<code>profile_name</code> choices and failing fast on unknown or ambiguous multi-profile
+configurations. External AI Gateway deployments can also set
+<code>DEPLOY_MODEL_DEPLOYMENTS=false</code>. See
+<a href="../configuration/#container-apps-workload-profiles">workload profiles</a> and
+<a href="../configuration/#model-deployments-and-external-ai-gateway">external AI Gateway mode</a>.</p>
 <h3 id="source-pinning">Source pinning</h3>
 <ul>
 <li><strong><code>source.commit</code>:</strong> must equal the local source folder's HEAD. Nothing is
@@ -6528,13 +6552,17 @@ application can select <code>containerEnv</code> or <code>none</code> and omit A
 its runtime and selected features support that choice. Configure the native
 <code>deployAppConfig</code> input explicitly and retain required Key Vault, identity and
 network access. See <a href="../configuration/#runtime-configuration-mode">runtime configuration mode</a>.</p>
-<p>Both current custom application examples remain store-dependent. They read the
-unchanged runtime-v1 document, not <code>DEPLOYMENT_METADATA</code>. Do not copy deployment
-metadata into runtime settings or use it to deliver secret values.</p>
-<p>Read <code>AGENTLZ_PLATFORM_OUTPUTS</code> from <code>APP_CONFIG_ENDPOINT</code> with label <code>agent-lz</code>,
-as both custom application examples demonstrate. The publisher exposes selected Container App
-client IDs; hosted instance identities are unavailable during foundation
-provisioning. See <a href="../deploy-infra-only/#platform-outputs">published platform outputs</a>.</p>
+<p><code>samples/custom-app/hosted/</code> reads the platform-injected
+<code>FOUNDRY_PROJECT_ENDPOINT</code> directly with zero <code>APP_CONFIG_ENDPOINT</code> dependency.
+<code>samples/custom-app/containerapp/</code> remains store-dependent in <code>appConfig</code> mode
+and reads the runtime-v1 document rather than <code>DEPLOYMENT_METADATA</code>. Do not copy
+deployment metadata into runtime settings or use it to deliver secret values.</p>
+<p>When using <code>appConfig</code> mode, read <code>AGENTLZ_PLATFORM_OUTPUTS</code> from
+<code>APP_CONFIG_ENDPOINT</code> with label <code>agent-lz</code>, as
+<code>samples/custom-app/containerapp/</code> demonstrates. The publisher exposes selected
+Container App client IDs, while hosted instance identities are created on first
+publication rather than foundation provisioning. See
+<a href="../deploy-infra-only/#platform-outputs">published platform outputs</a>.</p>
 <p>The hosted greeting checks for nonempty assistant output using the declared
 protocol, preferring <code>invocations</code> when both are present. Validate retrieval and
 authorization with representative tasks and allowed and denied identities.</p>
@@ -6564,7 +6592,8 @@ profile assignment. Do not use binding commands to replace an environment's appl
 <li>Compare the registry digest and selected service/version image with the
    recorded build or prebuilt digest. Confirm placeholders are no longer serving.</li>
 <li>Exercise the changed behavior with allowed and denied identities. For the
-   custom hosted example, confirm configuration access as described in Step 6.
+   custom hosted example, confirm the platform-injected project endpoint
+   response as described in Step 6.
    Do not accept protected retrieval until its identity integration is proven.</li>
 </ol>
 <h2 id="rollback">Rollback</h2>
