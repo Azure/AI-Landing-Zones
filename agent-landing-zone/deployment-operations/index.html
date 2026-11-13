@@ -1172,6 +1172,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#verify-deployment-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verify deployment metadata
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#postgresql-data-protection" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5513,6 +5524,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#verify-deployment-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verify deployment metadata
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#postgresql-data-protection" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5619,6 +5641,33 @@ Provision matching dependencies and restart/redeploy after toolset changes.</p>
 automatically revoke old grants. Review retirement explicitly; recovery does not run direct SQL
 inside the orchestrator. Embedding model/dimension changes need reindexing,
 not just a runtime-setting refresh.</p>
+<h2 id="verify-deployment-metadata">Verify deployment metadata</h2>
+<p>From the reviewed platform checkout, run:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>config.deployment.metadata<span class="w"> </span>--check<span class="w"> </span>--environment<span class="w"> </span>&lt;environment-name&gt;
+</code></pre></div>
+<p>This read-only resource check loads native <code>DEPLOYMENT_METADATA</code> and verifies
+the selected context, declared capabilities, live destinations and identities.
+It does not publish runtime settings or complete deferred configuration.
+Bicep reads the selected successful deployment. Terraform requires the
+original initialized native working directory and backend configuration, and
+rejects backend changes without reconfiguration or state migration.</p>
+<p>For stale cached metadata or overlapping aliases, restore the intended
+selection and refresh:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span>refresh<span class="w"> </span>--environment<span class="w"> </span>&lt;environment-name&gt;
+python<span class="w"> </span>-m<span class="w"> </span>config.deployment.metadata<span class="w"> </span>--check<span class="w"> </span>--environment<span class="w"> </span>&lt;environment-name&gt;
+</code></pre></div>
+<p>If the output is missing or incompatible, use a compatible platform checkout
+and reprovision with the same provider, original root inputs, application/group
+bindings and, for Terraform, original backend. Refresh cannot create a missing
+output or reconstruct private binding records.</p>
+<p>Repair missing ARM/output/identity read permissions, existing backend access or
+private DNS/TLS connectivity without broadening runtime roles or guessing
+destinations. Retain the selected operation's actual configuration and Key
+Vault permissions. Metadata rejection precedes dependent changes.</p>
+<p>Keep hooks and provider outputs from a compatible platform revision.
+Do not roll a store-free environment back to store-dependent hooks. Recovery
+does not delete an existing store or convert an application's runtime mode in
+place. See <a href="../configuration/#runtime-configuration-mode">runtime configuration mode</a>.</p>
 <h2 id="postgresql-data-protection">PostgreSQL data protection</h2>
 <p><a href="../postgresql/#protection-recovery-and-deliberate-removal">Optional PostgreSQL recovery/removal</a>
 requires the original immutable creation-intent record and independent server

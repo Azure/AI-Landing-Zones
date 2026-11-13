@@ -6522,6 +6522,15 @@ this does not deploy the reference hosted orchestrator.
 Reapplying foundation can repair its declared pull grant; refreshing outputs
 alone cannot. Follow the recovery link above.</p>
 <h3 id="reading-platform-outputs-at-runtime">Reading platform outputs at runtime</h3>
+<p>Platform deployment discovers resources through the provider's verified
+<code>DEPLOYMENT_METADATA</code>, separately from application runtime delivery. A custom
+application can select <code>containerEnv</code> or <code>none</code> and omit App Configuration when
+its runtime and selected features support that choice. Configure the native
+<code>deployAppConfig</code> input explicitly and retain required Key Vault, identity and
+network access. See <a href="../configuration/#runtime-configuration-mode">runtime configuration mode</a>.</p>
+<p>Both current custom application examples remain store-dependent. They read the
+unchanged runtime-v1 document, not <code>DEPLOYMENT_METADATA</code>. Do not copy deployment
+metadata into runtime settings or use it to deliver secret values.</p>
 <p>Read <code>AGENTLZ_PLATFORM_OUTPUTS</code> from <code>APP_CONFIG_ENDPOINT</code> with label <code>agent-lz</code>,
 as both custom application examples demonstrate. The publisher exposes selected Container App
 client IDs; hosted instance identities are unavailable during foundation

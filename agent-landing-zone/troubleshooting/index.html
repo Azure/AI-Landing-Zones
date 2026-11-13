@@ -1549,6 +1549,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#deployment-metadata-verification-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deployment metadata verification failed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#missing-endpoint-output" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6448,6 +6459,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#deployment-metadata-verification-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deployment metadata verification failed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#missing-endpoint-output" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7206,6 +7228,21 @@ Resolve missing or conflicting values in their provisioning source.</p>
 <p><strong>Verify:</strong> UI metadata configuration resolves the actual account/database and
 preserves container-scoped grants. Compare the resolved names with the
 provisioned resources and keep permissions scoped to the required containers.</p>
+<h4 id="deployment-metadata-verification-failed">Deployment metadata verification failed</h4>
+<p><strong>Symptom:</strong> A <code>schema</code>, <code>source</code>, <code>context</code>, <code>cache</code>, <code>resource</code> or
+<code>prerequisite</code> diagnostic stops post-provision, pre-deploy or direct setup.</p>
+<p><strong>Diagnose:</strong> Run the
+<a href="../deployment-operations/#verify-deployment-metadata">read-only metadata check</a>.
+Deployment discovery uses native provider output, not App Configuration keys.
+A missing store is valid in a compatible <code>containerEnv</code> selection, but not for
+a selected store-dependent runtime or feature.</p>
+<p><strong>Correct:</strong> Restore the intended environment and immutable bindings. Refresh
+stale cached outputs. For missing/old metadata, reprovision with compatible
+hooks and the same provider, inputs and backend. Repair exact resource/identity
+permissions, backend access and private connectivity when those checks fail.
+Do not hand-copy metadata, change backend bindings or grant broader roles to
+bypass verification.</p>
+<p><strong>Verify:</strong> The metadata check succeeds before retrying the selected operation.</p>
 <h4 id="missing-endpoint-output">Missing endpoint output</h4>
 <p><strong>Symptom:</strong></p>
 <div class="highlight"><pre><span></span><code>Missing &lt;KEY&gt;. Run provisioning and load the selected azd environment outputs before this stage.

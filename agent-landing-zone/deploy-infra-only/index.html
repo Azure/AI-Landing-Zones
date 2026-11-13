@@ -6419,7 +6419,7 @@ than skipping preflight.</p>
 <p>Test connectivity after provisioning and application behavior after deploying
 your selected application.</p>
 <p>Provisioning completes validation and binding, foundation deployment, then
-service configuration, role reconciliation and App Configuration publication
+service configuration, role reconciliation and selected runtime publication
 unless explicitly deferred. It does not build or deploy application images.</p>
 <p>Selected Container Apps can run placeholder images at this point.
 A placeholder response checks basic network and runtime reachability.
@@ -6429,7 +6429,17 @@ For initial infrastructure provisioning, inspect platform outputs below and
 continue to <a href="#validation">Validation</a>. Use lifecycle tasks only when needed.</p>
 <p><a id="platform-outputs"></a></p>
 <h3 id="platform-outputs">Platform outputs</h3>
-<p>After configuration completes, App Configuration publishes the JSON
+<p>Deployment discovery uses the native <code>DEPLOYMENT_METADATA</code> output. Hooks read
+the selected successful Bicep deployment and verify its original inputs,
+application/group bindings and live resource destinations before configuration.
+The executor needs deployment-output and selected ARM/identity read permissions,
+plus each selected operation's existing configuration permissions.
+See <a href="../deployment-operations/#verify-deployment-metadata">metadata recovery</a>.</p>
+<p>Custom applications can omit the store using
+<a href="../configuration/#runtime-configuration-mode">runtime configuration mode</a>.
+Required selected service setup still runs. This does not change the bundled
+application or sample runtime prerequisites.</p>
+<p>In <code>appConfig</code> mode, after configuration completes, App Configuration publishes the JSON
 <code>AGENTLZ_PLATFORM_OUTPUTS</code> and matching flat keys under label <code>agent-lz</code>.
 Search and Cosmos sections are omitted when their endpoints are absent;
 other required fields must validate. These derived keys are not written back

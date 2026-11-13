@@ -6004,14 +6004,18 @@ create a resolver. Leave it unchanged unless the approved DNS design uses it.</p
 <p>Run these checks on <strong>each</strong> deployment host and developer workstation, not
 only on a VM in Azure. Select the intended environment and refresh outputs
 if needed; refresh does not provision or complete configuration.</p>
-<p>The shipped outputs include <code>APP_CONFIG_ENDPOINT</code>, <code>KEY_VAULT_URI</code>,
+<p>First run the <a href="../deployment-operations/#verify-deployment-metadata">metadata check</a>
+from the selected environment. Deployment destinations come from verified
+<code>DEPLOYMENT_METADATA</code>, not runtime store settings. The executor needs ARM and
+identity read access in addition to the selected configuration permissions.</p>
+<p>The shipped outputs include <code>APP_CONFIG_ENDPOINT</code> when a store is selected, <code>KEY_VAULT_URI</code>,
 <code>AZURE_AI_PROJECT_ENDPOINT</code>, <code>AZURE_CONTAINER_REGISTRY_ENDPOINT</code> and, for the
 selected Foundry IQ/Search deployment, <code>KNOWLEDGE_BASE_ENDPOINT</code>.
 Use each nonempty value's hostname, not the resource ID or a private IP.
 The registry output is a login-server hostname; URL outputs include <code>https://</code>
 and can include a path.</p>
 <p>For example, in PowerShell:</p>
-<div class="highlight"><pre><span></span><code><span class="nv">$endpoint</span> <span class="p">=</span> <span class="n">azd</span> <span class="n">env</span> <span class="nb">get-value</span> <span class="n">APP_CONFIG_ENDPOINT</span>
+<div class="highlight"><pre><span></span><code><span class="nv">$endpoint</span> <span class="p">=</span> <span class="n">azd</span> <span class="n">env</span> <span class="nb">get-value</span> <span class="n">AZURE_AI_PROJECT_ENDPOINT</span>
 <span class="nv">$serviceHost</span> <span class="p">=</span> <span class="p">(</span><span class="no">[uri]</span><span class="nv">$endpoint</span><span class="p">).</span><span class="n">DnsSafeHost</span>
 <span class="n">nslookup</span> <span class="nv">$serviceHost</span>
 <span class="no">[System.Net.Dns]</span><span class="p">::</span><span class="n">GetHostAddresses</span><span class="p">(</span><span class="nv">$serviceHost</span><span class="p">)</span>
@@ -6034,9 +6038,11 @@ and can include a path.</p>
 than parsing it as a URL. Keep their original hostnames for TLS;
 do not replace application endpoints with IP addresses or <code>privatelink</code> aliases.</p>
 <p>The lifecycle prerequisite check rejects public or mixed DNS answers and checks
-TCP/TLS reachability: App Configuration before post-provision and deployment,
+TCP/TLS reachability: App Configuration only when the selected runtime requires it,
 the Foundry project additionally before hosted deployment, and ACR before hosted
-image builds. Test the remaining service hosts individually.</p>
+image builds. Test the remaining service hosts individually.
+Store-free selection removes the implicit store probe, not the required
+Foundry, registry, scheduler, workload-egress or connected-runner checks.</p>
 <h3 id="after-validation-deploy-or-develop">After validation: deploy or develop</h3>
 <p><span id="5-deploy-or-develop"></span></p>
 <ul>

@@ -6107,15 +6107,24 @@ creates the foundation, reconciles access and configures services; it does
 not build or publish application images or create a running hosted agent
 version. Selected Container Apps may initially have placeholder images.
 Reprovisioning must not restore placeholders over deployed application images.</p>
-<p>All flat Terraform outputs flow natively into azd and are consumed by the
-shared postprovision and predeploy hooks. No manual output copying is needed.</p>
-<p>Terraform publishes foundation-owned App Configuration connections, model
+<p>Terraform outputs flow natively into azd without manual copying. Deployment
+discovery reads only the approved <code>DEPLOYMENT_METADATA</code> output from the original
+initialized native backend, after source sensitivity and backend-binding checks.
+Preserve the reviewed root inputs, application/group bindings, backend records
+and Entra-authenticated state access. The executor also needs read access to
+selected ARM resources and identities, plus the operation's configuration rights.
+See <a href="../deployment-operations/#verify-deployment-metadata">metadata recovery</a>.</p>
+<p>In <code>appConfig</code> mode, Terraform publishes foundation-owned App Configuration connections, model
 metadata and declared additional settings. Shared postprovision seeds only
 missing defaults; the runtime publisher updates its explicitly owned keys.
 See <a href="../configuration/#configuration-ownership-and-declarations">configuration ownership</a>.</p>
 <p>The shared <a href="../deploy-infra-only/#platform-outputs">platform output reference</a>
 explains <code>AGENTLZ_PLATFORM_OUTPUTS</code> and flat keys published in App Configuration
 under label <code>agent-lz</code>. The platform document is not the full azd output set.</p>
+<p>For a compatible custom application, <code>containerEnv</code> can omit the store and
+<code>none</code> performs no runtime injection. Neither mode publishes runtime settings to
+a store merely because one exists. Selected platform setup still runs.
+See <a href="../configuration/#runtime-configuration-mode">runtime configuration mode</a>.</p>
 <h2 id="validation">Validation</h2>
 <ol>
 <li>Confirm Terraform and <strong>every required configuration step</strong> succeeded.
@@ -6125,7 +6134,8 @@ under label <code>agent-lz</code>. The platform document is not the full azd out
 <li>Check backend access and state-key isolation without printing state or
    secrets. Confirm that resources and state refer to this environment.</li>
 <li>
-<p>Read the expected platform output from the actual configuration store:</p>
+<p>Run the <a href="../deployment-operations/#verify-deployment-metadata">metadata check</a>.
+   In <code>appConfig</code> mode, also read the expected runtime platform output:</p>
 <div class="highlight"><pre><span></span><code>az<span class="w"> </span>appconfig<span class="w"> </span>kv<span class="w"> </span>show<span class="w"> </span>--endpoint<span class="w"> </span>&lt;app-configuration-endpoint&gt;<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--key<span class="w"> </span>AGENTLZ_PLATFORM_OUTPUTS<span class="w"> </span>--label<span class="w"> </span>agent-lz<span class="w"> </span>--auth-mode<span class="w"> </span>login
 </code></pre></div>

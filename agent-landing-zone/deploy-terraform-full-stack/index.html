@@ -5931,7 +5931,13 @@ It checks authenticated discovery before activating consumers.
 A manual MCP restart is not required during normal deployment.</p>
 <p>Provision does not import SQL metadata or grant database permissions.
 There is no required standalone image-preparation command or second provision.</p>
-<p>azd imports all flat Terraform outputs for the shared hooks automatically. Service
+<p>azd imports native Terraform outputs automatically. Shared hooks verify the
+dedicated <code>DEPLOYMENT_METADATA</code> against the original inputs, application/group
+bindings, initialized backend and selected live resources before dependent
+changes. Preserve backend access and selected ARM/identity read permissions in
+addition to configuration rights. See
+<a href="../deployment-operations/#verify-deployment-metadata">metadata recovery</a>.</p>
+<p>The bundled runtime still requires <code>appConfig</code>. Its service
 configuration publishes App Configuration values under <code>agent-lz</code>, with Key
 Vault references for secrets. Do not confuse those runtime/platform settings
 with the full infrastructure output contract.

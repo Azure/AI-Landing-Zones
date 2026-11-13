@@ -7266,7 +7266,13 @@ This keeps PowerShell and Bash behavior aligned.
 Unknown explicit build modes fail.</p>
 <p>The hosted orchestrator build is separate.
 It always uses ACR Tasks, even when <code>BUILD_MODE=local</code>.</p>
-<p>Before invoking component scripts, confirm <code>APP_CONFIG_ENDPOINT</code>.
+<p>The platform hooks first verify native <code>DEPLOYMENT_METADATA</code> against the
+selected environment, original inputs and live resources. Preserve deployment
+output and selected ARM/identity read permissions, as well as configuration
+rights. This discovery does not use App Configuration.
+See <a href="../deployment-operations/#verify-deployment-metadata">metadata recovery</a>.</p>
+<p>The bundled runtime and its component scripts still require App Configuration.
+Before invoking component scripts, confirm <code>APP_CONFIG_ENDPOINT</code>.
 A nonempty shell value overrides the azd environment value.
 The scripts read <code>AZURE_APP_RESOURCE_GROUP</code> from App Configuration under <code>agent-lz</code>.</p>
 <p>For UI and ingestion, a successful missing or empty read falls back to <code>AZURE_RESOURCE_GROUP</code>.
