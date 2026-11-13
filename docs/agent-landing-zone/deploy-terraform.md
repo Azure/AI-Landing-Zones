@@ -19,5 +19,10 @@ shared azd lifecycle. The separate
 [AI Landing Zone Terraform foundation reference](../terraform/index.md)
 covers direct foundation composition with the shared AVM pattern.
 
+Shared hooks read verified `DEPLOYMENT_METADATA` from the original native
+Terraform backend, independently of runtime App Configuration delivery.
+See [runtime configuration modes](configuration.md#runtime-configuration-mode)
+and [metadata recovery](deployment-operations.md#verify-deployment-metadata).
+
 [Optional PostgreSQL](postgresql.md) for fresh custom consumers uses this same
 product-root lifecycle; direct foundation calls omit protection/bootstrap guards.

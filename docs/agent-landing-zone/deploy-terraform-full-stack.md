@@ -183,7 +183,14 @@ A manual MCP restart is not required during normal deployment.
 Provision does not import SQL metadata or grant database permissions.
 There is no required standalone image-preparation command or second provision.
 
-azd imports all flat Terraform outputs for the shared hooks automatically. Service
+azd imports native Terraform outputs automatically. Shared hooks verify the
+dedicated `DEPLOYMENT_METADATA` against the original inputs, application/group
+bindings, initialized backend and selected live resources before dependent
+changes. Preserve backend access and selected ARM/identity read permissions in
+addition to configuration rights. See
+[metadata recovery](deployment-operations.md#verify-deployment-metadata).
+
+The bundled runtime still requires `appConfig`. Its service
 configuration publishes App Configuration values under `agent-lz`, with Key
 Vault references for secrets. Do not confuse those runtime/platform settings
 with the full infrastructure output contract.

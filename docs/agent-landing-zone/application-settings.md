@@ -5,6 +5,12 @@ ingestion and MCP services. Azure App Configuration remains an intentional depen
 Components read the `agent-lz` label; a label is not an environment-isolation
 boundary. Keep stores, identities and secrets separate between environments.
 
+This dependency belongs to the bundled applications, not platform resource
+discovery. Deployment tooling uses verified provider `DEPLOYMENT_METADATA`.
+Custom applications can select `containerEnv` or `none` with their own runtime
+contract. See [runtime configuration mode](configuration.md#runtime-configuration-mode).
+The default `appConfig` behavior and `agent-lz` ownership rules below are unchanged.
+
 [Deployment settings](configuration.md) covers resource selection, provisioning
 ownership and generated outputs. Read individual nonsecret keys rather than
 dumping a store or environment.

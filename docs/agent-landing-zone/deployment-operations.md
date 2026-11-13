@@ -41,6 +41,44 @@ automatically revoke old grants. Review retirement explicitly; recovery does not
 inside the orchestrator. Embedding model/dimension changes need reindexing,
 not just a runtime-setting refresh.
 
+## Verify deployment metadata
+
+From the reviewed platform checkout, run:
+
+```bash
+python -m config.deployment.metadata --check --environment <environment-name>
+```
+
+This read-only resource check loads native `DEPLOYMENT_METADATA` and verifies
+the selected context, declared capabilities, live destinations and identities.
+It does not publish runtime settings or complete deferred configuration.
+Bicep reads the selected successful deployment. Terraform requires the
+original initialized native working directory and backend configuration, and
+rejects backend changes without reconfiguration or state migration.
+
+For stale cached metadata or overlapping aliases, restore the intended
+selection and refresh:
+
+```bash
+azd env refresh --environment <environment-name>
+python -m config.deployment.metadata --check --environment <environment-name>
+```
+
+If the output is missing or incompatible, use a compatible platform checkout
+and reprovision with the same provider, original root inputs, application/group
+bindings and, for Terraform, original backend. Refresh cannot create a missing
+output or reconstruct private binding records.
+
+Repair missing ARM/output/identity read permissions, existing backend access or
+private DNS/TLS connectivity without broadening runtime roles or guessing
+destinations. Retain the selected operation's actual configuration and Key
+Vault permissions. Metadata rejection precedes dependent changes.
+
+Keep hooks and provider outputs from a compatible platform revision.
+Do not roll a store-free environment back to store-dependent hooks. Recovery
+does not delete an existing store or convert an application's runtime mode in
+place. See [runtime configuration mode](configuration.md#runtime-configuration-mode).
+
 ## PostgreSQL data protection
 
 [Optional PostgreSQL recovery/removal](postgresql.md#protection-recovery-and-deliberate-removal)

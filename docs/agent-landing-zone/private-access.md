@@ -210,7 +210,12 @@ Run these checks on **each** deployment host and developer workstation, not
 only on a VM in Azure. Select the intended environment and refresh outputs
 if needed; refresh does not provision or complete configuration.
 
-The shipped outputs include `APP_CONFIG_ENDPOINT`, `KEY_VAULT_URI`,
+First run the [metadata check](deployment-operations.md#verify-deployment-metadata)
+from the selected environment. Deployment destinations come from verified
+`DEPLOYMENT_METADATA`, not runtime store settings. The executor needs ARM and
+identity read access in addition to the selected configuration permissions.
+
+The shipped outputs include `APP_CONFIG_ENDPOINT` when a store is selected, `KEY_VAULT_URI`,
 `AZURE_AI_PROJECT_ENDPOINT`, `AZURE_CONTAINER_REGISTRY_ENDPOINT` and, for the
 selected Foundry IQ/Search deployment, `KNOWLEDGE_BASE_ENDPOINT`.
 Use each nonempty value's hostname, not the resource ID or a private IP.
@@ -220,7 +225,7 @@ and can include a path.
 For example, in PowerShell:
 
 ```powershell
-$endpoint = azd env get-value APP_CONFIG_ENDPOINT
+$endpoint = azd env get-value AZURE_AI_PROJECT_ENDPOINT
 $serviceHost = ([uri]$endpoint).DnsSafeHost
 nslookup $serviceHost
 [System.Net.Dns]::GetHostAddresses($serviceHost)
@@ -245,9 +250,11 @@ than parsing it as a URL. Keep their original hostnames for TLS;
 do not replace application endpoints with IP addresses or `privatelink` aliases.
 
 The lifecycle prerequisite check rejects public or mixed DNS answers and checks
-TCP/TLS reachability: App Configuration before post-provision and deployment,
+TCP/TLS reachability: App Configuration only when the selected runtime requires it,
 the Foundry project additionally before hosted deployment, and ACR before hosted
 image builds. Test the remaining service hosts individually.
+Store-free selection removes the implicit store probe, not the required
+Foundry, registry, scheduler, workload-egress or connected-runner checks.
 
 ### After validation: deploy or develop
 

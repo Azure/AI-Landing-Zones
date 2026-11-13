@@ -276,10 +276,15 @@ not build or publish application images or create a running hosted agent
 version. Selected Container Apps may initially have placeholder images.
 Reprovisioning must not restore placeholders over deployed application images.
 
-All flat Terraform outputs flow natively into azd and are consumed by the
-shared postprovision and predeploy hooks. No manual output copying is needed.
+Terraform outputs flow natively into azd without manual copying. Deployment
+discovery reads only the approved `DEPLOYMENT_METADATA` output from the original
+initialized native backend, after source sensitivity and backend-binding checks.
+Preserve the reviewed root inputs, application/group bindings, backend records
+and Entra-authenticated state access. The executor also needs read access to
+selected ARM resources and identities, plus the operation's configuration rights.
+See [metadata recovery](deployment-operations.md#verify-deployment-metadata).
 
-Terraform publishes foundation-owned App Configuration connections, model
+In `appConfig` mode, Terraform publishes foundation-owned App Configuration connections, model
 metadata and declared additional settings. Shared postprovision seeds only
 missing defaults; the runtime publisher updates its explicitly owned keys.
 See [configuration ownership](configuration.md#configuration-ownership-and-declarations).
@@ -287,6 +292,11 @@ See [configuration ownership](configuration.md#configuration-ownership-and-decla
 The shared [platform output reference](deploy-infra-only.md#platform-outputs)
 explains `AGENTLZ_PLATFORM_OUTPUTS` and flat keys published in App Configuration
 under label `agent-lz`. The platform document is not the full azd output set.
+
+For a compatible custom application, `containerEnv` can omit the store and
+`none` performs no runtime injection. Neither mode publishes runtime settings to
+a store merely because one exists. Selected platform setup still runs.
+See [runtime configuration mode](configuration.md#runtime-configuration-mode).
 
 ## Validation
 
@@ -296,7 +306,8 @@ under label `agent-lz`. The platform document is not the full azd output set.
    the approved inputs. Verify private endpoints in their actual groups.
 3. Check backend access and state-key isolation without printing state or
    secrets. Confirm that resources and state refer to this environment.
-4. Read the expected platform output from the actual configuration store:
+4. Run the [metadata check](deployment-operations.md#verify-deployment-metadata).
+   In `appConfig` mode, also read the expected runtime platform output:
 
     ```bash
     az appconfig kv show --endpoint <app-configuration-endpoint> \
