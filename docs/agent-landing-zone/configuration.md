@@ -165,8 +165,8 @@ create a platform hub; existing BYO VNet, DNS and hub settings still apply.
 | Variable | Default | Purpose |
 | --- | --- | --- |
 | `AZURE_RESOURCE_GROUP` | `rg-<environment-name>` | Foundry and grounding destination, and the native azd root deployment group. An explicitly supplied name is preserved. |
-| `AZURE_APP_RESOURCE_GROUP` | `<AZURE_RESOURCE_GROUP>-app` | Application destination: Container Apps, registry, App Configuration, Key Vault, application Cosmos DB and monitoring. |
-| `AZURE_NETWORK_RESOURCE_GROUP` | `<AZURE_RESOURCE_GROUP>-network` | Destination for workload-owned network resources. Existing network/private-endpoint overrides retain their own contract. |
+| `AZURE_APP_RESOURCE_GROUP` | `<AZURE_RESOURCE_GROUP>-app` | Application destination (`applicationResourceGroupName`): Container Apps, registry, App Configuration, Key Vault, application Cosmos DB and monitoring. |
+| `AZURE_NETWORK_RESOURCE_GROUP` | `<AZURE_RESOURCE_GROUP>-network` | Destination (`networkResourceGroupName`) for workload-owned network resources. Existing network/private-endpoint overrides retain their own contract. |
 | `CREATE_RESOURCE_GROUPS` | `true` for new environments | Strict boolean (`true` or `false`): allows creating missing additional destination groups. Set `false` to require pre-created additional groups. Does not disable azd's normal root-group creation. |
 
 The hook saves these defaults in the selected azd environment before provision.
@@ -297,7 +297,7 @@ When unset, they use the template defaults shown below.
 | `AZURE_SEARCH_LOCATION` | Empty | Region for both the Agent Application Search service and the separate Foundry Agent Service Search service. Leave empty to use `AZURE_LOCATION`. |
 | `AZURE_SPEECH_LOCATION` | Empty | Region for Azure AI Speech. Leave empty to use the deployment region. |
 | `AZURE_PE_LOCATION` | Empty | Region for private endpoints. Leave empty to use the deployment region. |
-| `AZURE_PE_RESOURCE_GROUP_NAME` | Empty | Explicit private endpoint group override takes precedence. When empty, `USE_EXISTING_VNET=true` with `SIDE_BY_SIDE=false` uses the existing VNet's group; otherwise uses the resolved network group (`AZURE_NETWORK_RESOURCE_GROUP`). New Foundry-root environments initialize a separate network group; existing single-group environments retain their mapping. |
+| `AZURE_PE_RESOURCE_GROUP_NAME` | Empty | Explicit private endpoint group override (`privateEndpointResourceGroupName`) takes precedence. When empty, `USE_EXISTING_VNET=true` with `SIDE_BY_SIDE=false` uses the existing VNet's group; otherwise uses the resolved network group (`AZURE_NETWORK_RESOURCE_GROUP`). New Foundry-root environments initialize a separate network group; existing single-group environments retain their mapping. |
 | `EXISTING_APPLICATION_INSIGHTS_CONNECTION_STRING` | None | Sends telemetry to an Application Insights resource you already have. |
 
 Supported `EXISTING_*` inputs select reuse, subject to each resource's conditions.
@@ -323,8 +323,10 @@ that native parameter. A provisioned store does not select `appConfig` mode.
 Both providers still run selected Foundry, Search, governance, Container Apps
 and panel configuration using verified metadata. Selected features retain their
 real prerequisites, including Key Vault operations and private connectivity.
-The bundled Agent Application, Agent App MCP Server and current custom
-application samples require App Configuration. A custom store-free application
+The bundled Agent Application, Agent App MCP Server and
+`samples/custom-app/containerapp` require App Configuration, while
+`samples/custom-app/hosted` reads platform-injected `FOUNDRY_PROJECT_ENDPOINT`
+directly without `APP_CONFIG_ENDPOINT`. A custom store-free application
 must own compatible runtime configuration and declare its dependencies.
 This setting does not delete an existing store or migrate an application's
 runtime mode in place.
@@ -500,6 +502,23 @@ resource requirements; this reference selector does not add ingestion to them.
 
 The source/index arrangement must support omission. See [Ingestion](ingestion.md)
 for supported source combinations and the native private-input boundary.
+
+### Model deployments and external AI Gateway
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `DEPLOY_MODEL_DEPLOYMENTS` | `true` | Maps to `deployModelDeployments` across Bicep and Terraform. Set `false` when routing all model inference through an external AI Gateway with zero local Foundry model deployments. |
+
+When `DEPLOY_MODEL_DEPLOYMENTS=false` (`deployModelDeployments = false`), neither
+Bicep nor Terraform provisions local chat or embedding deployments, and an empty
+native `modelDeploymentList = []` does not fall back to default deployments.
+Regional model quota preflight checks are skipped. `config.aifoundry.setup`
+still configures account-level Responsible AI (RAI) blocklists and policies
+while skipping local model deployment RAI attachment.
+
+Features that require a local Foundry planning or embedding deployment (such as
+Foundry IQ MCP planning models or NL2SQL vector embeddings unless externally
+satisfied) retain their validation guards.
 
 ### Search region and quota
 
@@ -1044,7 +1063,13 @@ Existing private DNS zones, such as hub-owned zones, use
 `COGSVCS`, `OPENAI`, `AISERVICES`, `SEARCH`, `COSMOS`, `BLOB`, `KEYVAULT`, `APPCONFIG`, `CONTAINERAPPS`, `ACR`, `AZUREMONITOR`, `OMSOPSINSIGHTS`, `ODSOPSINSIGHTS`, `AZUREAUTOMATION`, `APPINSIGHTS`.
 
 Their owner must provide the required VNet links or resolver forwarding
-separately from network peering. With `POLICY_MANAGED_PRIVATE_DNS=true`,
+separately from network peering. See the
+[BYO hub Private DNS checklist](network-isolation.md#byo-hub-private-dns-checklist)
+for AMPLS zone mapping (`privatelink.monitor.azure.com` rather than
+`privatelink.applicationinsights.io`, plus `privatelink.agentsvc.azure-automation.net`),
+Foundry backing Cosmos DB (`privatelink.documents.azure.com`), internal APIM
+(`privatelink.azure-api.net`) and internal Container Apps `<defaultDomain>`
+static `A` records. With `POLICY_MANAGED_PRIVATE_DNS=true`,
 Azure Policy manages DNS records instead of the template. Policy coverage
 and links need agreement with the DNS owner. Policy-managed DNS and explicit
 existing-zone IDs are mutually exclusive DNS arrangements.
@@ -1216,6 +1241,21 @@ Native Search, Foundry IQ, MCP and multimodal registration default to off;
 the integrated MCP lifecycle coordinates registration when selected.
 Configured infrastructure alone does not onboard SQL or populate its catalog.
 
+### Container Apps workload profiles
+
+Container Apps `profile_name` resolves dynamically against effective
+`workloadProfiles` (`WORKLOAD_PROFILES` or native `workloadProfiles`) across
+Bicep and Terraform:
+
+- **`"main"`** when `"main"` is present in effective `workloadProfiles` (the default dedicated profile).
+- **`"Consumption"`** when overridden to Consumption-only (`[]` or `[{"name": "Consumption", "workloadProfileType": "Consumption"}]`).
+- **Single custom dedicated profile** when both `"main"` and `"Consumption"` are omitted and exactly one custom profile is declared.
+
+Explicit per-application `profile_name` selections are preserved when they
+match an effective profile. Unknown `profile_name` values or ambiguous
+multi-profile configurations without `"main"` or `"Consumption"` fail fast
+before deployment.
+
 ### Hosted foundation and publication inputs
 
 These inputs prepare hosting resources and metadata.
@@ -1228,6 +1268,8 @@ and [Hosted agents](hosted-agents.md) explain the application capabilities.
 | `HOSTED_AGENT_IMAGE` | `agent-app-orchestrator` | Repository name of the agent image in Container Registry. |
 | `HOSTED_AGENT_CONTAINER_CPU` | `2` | CPU recorded in provisioning metadata. See the literal-definition constraint below. |
 | `HOSTED_AGENT_CONTAINER_MEMORY` | `4Gi` | Memory recorded in provisioning metadata. See the same constraint. |
+| `GRANT_PROJECT_TRACE_EVALUATION_READER` | `false` | Opt-in (`grantProjectTraceEvaluationReader`): grants the Foundry project managed identity `Reader` on Application Insights and `Log Analytics Data Reader` on the linked Log Analytics workspace for scheduled trace evaluations (`azure_ai_traces`). |
+| `GRANT_PROJECT_PROTECTED_TRACE_CONTENT_READER` | `false` | Strictly opt-in (`grantProjectProtectedTraceContentReader`): grants `Privileged Monitoring Data Reader` to the Foundry project managed identity with an Azure ABAC v2.0 condition restricting workspace table reads to `AppGenAIContent` when `Protected`. |
 
 Use the generated compatible host-specific application definitions for
 registration names, CPU, memory, entrypoints and protocols. Provisioning

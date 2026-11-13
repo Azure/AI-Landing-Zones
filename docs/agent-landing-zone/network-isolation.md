@@ -78,6 +78,28 @@ peering, routes, DNS, gateway transit and changes to shared resources.
 Policy-managed DNS and explicitly reused DNS zones are alternative arrangements.
 Their owners must provide the necessary links and readiness.
 
+### BYO hub Private DNS checklist
+
+When central hub DNS or Azure Policy manages Private DNS instead of standalone
+deployment zones, ensure every enabled boundary below resolves in the hub,
+spoke and operator resolver path:
+
+| Service boundary | Required Private DNS zone or static record |
+| --- | --- |
+| Microsoft Foundry and AI services | `privatelink.cognitiveservices.azure.com`, `privatelink.openai.azure.com` and `privatelink.services.ai.azure.com`. |
+| Search and Blob storage | `privatelink.search.windows.net` and `privatelink.blob.core.windows.net` (used by document storage, Foundry backing storage and AMPLS packs). |
+| Cosmos DB | `privatelink.documents.azure.com`. Required even when application Cosmos DB is disabled (`DEPLOY_COSMOS_DB=false`) if Foundry Agent Service provisions or links its associated enterprise memory Cosmos account. |
+| App Configuration, Key Vault and Container Registry | `privatelink.azconfig.io`, `privatelink.vaultcore.azure.net` and `privatelink.azurecr.io`. |
+| Container Apps Environment | `privatelink.<region>.azurecontainerapps.io`. When the environment is internal (`internal = true`), also create a Private DNS zone for the environment `<defaultDomain>` with static `A` records `*` and `@` pointing to the environment `staticIp`. |
+| Internal AI Gateway and optional PostgreSQL | `privatelink.azure-api.net` when integrating an internal or private Azure API Management AI Gateway, plus `privatelink.postgres.database.azure.com` when optional PostgreSQL is enabled. |
+| Azure Monitor Private Link Scope (AMPLS) | `privatelink.monitor.azure.com`, `privatelink.oms.opinsights.azure.com`, `privatelink.ods.opinsights.azure.com` and exact hyphenated `privatelink.agentsvc.azure-automation.net` (plus `privatelink.blob.core.windows.net`). AMPLS maps Application Insights ingestion, live metrics and query endpoints through `privatelink.monitor.azure.com` rather than `privatelink.applicationinsights.io`. |
+
+### Hub-and-spoke peering and routing checklist
+
+- **Bidirectional VNet peering:** configure spoke-to-hub peering (`HUB_INTEGRATION_CREATE_HUB_PEERING`) and reverse hub-to-spoke peering with `allowVirtualNetworkAccess` and `allowForwardedTraffic` enabled in both directions.
+- **Gateway transit settings:** align `allowGatewayTransit` on the hub peering with `useRemoteGateways` (`HUB_INTEGRATION_PEERING_USE_REMOTE_GATEWAYS`) on the spoke peering when sharing a hub VPN or ExpressRoute gateway.
+- **Gateway and firewall return routes:** advertise or configure return routes for the spoke VNet address space on the hub firewall and on VPN or ExpressRoute gateways so operator workstations, DNS resolvers and CI/CD runners reach spoke private endpoints symmetrically.
+
 <span id="isolation-and-provisioning"></span>
 <span id="choose-subnet-ownership"></span>
 <span id="default-subnets"></span>
@@ -102,6 +124,20 @@ Foundry/grounding endpoints, independently of resource group count.
 VPN gateways, AI Gateway and Power Platform integrations need their own
 setup. Reserving a subnet does not deploy or connect them.
 See [subnet inputs](configuration.md#subnet-creation-and-addressing).
+
+!!! warning "Foundry Agent Service subnet binding is immutable"
+    Microsoft Foundry Agent Service `networkInjections` subnet binding (`agentSubnetName`, default `agent-subnet`) is **immutable after initial capability-host and account provisioning**. Changing VNets or agent subnets later cannot be applied in place and requires recreating the Foundry resource. Confirm `EXISTING_VNET_RESOURCE_ID` and `agentSubnetName` (`AZURE_AGENT_SUBNET_NAME`) before the first `azd provision`.
+
+### Multi-resource-group placement checklist
+
+Confirm target groups, RBAC and Azure Policy coverage across all four [resource group destinations](configuration.md#resource-group-destinations) before first provision:
+
+| Parameter and environment input | Scope and pre-provision verification |
+| --- | --- |
+| `AZURE_RESOURCE_GROUP` | Foundry and grounding root resource group. Verify subscription region, Foundry model or gateway plan and root deployment permissions. |
+| `applicationResourceGroupName` (`AZURE_APP_RESOURCE_GROUP`) | Application Container Apps, Container Registry, App Configuration, Key Vault, application Cosmos DB and observability resources. Pre-create when `CREATE_RESOURCE_GROUPS=false`. |
+| `networkResourceGroupName` (`AZURE_NETWORK_RESOURCE_GROUP`) | Workload-owned VNet, subnets, NSGs, NAT gateway and standalone firewall. Align with existing-VNet ownership when reusing networking. |
+| `privateEndpointResourceGroupName` (`AZURE_PE_RESOURCE_GROUP_NAME`) | Explicit private endpoint resource group override (takes precedence over `SIDE_BY_SIDE=false` existing-VNet placement and `AZURE_NETWORK_RESOURCE_GROUP`). Confirm scoped RBAC and Private DNS zone links or policy coverage in the resolved group. |
 
 <span id="component-runtime-egress"></span>
 <span id="review-before-provisioning"></span>
@@ -130,6 +166,17 @@ Standalone private deployments default to a Basic firewall. Choose Standard
 when its features, such as DNS proxy, are required, and plan the corresponding
 [firewall networking](configuration.md#firewall-sku-and-management-networking).
 Enabling DNS proxy does not redirect client DNS or repair missing private-zone links.
+
+### BYO hub firewall Azure Monitor rules
+
+When spoke subnets route outbound traffic through a BYO hub firewall, allow
+outbound HTTPS (`TCP 443`) to AMPLS and Azure Monitor **both ingestion and
+query** endpoints: `*.loganalytics.io`, `*.applicationinsights.io`,
+`*.monitor.azure.com`, `*.in.applicationinsights.azure.com`,
+`*.ods.opinsights.azure.com` and `*.oms.opinsights.azure.com`. The built-in
+standalone template firewall already covers `*.loganalytics.io` and
+`*.monitor.azure.com`, whereas external hub firewall policies remain
+report-only and must allow both ingestion and workspace or trace query FQDNs.
 
 <span id="jumpbox-access"></span>
 <span id="use-the-jumpbox"></span>

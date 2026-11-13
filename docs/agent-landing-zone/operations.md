@@ -46,6 +46,34 @@ permissions. Use the user's approved application path when acting on their
 session. Use the service's administrative access for resource health and
 diagnostics.
 
+### Inspect Operate and Traces in isolated networks
+
+Human operators inspecting **Operate** and **Traces** in the Foundry portal for
+an isolated deployment need both private DNS resolution and Azure Monitor read
+RBAC:
+
+- **Private DNS and firewall path:** resolve AMPLS zones (`privatelink.monitor.azure.com`, `privatelink.oms.opinsights.azure.com`, `privatelink.ods.opinsights.azure.com`, `privatelink.agentsvc.azure-automation.net` and `privatelink.blob.core.windows.net`) over VPN or ExpressRoute with Private DNS Resolver, and allow outbound HTTPS (`443`) to Azure Monitor ingestion and query endpoints. See the [BYO hub Private DNS checklist](network-isolation.md#byo-hub-private-dns-checklist).
+- **Operator Azure Monitor RBAC:** assign `Log Analytics Reader` on Application Insights and the linked Log Analytics workspace, plus `Privileged Monitoring Data Reader` when `AppGenAIContent` is `Protected`.
+
+### Run scheduled trace evaluations on hosted agents
+
+Use **scheduled trace evaluations** (`azure_ai_traces`) for hosted agents
+instead of `responseCompleted` continuous evaluation rules, which are not
+supported for hosted agents. Check per-item agent version
+(`gen_ai.agent.version` or `FOUNDRY_AGENT_VERSION`) and non-empty output across
+rolling trace lookback windows so older versions or empty warm-up spans do not
+skew evaluation scores.
+
+Opt in before `azd provision` only to the least-privilege evaluation roles
+required by the Foundry project managed identity:
+
+- **`GRANT_PROJECT_TRACE_EVALUATION_READER=true`** (`grantProjectTraceEvaluationReader`): grants the Foundry project managed identity `Reader` on Application Insights and `Log Analytics Data Reader` on the linked Log Analytics workspace.
+- **`GRANT_PROJECT_PROTECTED_TRACE_CONTENT_READER=true`** (`grantProjectProtectedTraceContentReader`): strictly opt-in grant assigning `Privileged Monitoring Data Reader` conditioned with Azure ABAC v2.0 restricting workspace table reads to `AppGenAIContent` when `Protected`.
+
+When model calls traverse an AI Gateway, allowlist each hosted agent's
+dedicated runtime identity (created on first `azd deploy` publication) at the
+gateway rather than only the Foundry project identity.
+
 ## Conversations, workflows and feedback
 
 Use the selected host's official client and service operations to inspect

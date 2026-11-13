@@ -154,6 +154,19 @@ managed-identity scheduler binding:
 Keep the native worker and UI client aligned; do not change either component's
 binding independently.
 
+### Platform-injected and reserved variables
+
+Microsoft Foundry Hosted Agents automatically inject and reserve `FOUNDRY_*`
+(`FOUNDRY_PROJECT_ENDPOINT`, `FOUNDRY_PROJECT_ARM_ID`, `FOUNDRY_AGENT_NAME`,
+`FOUNDRY_AGENT_VERSION`, `FOUNDRY_AGENT_SESSION_ID`), `AGENT_*` and
+`APPLICATIONINSIGHTS_CONNECTION_STRING`.
+
+`config.appdefinition` rejects overrides of those reserved variables in
+`azure.yaml` or `agent.yaml` during preflight validation before publish.
+Telemetry settings such as `APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL` and
+`OTEL_*` remain valid. See
+[Bring your own app](build-your-own-app.md#folder-layout-and-azureyaml).
+
 ## Validation rules
 
 Check a compatible **published** package set for the selected Python
@@ -197,6 +210,20 @@ If publication creates a runtime identity, reconcile its grants as an explicit
 deployment step before admitting traffic. Runtime startup does not create
 resources, grant roles or repair missing foundation configuration.
 See [hosted access recovery](deploy-full-stack.md#recover-hosted-runtime-access).
+
+### AI Gateway allowlisting and external models
+
+Each hosted agent publication creates a dedicated runtime managed identity on
+its first `azd deploy`, including two distinct runtime identities when
+`APPLICATION_MODE=both`. Allowlist each hosted agent's dedicated runtime
+identity at the AI Gateway rather than only the Foundry project identity.
+
+Deployments routing all model inference through an external AI Gateway set
+`DEPLOY_MODEL_DEPLOYMENTS=false` so local chat and embedding deployments and
+model quota preflight checks are skipped. Container Apps `profile_name`
+resolves dynamically against `WORKLOAD_PROFILES`. See
+[external AI Gateway mode](configuration.md#model-deployments-and-external-ai-gateway)
+and [workload profiles](configuration.md#container-apps-workload-profiles).
 
 ## Calling the agent
 
@@ -280,3 +307,19 @@ Native persistence does not authorize prompt/completion capture.
 Keep sensitive content and credentials out of telemetry. Correlate owner-bound
 UI operations with native session/run and deployment identifiers under the
 approved logging policy. See [Monitoring & audit](application-monitoring.md).
+
+### Scheduled trace evaluations
+
+Hosted agents use **scheduled trace evaluations** (`azure_ai_traces` over
+`invoke_agent` spans) rather than `responseCompleted` continuous evaluation
+rules, which are not supported for hosted agents. With
+`azure-ai-agentserver-responses`, persisted `GET /responses/{id}` lookups and
+GenAI OpenTelemetry `invoke_agent` spans emit automatically when
+`APPLICATIONINSIGHTS_CONNECTION_STRING` is injected.
+
+Check per-item agent version (`gen_ai.agent.version` or
+`FOUNDRY_AGENT_VERSION`) and non-empty assistant output across rolling trace
+lookback windows so older agent versions or empty startup probes do not skew
+evaluation scores. See
+[Administration](operations.md#run-scheduled-trace-evaluations-on-hosted-agents)
+for opt-in evaluation RBAC.

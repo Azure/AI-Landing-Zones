@@ -64,6 +64,12 @@ and exporter errors. A custom process override
 For Container Apps, start in Application Insights rather than expecting a
 Hosted-agent entry in Foundry.
 
+In isolated networks, **Operate** and **Traces** require workstation VPN or
+ExpressRoute DNS resolution to AMPLS endpoints alongside Azure Monitor reader
+roles. For hosted evaluations, use scheduled trace evaluations
+(`azure_ai_traces`). See
+[Administration](operations.md#inspect-operate-and-traces-in-isolated-networks).
+
 ### Traces, logs and content are separate
 
 Basic traces do not require prompt or response-content capture.
