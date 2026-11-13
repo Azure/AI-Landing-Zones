@@ -458,10 +458,10 @@ window.architecture = {
     add({
       id: "bot", group: "application", name: "Azure Bot Service",
       field: "botServices", sku: "Channel / message-dependent", unit: "Bot integrations",
-      description: "Optional channel integration with Microsoft 365 or Teams, shown inside the subscription.",
+      description: "Optional custom Bot Framework channel integration shown in the reference diagram. Direct Foundry publishing to Teams and Microsoft 365 Copilot does not require an Azure Bot Service resource.",
       sizing: "<strong>Size channel messages and authentication flows.</strong> Bot registration is not hosted-agent compute. Standard and premium channel billing differs.",
-      detail: "Separately provisioned in the diagram. No automatic channel deployment is implied. Channel messages, licenses and agent/model consumption must be budgeted independently.",
-      parameter: "Architecture diagram: separately provisioned Bot Service"
+      detail: "Shown as an optional subscription component in the reference diagram. Direct Foundry publication to Teams and Microsoft 365 Copilot uses built-in Foundry registration with zero Bot Service resources. Custom Bot Framework channels, licenses and model consumption must be budgeted independently.",
+      parameter: "Architecture diagram: optional custom Bot Framework channel"
     }, s.botServices);
     add({
       id: "speech", group: "foundry", name: "Azure AI Speech",
