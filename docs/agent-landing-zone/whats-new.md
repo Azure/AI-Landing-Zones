@@ -2,6 +2,8 @@
 
 Major updates by month. See the [release notes](https://github.com/Azure/agent-landing-zone/releases)
 for all changes and fixes.
+New releases start as pre-releases and become Latest after live validation,
+see [Validated releases](validated-releases.md).
 
 ## November 2026
 
