@@ -78,9 +78,9 @@ Explore Agent Landing Zone, integrated with AI Gateway Landing Zone, or on its o
 Agent Landing Zone connects to a platform that provides shared connectivity, DNS and egress services.
 
 <figure class="architecture-figure" markdown="1">
-![Agent Landing Zone reference architecture](architecture/media/AI-Landing-Zone-with-platform.png?v=e868bb76bceb){ width=6400 height=3822 loading=lazy }
+![Agent Landing Zone reference architecture](architecture/media/AI-Landing-Zone-with-platform.png?v=32bc79bf776a){ width=6400 height=3823 loading=lazy }
 <figcaption markdown="block">
-[Enlarge the Agent Landing Zone diagram](architecture/media/AI-Landing-Zone-with-platform.png?v=e868bb76bceb)
+[Enlarge the Agent Landing Zone diagram](architecture/media/AI-Landing-Zone-with-platform.png?v=32bc79bf776a)
 
 Resource selection and reuse depend on your implementation and settings. This reference shows the default hosted application without application Cosmos DB or its private endpoint; Foundry Agent Service's separate backing resources are retained.
 </figcaption>
@@ -93,9 +93,9 @@ Resource selection and reuse depend on your implementation and settings. This re
 Combine many Agent Landing Zones as spokes for agents to an AI Gateway Landing Zone as hub for models. The gateway has its own deployment and connectivity requirements; Agent Landing Zone does not provision it automatically.
 
 <figure class="architecture-figure" markdown="1">
-![AI Gateway Landing Zone reference architecture](architecture/media/AI-Landing-Zones-APIM.png?v=27769aa5cbf0){ width=6400 height=5867 loading=lazy }
+![AI Gateway Landing Zone reference architecture](architecture/media/AI-Landing-Zones-APIM.png?v=431e467f6d75){ width=6400 height=5867 loading=lazy }
 <figcaption markdown="block">
-[Enlarge the integrated gateway diagram](architecture/media/AI-Landing-Zones-APIM.png?v=27769aa5cbf0)
+[Enlarge the integrated gateway diagram](architecture/media/AI-Landing-Zones-APIM.png?v=431e467f6d75)
 
 Resource selection and reuse depend on your implementation and settings. The Agent Landing Zone portion shows the default hosted application without application Cosmos DB or its private endpoint; Foundry Agent Service's separate backing resources are retained.
 </figcaption>
@@ -109,9 +109,9 @@ Resource selection and reuse depend on your implementation and settings. The Age
 Deploy an independent environment where your team manages the network, without a shared platform hub.
 
 <figure class="architecture-figure" markdown="1">
-![Standalone Agent Landing Zone reference architecture](architecture/media/AI-Landing-Zone-without-platform.png?v=aa651551c880){ width=6400 height=3946 loading=lazy }
+![Standalone Agent Landing Zone reference architecture](architecture/media/AI-Landing-Zone-without-platform.png?v=67f29bca8122){ width=6400 height=3946 loading=lazy }
 <figcaption markdown="block">
-[Enlarge the standalone diagram](architecture/media/AI-Landing-Zone-without-platform.png?v=aa651551c880)
+[Enlarge the standalone diagram](architecture/media/AI-Landing-Zone-without-platform.png?v=67f29bca8122)
 
 Resource selection and reuse depend on your implementation and settings. This reference shows the default hosted application without application Cosmos DB or its private endpoint; Foundry Agent Service's separate backing resources are retained.
 </figcaption>

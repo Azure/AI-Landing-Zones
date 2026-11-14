@@ -24,11 +24,11 @@ for deployment options and configuration.
 
 #### Standalone
 
-![Standalone Agent Landing Zone reference architecture](docs/architecture/media/AI-Landing-Zone-without-platform.png?v=aa651551c880)
+![Standalone Agent Landing Zone reference architecture](docs/architecture/media/AI-Landing-Zone-without-platform.png?v=67f29bca8122)
 
 #### With Platform Hub
 
-![Agent Landing Zone with Platform Hub reference architecture](docs/architecture/media/AI-Landing-Zone-with-platform.png?v=e868bb76bceb)
+![Agent Landing Zone with Platform Hub reference architecture](docs/architecture/media/AI-Landing-Zone-with-platform.png?v=32bc79bf776a)
 
 ### AI Gateway Landing Zone
 

@@ -20,7 +20,7 @@ Azure Bastion and a jumpbox for initial access.
 
 ## Architecture overview
 
-[![Standalone Agent Landing Zone reference architecture](../architecture/media/AI-Landing-Zone-without-platform.png?v=aa651551c880)](../architecture/media/AI-Landing-Zone-without-platform.png?v=aa651551c880)
+[![Standalone Agent Landing Zone reference architecture](../architecture/media/AI-Landing-Zone-without-platform.png?v=67f29bca8122)](../architecture/media/AI-Landing-Zone-without-platform.png?v=67f29bca8122)
 
 <span id="foundation-and-application"></span>
 
