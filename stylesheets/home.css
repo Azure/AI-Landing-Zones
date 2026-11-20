@@ -73,6 +73,9 @@ body:has(.alz-home) .md-nav--secondary .md-nav { display: none; }
 .alz-home .architecture-panel > p { max-width: none; }
 .alz-home .architecture-figure { width: 100%; margin: 20px 0 12px; }
 .alz-home .architecture-figure > p { max-width: none; }
+.alz-home .architecture-source { display: flex; justify-content: flex-end; max-width: none; margin: 0; padding-top: 10px; border-top: 1px solid var(--home-line); font-size: 13px; }
+.alz-home .architecture-source a { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; color: var(--home-muted); }
+.alz-home .architecture-source a:hover, .alz-home .architecture-source a:focus-visible { color: var(--home-indigo); }
 .alz-home .home-diagram-trigger { display: block; width: 100%; padding: 0; border: 0; background: #fff; cursor: zoom-in; }
 html:has(.home-diagram-viewer[open]) { overflow: hidden; }
 .alz-home .home-diagram-viewer { width: calc(100vw - 32px); height: calc(100dvh - 32px); max-width: none; max-height: none; margin: auto; padding: 20px; border: 1px solid var(--home-line); border-radius: 4px; background: #fff; color: var(--home-body); }
