@@ -126,7 +126,7 @@ for backend readiness, updates and removal boundaries.
 ## Validation scope
 
 Each release is validated live with both Bicep and Terraform in the
-[standard scenario](validated-releases.md#standard-scenario): a hosted,
+[standard scenario](validated-releases.md#the-scenario-we-validate): a hosted,
 conversational, network-isolated deployment that builds with ACR Tasks and
 keeps Terraform state in a remote Azure Storage backend. Each run provisions,
 deploys and smoke-tests the agent. Other combinations and recovery paths are
