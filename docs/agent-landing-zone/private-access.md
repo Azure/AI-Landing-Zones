@@ -98,9 +98,11 @@ For an existing VNet (`USE_EXISTING_VNET=true` with
 `EXISTING_VNET_RESOURCE_ID`), have the network owner configure both peering
 directions separately.
 
-Preserve approved egress routing through
+With `DEPLOYMENT_MODE=ailz-integrated` and isolation, provisioning rejects the
+default local Basic firewall. Either set `AZURE_FIREWALL_SKU=Standard`, or set
+`DEPLOY_AZURE_FIREWALL=false` and select exactly one approved egress path:
 `HUB_INTEGRATION_EGRESS_NEXT_HOP_IP` or
-`HUB_INTEGRATION_EXISTING_ROUTE_TABLE_RESOURCE_ID` where required. These do
+`HUB_INTEGRATION_EXISTING_ROUTE_TABLE_RESOURCE_ID`. These do
 not configure P2S client routes or authentication. Use the
 [reuse reference](configuration.md#existing-resources) for other reuse inputs.
 
@@ -252,7 +254,9 @@ do not replace application endpoints with IP addresses or `privatelink` aliases.
 The lifecycle prerequisite check rejects public or mixed DNS answers and checks
 TCP/TLS reachability: App Configuration only when the selected runtime requires it,
 the Foundry project additionally before hosted deployment, and ACR before hosted
-image builds. Test the remaining service hosts individually.
+image builds. Post-provision also probes the bound Foundry project, Key Vault,
+Search, Blob storage and Cosmos DB endpoints that are present. Test the
+remaining service hosts individually.
 Store-free selection removes the implicit store probe, not the required
 Foundry, registry, scheduler, workload-egress or connected-runner checks.
 
@@ -277,8 +281,9 @@ Foundry, registry, scheduler, workload-egress or connected-runner checks.
 Configure service RBAC and document permissions separately from network access.
 Preserve application authentication, OBO and source access-control lists.
 For hosted-agent authoring, verify the runner's **Foundry User** role on the
-exact project and account read access as described in
-[Network design](network-isolation.md). Do not grant Owner to solve a
+exact project and account read access as described in the
+[full-stack prerequisites](deploy-full-stack.md#prepare-azure-access).
+Do not grant Owner to solve a
 data-plane denial.
 
 <span id="recover-or-disconnect"></span>

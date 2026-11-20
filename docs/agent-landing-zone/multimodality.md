@@ -17,8 +17,8 @@ This page explains capability boundaries. The
 | Content | Application boundary |
 | --- | --- |
 | Diagrams in a shared collection | Native Foundry IQ Blob ingestion can produce image descriptions when its model and extraction requirements are met. |
-| Private conversational file | Optional inline TXT/Markdown, PDF, PNG or JPEG; at most three files, 64 KiB each and 256 KiB per serialized inline turn. No workflow attachments. |
-| Screenshot or standalone image in chat | PNG/JPEG attachment transport is implemented; model image understanding is not verified. |
+| Private conversational file | Optional inline TXT/Markdown, PDF, PNG or JPEG. At most three files, 64 KiB each and 256 KiB per serialized inline turn. No workflow attachments. |
+| Screenshot or standalone image in chat | PNG/JPEG attachment transport is implemented. Model image understanding is not verified. |
 | Voice | No supplied capture, transcription, realtime audio or playback integration. |
 
 <span id="ground-answers-in-document-images"></span>

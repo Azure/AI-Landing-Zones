@@ -86,7 +86,8 @@ azd env set DEPLOY_INGESTION_CONTAINER_APP false
 azd env set BUILD_MODE acr-task
 ```
 
-For the private registry path, also select its build pool before provision:
+The private registry path uses the ACR Tasks build pool, which is selected by
+default. Keep it selected before provision:
 
 ```bash
 azd env set DEPLOY_ACR_TASK_AGENT_POOL true

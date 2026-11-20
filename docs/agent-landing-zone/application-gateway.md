@@ -305,8 +305,11 @@ Application Gateway supports WebSockets, but
 4. Remove the new DNS record if no approved route uses it. Keep certificates
    and Key Vault access needed by other consumers.
 
-Setting `publicIngress.enabled` to false **does not delete** previously created
-resources in incremental deployments, and is not an access-revocation procedure.
+With Bicep, setting `publicIngress.enabled` to false **does not delete**
+previously created resources in incremental deployments. With Terraform, the
+next `azd provision` plans deletion of the gateway, public IP, WAF policy,
+gateway NSG and gateway identity, so review that plan first. Neither is an
+access-revocation procedure.
 
 After closing access and checking remaining references with their owners,
 arrange explicit deletion of only the dedicated ingress resources

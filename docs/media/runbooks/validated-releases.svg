@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1220" height="600" viewBox="0 0 1220 600" role="img" aria-labelledby="title desc">
+  <title id="title">How a release becomes Latest</title>
+  <desc id="desc">A release is published as a pre-release after the offline checks pass. The release validation workflow then deploys it live in Azure with network isolation, first with Bicep and then with Terraform. Each run provisions a fresh landing zone, configures it from a VNet-connected host, deploys the applications and runs the agent smoke test. When both providers pass, the workflow attaches the evidence and promotes the release to Latest. If either provider fails, the release stays a pre-release. The Latest release is revalidated every day.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#32698e"/></marker>
+  </defs>
+  <style>text{font-family:"Segoe UI",sans-serif;fill:#1e3646;font-size:20px}.title{font-size:28px;font-weight:700}.head{font-size:22px;font-weight:600}.step{font-size:16px;font-weight:600;fill:#32698e}.node{fill:#fff;stroke:#9bb2c4;stroke-width:1.5}.latest{fill:#eef7ee;stroke:#5b9a5b;stroke-width:2}.group{fill:#f3f8fc;stroke:#9bb2c4;stroke-width:1.5}.header{fill:#e1edf4;stroke:#9bb2c4;stroke-width:1.5}.flow{fill:none;stroke:#32698e;stroke-width:2;marker-end:url(#arrow)}.rule{stroke:#d5e1ea;stroke-width:1.5}</style>
+  <rect width="1220" height="600" fill="#fff"/>
+  <text x="32" y="46" class="title">How a release becomes Latest</text>
+  <text x="32" y="80">Every release is deployed live with both providers before it is promoted</text>
+
+  <rect x="32" y="172" width="196" height="170" class="node"/>
+  <text x="50" y="200" class="step">1</text>
+  <text x="50" y="230" class="head">Pre-release</text>
+  <text x="50" y="268">Offline checks</text>
+  <text x="50" y="298">passed in CI</text>
+  <path d="M228 257H280" class="flow"/>
+
+  <rect x="282" y="118" width="540" height="250" class="group"/>
+  <rect x="282" y="118" width="540" height="44" class="header"/>
+  <text x="300" y="147" class="head">Live deployment in Azure, network isolated</text>
+  <rect x="302" y="182" width="226" height="166" class="node"/>
+  <text x="320" y="210" class="step">2</text>
+  <text x="320" y="240" class="head">Bicep</text>
+  <text x="320" y="276">Fresh landing zone</text>
+  <text x="320" y="306">Provision, configure</text>
+  <text x="320" y="334">Deploy, smoke test</text>
+  <path d="M528 265H574" class="flow"/>
+  <text x="532" y="252" font-size="16">then</text>
+  <rect x="576" y="182" width="226" height="166" class="node"/>
+  <text x="594" y="210" class="step">3</text>
+  <text x="594" y="240" class="head">Terraform</text>
+  <text x="594" y="276">Fresh landing zone</text>
+  <text x="594" y="306">Provision, configure</text>
+  <text x="594" y="334">Deploy, smoke test</text>
+  <path d="M822 257H934" class="flow"/>
+  <text x="834" y="244" font-size="16">both pass</text>
+
+  <rect x="936" y="172" width="252" height="170" class="latest"/>
+  <text x="954" y="200" class="step">4</text>
+  <text x="954" y="230" class="head">Latest</text>
+  <text x="954" y="268">Evidence attached</text>
+  <text x="954" y="298">Promoted automatically</text>
+
+  <line x1="32" y1="410" x2="1188" y2="410" class="rule"/>
+  <text x="32" y="452" class="head">Either provider fails: the release stays a pre-release.</text>
+  <text x="32" y="486">The fix ships in a new patch release, which goes through the same validation.</text>
+  <text x="32" y="538" class="head">The Latest release is revalidated every day.</text>
+  <text x="32" y="572">A failure opens an issue in the repository and is fixed in a new patch release.</text>
+  </svg>

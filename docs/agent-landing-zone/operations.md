@@ -68,7 +68,7 @@ Opt in before `azd provision` only to the least-privilege evaluation roles
 required by the Foundry project managed identity:
 
 - **`GRANT_PROJECT_TRACE_EVALUATION_READER=true`** (`grantProjectTraceEvaluationReader`): grants the Foundry project managed identity `Reader` on Application Insights and `Log Analytics Data Reader` on the linked Log Analytics workspace.
-- **`GRANT_PROJECT_PROTECTED_TRACE_CONTENT_READER=true`** (`grantProjectProtectedTraceContentReader`): strictly opt-in grant assigning `Privileged Monitoring Data Reader` conditioned with Azure ABAC v2.0 restricting workspace table reads to `AppGenAIContent` when `Protected`.
+- **`GRANT_PROJECT_PROTECTED_TRACE_CONTENT_READER=true`** (`grantProjectProtectedTraceContentReader`): strictly opt-in grant assigning `Privileged Monitoring Data Reader` conditioned with Azure ABAC v2.0 restricting workspace table reads to `AppGenAIContent` when `Protected`. It requires `GRANT_PROJECT_TRACE_EVALUATION_READER=true`.
 
 When model calls traverse an AI Gateway, allowlist each hosted agent's
 dedicated runtime identity (created on first `azd deploy` publication) at the
@@ -125,11 +125,12 @@ to select the supported administration operations.
 
 ### Operator overview and curation
 
-Before exposing operator routes, a component-managed integration requires the
-selected administrative surface and `PANEL_OPERATOR_SURFACES_ENABLED`.
+Before exposing operator routes, a component-managed integration requires
+`DEPLOY_ADMINISTRATIVE_PANEL=true` and `PANEL_OPERATOR_SURFACES_ENABLED=true`.
 The integration also requires an explicit `PANEL_OPERATOR_APP_ROLE` or
 `PANEL_OPERATOR_GROUP_ID`.
 The `DATA_INGEST_APP_APIKEY` cursor-signing secret must be securely resolved.
+Until all of these are present, operator routes return HTTP 503.
 These are component contracts, not an activation recipe for the reference
 platform: its configuration ownership fixes operator surfaces to `false`.
 

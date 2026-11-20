@@ -125,7 +125,7 @@ host/mode entries:
 ```
 
 These are source-setup settings, not same-named environment switches.
-The enabled flag defaults to `false`; the source/site bindings default to
+The enabled flag defaults to `false`. The source/site bindings default to
 empty. The identity inputs below have an explicit deployment environment
 publication path:
 
@@ -343,7 +343,7 @@ GET https://graph.microsoft.com/v1.0/drives/{driveId}/items/{driveItemId}/permis
 The `driveItem` response supplies the file name, MIME type and
 `parentReference.driveId`. The connector resolves this relationship to download
 and chunk the file. A generic list instead contributes structured field text
-and, when selected and available, its attachments.
+only. The connector does not index generic-list attachments.
 
 For generic-list permissions, the connector uses the Graph **beta** endpoint:
 
@@ -526,8 +526,7 @@ and satisfy the existing container's partition-key definition.
         "Title",
         "Code_x0020_Name",
         "Product_x0020_Line",
-        "Modified",
-        "Attachments"
+        "Modified"
       ],
       "excludeFields": []
     }
@@ -543,7 +542,7 @@ mean "index the whole site."
 | `siteDomain`, `siteName` | Required by the connector's site-ID lookup. Use the URL values discovered above. |
 | `listId` | Prefer the Graph GUID. Name-only lookup is supported as a fallback. Retain `listName` for readable logs. |
 | `listType` | Use `genericList` or `documentLibrary` from `list.template`. Set it explicitly for libraries. The default is `genericList`. |
-| `includeFields` | Internal column names for generic-list text. Omitted or empty means all returned fields. Keep `Title` and `Modified`, and include `Attachments` when classic-list attachments are needed. Modification detection uses the item's `lastModifiedDateTime`, with `fields.Modified` as fallback. |
+| `includeFields` | Internal column names for generic-list text. Omitted or empty means all returned fields. Keep `Title` and `Modified`. Modification detection uses the item's `lastModifiedDateTime`, with `fields.Modified` as fallback. |
 | `excludeFields` | Optional fields to omit from the generated field text. This is not an authorization control. |
 | `category` | List-level value overrides the site's default. |
 | `filter` | Optional Graph OData item filter. Empty selects all returned items in the configured list. Test the filter before scheduling. |
@@ -650,8 +649,8 @@ cleanup effects, [Administration](operations.md) for route availability, and
    deployment. For protected retrieval, retain native permission filtering
    with the user/group ACL field annotations and establish the source-compatible
    user authorization described in [Foundry IQ](foundry-iq.md#user-authorization-boundaries).
-   The native application still needs its compatible MCP project connection;
-   the direct connector instead needs explicit token/invocation wiring.
+   The native application still needs its compatible MCP project connection.
+   The direct connector instead needs explicit token/invocation wiring.
    Source registration does not ingest content or turn ACL arrays into
    enforced authorization by itself.
 5. Run the allowed/denied-user checks below, including a permission-only

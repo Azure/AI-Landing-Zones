@@ -162,8 +162,9 @@ azd env set TF_STATE_SUBSCRIPTION_ID <state-subscription-id>
 ```
 
 The state key is `agent-landing-zone/${AZURE_ENV_NAME}.tfstate`, giving each
-environment its own blob. azd renders `infra/terraform/provider.conf.json`
-from these settings, including the canonical `ARM_ENVIRONMENT`.
+environment its own blob. azd renders the `infra/terraform/provider.conf.json`
+template from these settings into `.azure/<environment-name>/infra/terraform/`,
+including the canonical `ARM_ENVIRONMENT`, and passes it to `terraform init`.
 Confirm the cloud, account, container and environment name
 before provisioning; keep `.azure/` metadata private. See the official
 [remote-state guidance](https://learn.microsoft.com/azure/developer/azure-developer-cli/use-terraform-for-azd#local-vs-remote-state)

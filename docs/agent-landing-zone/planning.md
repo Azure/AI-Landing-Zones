@@ -12,7 +12,7 @@ behavior. The [overview](index.md) explains what the template delivers.
 | Provider | When to choose it | What to account for |
 | --- | --- | --- |
 | Bicep, the default | Your team uses Azure-native infrastructure tooling. | Use the product's `azd` workflow for provisioning, service configuration and later updates. |
-| Terraform | Your team standardizes on Terraform state and workflows. | Prepare remote storage outside workload teardown and an authorized single-writer process. Native azd disables state locking. Azure validation remains pending. |
+| Terraform | Your team standardizes on Terraform state and workflows. | Prepare remote storage outside workload teardown and an authorized single-writer process. Native azd disables state locking. |
 
 Both use the same platform workflow. Direct Bicep deployment or
 `terraform apply` does not replace its configuration and validation stages.

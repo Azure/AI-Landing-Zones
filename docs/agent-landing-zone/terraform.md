@@ -125,10 +125,12 @@ for backend readiness, updates and removal boundaries.
 
 ## Validation scope
 
-Verification includes offline tests and an Azure-authenticated plan of the
-public foundation, using in-memory test state without applying resources.
-Native backend operations, full-stack and private deployments, runtime RBAC
-and recovery were not exercised in Azure. Validate your deployment with the
+Each release is validated live with both Bicep and Terraform in the
+[standard scenario](validated-releases.md#standard-scenario): a hosted,
+conversational, network-isolated deployment that builds with ACR Tasks and
+keeps Terraform state in a remote Azure Storage backend. Each run provisions,
+deploys and smoke-tests the agent. Other combinations and recovery paths are
+not validated live. Validate your deployment with the
 [foundation](deploy-terraform-infra-only.md#validation) and
 [application](deploy-terraform-full-stack.md#validation) guide checks.
 
