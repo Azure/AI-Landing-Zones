@@ -131,7 +131,7 @@ inputs for Bicep or Terraform.
 
 | Selection | Server behavior |
 | --- | --- |
-| `[]` — default | Registers zero tools and initializes no NL2SQL clients or dependencies. New empty-server selection adds no NL2SQL catalog, model, SQL or secret grants. |
+| `[]` (default) | Registers zero tools and initializes no NL2SQL clients or dependencies. New empty-server selection adds no NL2SQL catalog, model, SQL or secret grants. |
 | `["nl2sql"]` | Registers `nl2sql.list_sources` and `nl2sql.query`; requires the [NL2SQL configuration](#configure-nl2sql). |
 
 Unknown names, duplicates, malformed JSON and invalid array values fail closed

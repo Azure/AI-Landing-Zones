@@ -881,7 +881,9 @@ Wait for role assignments to take effect, then retry root `azd deploy`.
 Complete its greeting and remaining checks before admitting traffic.
 
 The helper grants only its defined runtime roles:
-App Configuration Data Reader, model access and scoped Search transport access.
+App Configuration Data Reader, model access and scoped retrieval access.
+Retrieval access is Search Index Data Reader on the Search service, or Foundry
+User on the Foundry project when Foundry IQ serves retrieval.
 If configured, it also grants access to the exact audit secret.
 These roles do not grant delegated users access.
 Other capabilities can require separate roles.

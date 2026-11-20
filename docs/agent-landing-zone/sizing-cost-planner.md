@@ -81,9 +81,9 @@ hide:
         <p>Start with peak concurrent turns, turn duration, model/tool calls, input/output tokens, corpus and vector-index size, update rate and ingestion deadlines. Users alone do not determine capacity. Measure ingestion alongside interactive traffic, not only in isolation.</p>
         <h3 id="models-and-quota">Models and quota</h3>
         <p>The reference deploys <code>gpt-5-nano</code> and <code>text-embedding-3-large</code>, each with <code>sku.capacity=100</code>. This allocates model-specific quota, not 100 users or a prepaid token budget. Check actual TPM/RPM, retries and regional availability. More application replicas do not increase model quota. <a href="https://learn.microsoft.com/azure/ai-services/openai/quotas-limits" target="_blank" rel="noopener">Model limits &#8599;</a></p>
-        <p>The current embedding default is <code>text-embedding-3-large</code> version <code>1</code>, <code>GlobalStandard</code>, declared capacity <code>100</code>; the empty-list foundation fallback keeps capacity <code>10</code>. Model/deployment names, API versions and vector dimensions are unchanged.</p>
+        <p>The embedding default is <code>text-embedding-3-large</code> version <code>1</code>, <code>GlobalStandard</code>, declared capacity <code>100</code>. With an empty model list, the foundation fallback uses capacity <code>10</code>.</p>
         <p><a href="https://learn.microsoft.com/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure-region-availability#global-standard" target="_blank" rel="noopener">Global Standard availability &#8599;</a> confirms model support. Global deployment processing may occur outside the resource region. If regional processing is required, explicitly set the embedding entry's <code>sku.name</code> to <code>Standard</code> and verify regional availability and quota.</p>
-        <p>The separate embedding cost row retains its existing regional price meter as a budgeting proxy, not a verified Global Standard quote; confirm the applicable price before deployment. The pinned source links below remain historical reference inputs, not evidence of the current embedding deployment type.</p>
+        <p>The separate embedding cost row retains its existing regional price meter as a budgeting proxy, not a verified Global Standard quote. Confirm the applicable price before deployment. The pinned source links below remain historical reference inputs, not evidence of the current embedding deployment type.</p>
         <h3 id="search-capacity">Search capacity</h3>
         <p>Application Search and Foundry backing Search are separate services, each initially S1 with one replica and one partition. Partitions address index/vector footprint and growth. Replicas address retrieval/indexing load and availability. One replica is not a high-availability design. Validate limits for the service's region and creation date. Private native ingestion also needs approved, ready shared private links, not just more Search capacity.</p>
         <p>Standard S1/S2 supports 1, 2, 3, 4, 6 or 12 partitions, up to 12 replicas and at most 36 search units. New Basic services in the offered regions support 1, 2 or 3 partitions, up to 3 replicas and at most 9 search units. The controls and saved/shared scenario validation enforce these <a href="https://learn.microsoft.com/azure/search/search-capacity-planning#partition-and-replica-combinations" target="_blank" rel="noopener">documented combinations</a>. Other capacity, availability and workload checks still apply.</p>
@@ -94,7 +94,7 @@ hide:
         <h3 id="data-builds-and-observability">Data and operations</h3>
         <p>Budget Foundry backing Cosmos separately from optional application Cosmos. Verify actual throughput offers, data/index size, retention and backup policy. Build memory and parallel jobs size the build pool, not chat traffic. Registry storage persists when that pool is scaled to zero. Set logging retention/sampling from investigation and compliance needs, without capturing message content merely to size the system.</p>
         <p>Application Cosmos is automatically required for selected UI metadata, NL2SQL or custom Cosmos capabilities, and can also be selected independently. The normal application account is serverless.</p>
-        <p>Optional <a href="../agent-app-mcp/">Agent App MCP Server</a> adds separate compute; its default empty toolset list adds no NL2SQL dependencies. Explicitly selecting <code>MCP_TOOLSETS=["nl2sql"]</code> adds SQL load, generation/embedding calls and a Cosmos vector catalog, not a Search dependency.</p>
+        <p>Optional <a href="../agent-app-mcp/">Agent App MCP Server</a> adds separate compute. Its default empty toolset list adds no NL2SQL dependencies. Explicitly selecting <code>MCP_TOOLSETS=["nl2sql"]</code> adds SQL load, generation/embedding calls and a Cosmos vector catalog, not a Search dependency.</p>
         <p>Budget compute and selected import/query usage separately from this planner's default hosted conversational scenario, including retained catalog storage after deselection. Below 1,000 vectors, Cosmos can use a vector full scan; measure RUs and latency rather than assuming index savings.</p>
         <span id="validate-the-initial-capacity"></span>
         <h3 id="capacity-validation">Validate the bottleneck</h3>
@@ -190,9 +190,9 @@ hide:
       <span id="check-the-agent-specific-cost-drivers"></span><h3 id="agent-specific-cost-drivers">Keep the scope explicit</h3>
       <p>Hosted compute, frontend compute, two Search services, backing data services and private management networking are separate costs. Count shared Container Apps nodes and workspace-based Application Insights ingestion only once. An omitted new resource can require a compatible existing service or a different feature selection, not a free replacement. DNS zones, disks, registry images and other retained allocations do not necessarily disappear with their consumers.</p>
       <span id="control-spend-without-weakening-the-design"></span><h3 id="spend-controls-and-security">Control spend without weakening the design</h3>
-      <p>Measure idle allocations, retries, logs and retained resources. Tune model choice, capacity, replicas and retention against quality, latency, availability and compliance. Budgets and alerts notify, they do not stop services or cap spend. Keep private networking, authentication and document-level authorization intact. Shared infrastructure needs approved ownership, routes and permissions. Review backup, dependencies and access before deleting existing resources. A quantity of 0 here never deletes them.</p>
+      <p>Measure idle allocations, retries, logs and retained resources. Tune model choice, capacity, replicas and retention against quality, latency, availability and compliance. Budgets and alerts notify. They do not stop services or cap spend. Keep private networking, authentication and document-level authorization intact. Shared infrastructure needs approved ownership, routes and permissions. Review backup, dependencies and access before deleting existing resources. A quantity of 0 here never deletes them.</p>
       <p>This planner models network-isolated standalone deployments. The reference uses <code>ORCHESTRATION_HOST=hosted</code> and <code>APPLICATION_MODE=conversational</code>, native Foundry IQ ingestion and no Agent App Ingestion worker. The UI is included automatically.</p>
-      <p>History, feedback and private attachments default to off; workflow/both or enabled product features add UI metadata storage, which must be costed separately. Foundry backing services are separate resources.</p>
+      <p>History, feedback and private attachments default to off. Workflow/both or enabled product features add UI metadata storage, which must be costed separately. Foundry backing services are separate resources.</p>
       <p>Review <a href="../planning/">deployment choices</a>, <a href="../configuration/">deployment settings</a> and the <a href="../deploy-full-stack/">deployment guide</a> before applying a scenario. The <a href="../../architecture/cost-guide/">shared cost guide</a> has additional dated pricing examples, not current Agent defaults.</p>
       <div class="source-links"><a href="https://github.com/Azure/agent-landing-zone/blob/main/main.parameters.json" target="_blank" rel="noopener">Reference deployment parameters &#8599;</a><a href="https://github.com/Azure/agent-landing-zone/blob/main/infra/bicep/main.bicep" target="_blank" rel="noopener">Reference Bicep settings &#8599;</a><a href="https://learn.microsoft.com/en-us/rest/api/cost-management/retail-prices/azure-retail-prices" target="_blank" rel="noopener">Pricing API &#8599;</a><a href="../../data/planner/prices.json" target="_blank" rel="noopener">Price snapshot &#8599;</a></div>
       <a href="https://azure.microsoft.com/pricing/calculator/" target="_blank" rel="noopener">Confirm your estimate in Azure Pricing Calculator &#8599;</a>
@@ -209,9 +209,13 @@ hide:
 ## Optional PostgreSQL costs outside this planner
 
 [Optional PostgreSQL](postgresql.md) is not priced in this planner inventory.
-Development defaults are version16, Burstable/Standard_B1ms, 32 GiB, backup7
-and HA/geo-backup/auto-grow off, not a production SLA. Budget compute/storage/
-backup and Basic dedicated Standard ACA NAT hourly/data-processing/static IPv4
-or isolated PE/DNS, transfer, app usage and logs. HA/larger SKUs/geo-backup/
-retention add cost; regional capacity/policy may block a profile, never silently
-downgrade it. Disabled deployments have no feature-owned resource cost.
+Its development defaults are PostgreSQL 16, Burstable `Standard_B1ms`, 32 GiB
+storage and 7-day backup retention, with high availability, geo-redundant
+backup and storage auto-grow off. These defaults are not a production SLA.
+Budget compute, storage and backup. Without network isolation, also budget the
+dedicated NAT gateway hours, data processing and static public IPv4 address
+of the Container Apps environment. With network isolation, budget the private
+endpoint and private DNS instead. Add transfer, application usage and logs.
+High availability, larger SKUs, geo-redundant backup and longer retention add
+cost. Regional capacity or policy can block a profile, which is never silently
+downgraded. Disabled deployments have no PostgreSQL resource cost.

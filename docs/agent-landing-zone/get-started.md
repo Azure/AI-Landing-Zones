@@ -78,7 +78,7 @@ CLI login authenticates the operator; it does not grant application admission or
     $PSNativeCommandUseErrorActionPreference = $true
     New-Item -ItemType Directory agent-landing-zone
     Set-Location agent-landing-zone
-    azd init --template Azure/agent-landing-zone --branch v7.5.0 --environment <environment-name> .
+    azd init --template Azure/agent-landing-zone --branch v7.5.16 --environment <environment-name> .
     ```
 
 Initialization creates and selects the local environment.
@@ -301,11 +301,11 @@ Portal Bastion access does not require native RDP tunneling.
     $PSNativeCommandUseErrorActionPreference = $true
     git clone https://github.com/Azure/agent-landing-zone.git
     Set-Location agent-landing-zone
-    git checkout --detach ef03a1248a9ee1de0a6023225a25fff7bae9577f
+    git checkout --detach 770119d614ec8ed23dd2784ecf25889eb05e3412
     git rev-parse HEAD
     ```
 
-4. Compare the reported commit with `ef03a1248a9ee1de0a6023225a25fff7bae9577f`.
+4. Compare the reported commit with `770119d614ec8ed23dd2784ecf25889eb05e3412`.
 5. Stop if the revisions differ.
 6. Prepare Python and the Foundry extension in this checkout:
 

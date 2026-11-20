@@ -43,7 +43,7 @@ bindings.
 ### Initialization and setting order
 
 For a new installation, [initialize a project with azd](deploy-full-stack.md#step-1-initialize-the-project)
-in a new empty directory. Init creates/selects the environment; do not create
+in a new empty directory. Init creates/selects the environment. Do not create
 it again with `azd env new`. Run subsequent commands from the directory
 containing root `azure.yaml`, `manifest.json` and `main.parameters.json`.
 
@@ -65,7 +65,7 @@ Functional keys such as `SEARCH_RETRIEVAL_ENABLED`, `FOUNDRY_IQ_ENABLED` and
 `MULTIMODAL_ENABLED` instead require explicit declarations in
 `parameters.additionalAppConfigurationSettings.value` in root
 `main.parameters.json`, using `name`, a string `value` and label `agent-lz`.
-Keep existing entries and update or append the intended keys; there is no
+Keep existing entries and update or append the intended keys. There is no
 implied same-named azd input. Follow the capability's requirements and
 [configuration procedure](application-settings.md#configure-an-agent-capability)
 before provisioning and deploying it.
@@ -81,7 +81,7 @@ resource group. Backend settings are separate from workload parameters:
 | `TF_STATE_STORAGE_ACCOUNT` | Existing storage account name |
 | `TF_STATE_CONTAINER` | Existing state container name |
 | `TF_STATE_SUBSCRIPTION_ID` | Defaults to `AZURE_SUBSCRIPTION_ID` |
-| `ARM_ENVIRONMENT` | Canonical `public`, `usgovernment` or `china`; qualified from CLI metadata or explicitly selected for process credentials |
+| `ARM_ENVIRONMENT` | Canonical `public`, `usgovernment` or `china`. Qualified from CLI metadata or explicitly selected for process credentials |
 
 The state key is `agent-landing-zone/${AZURE_ENV_NAME}.tfstate`.
 AzureAD Blob authentication requires account **Reader** for metadata and
@@ -113,7 +113,7 @@ The adapter generates the `azureCloud` context and passes the canonical
 | `china` | `core.chinacloudapi.cn` |
 
 CLI authentication must match the selected subscription and active CLI cloud.
-Process credentials require an explicit cloud; any azd-store and process
+Process credentials require an explicit cloud. Any azd-store and process
 values must agree. Preprovision persists the qualified cloud before native
 backend initialization. The hooks do not change global cloud or authentication
 settings.
@@ -133,7 +133,7 @@ Permissions, identities and dedicated stores enforce the following boundaries.
 | Network and builds | DNS, routes, private endpoints and a connected runner. An ACR build pool does not connect the deployment host. |
 
 Approved nonsecret inputs can be version-controlled. An `environments/`
-folder is not loaded automatically; its settings need explicit application.
+folder is not loaded automatically. Its settings need explicit application.
 Local `.azure` contains private deployment state, which hooks copy to child
 projects. Those workspaces need the same protection and cannot safely be
 copied between DEV, TEST and PROD.
@@ -143,7 +143,7 @@ copied between DEV, TEST and PROD.
 ### Resource naming
 
 [Resource naming](resource-naming.md) explains defaults, overrides and name
-stability. Names resolve before the first provision; later changes can create
+stability. Names resolve before the first provision. Later changes can create
 new resources instead of updating existing ones.
 
 ### Resource group destinations
@@ -160,7 +160,7 @@ All workload destinations must be in `AZURE_SUBSCRIPTION_ID`.
 Equal names are
 valid: one, two or three distinct groups can express the same three logical
 destinations. These inputs do not enable services, change network isolation or
-create a platform hub; existing BYO VNet, DNS and hub settings still apply.
+create a platform hub. Existing BYO VNet, DNS and hub settings still apply.
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
@@ -195,15 +195,15 @@ azd env set AZURE_NETWORK_RESOURCE_GROUP rg-workload
 
 With `false`, a missing additional destination fails before services are
 provisioned. With `true`, existing groups are reused without
-changing their tags or location; only missing additional groups are created.
+changing their tags or location. Only missing additional groups are created.
 
-The additional destinations are application and network; azd manages creation
+The additional destinations are application and network. azd manages creation
 of the Foundry/root group through its normal lifecycle.
 New additional groups do not receive the `azd-env-name` tag.
 
 Run the normal product-root lifecycle: each `azd provision` coordinates the
 selected provider across the configured destinations. Bicep uses its
-resource-group-scoped root and scoped modules; Terraform uses its repository-owned
+resource-group-scoped root and scoped modules. Terraform uses its repository-owned
 composition. Do not replace the lifecycle with three manual deployments.
 Hosted image preparation remains part of application deployment.
 
@@ -215,7 +215,7 @@ Hosted image preparation remains part of application deployment.
   subscription-scope deployment permission.
 - **Creating missing groups:** `CREATE_RESOURCE_GROUPS=true` additionally needs
   `Microsoft.Resources/subscriptions/resourceGroups/write` at subscription
-  scope. A scoped custom role can grant that action; subscription Contributor
+  scope. A scoped custom role can grant that action. Subscription Contributor
   is broader, not a universal prerequisite.
 - **RBAC:** the deploying identity needs
   `Microsoft.Authorization/roleAssignments/write` at each assignment scope,
@@ -227,7 +227,7 @@ Hosted image preparation remains part of application deployment.
   resources require their owners' scoped permissions.
 
 Resource-group Contributor and scoped RBAC administration do not grant Entra
-directory reads; for platform-output client-ID discovery, restricted automation
+directory reads. For platform-output client-ID discovery, restricted automation
 can instead supply `AGENTLZ_COMPONENT_IDENTITIES` as a nonsecret JSON map of
 Container App component names to pre-resolved managed-identity client IDs,
 without granting broad directory rights.
@@ -241,7 +241,7 @@ retry with the same destinations. Do not delete groups as automatic rollback.
 Review every destination and shared dependency before any
 [environment removal](deploy-full-stack.md#remove-an-environment).
 
-For **Bicep**, the `predown` guard blocks split-group `azd down`; arrange
+For **Bicep**, the `predown` guard blocks split-group `azd down`. Arrange
 owner-reviewed, separately authorized cleanup.
 For **Terraform**, the guard verifies the original common group binding,
 `terraform-resource-groups.json` and `terraform-backend.json`, then permits
@@ -252,17 +252,17 @@ missing records or retargeted groups/backend settings. See
 ### Values set by azd or by you
 
 A **principal** is a user or service identity. Its **object ID** identifies
-that identity in the Entra directory; it is not an application's client ID.
+that identity in the Entra directory. It is not an application's client ID.
 
 | Variable | Description |
 | --- | --- |
 | `AZURE_ENV_NAME` | Environment name, created/selected during `azd init` for a new project or `azd env new` for an additional environment. Used to derive resource names. |
 | `AZURE_LOCATION` | Primary Azure region. Set it before provision so the first-run hook can create the additional resource groups. |
-| `AZURE_PRINCIPAL_ID` | Deployment identity's object ID for service setup and access. azd resolves it for Bicep; Terraform preprovision detects a missing value for ordinary CLI, service-principal and managed-identity authentication. |
+| `AZURE_PRINCIPAL_ID` | Deployment identity's object ID for service setup and access. azd resolves it for Bicep. Terraform preprovision detects a missing value for ordinary CLI, service-principal and managed-identity authentication. |
 
 For certificate, OIDC or custom managed-identity authentication, explicitly
 set `AZURE_PRINCIPAL_ID` and `AZURE_PRINCIPAL_TYPE` to identify the caller.
-These inputs are not credentials; use the caller's object ID, not its client
+These inputs are not credentials. Use the caller's object ID, not its client
 ID. See [Terraform authentication](deploy-terraform-infra-only.md#step-2-authenticate-and-select-the-target).
 
 <span id="inputs-that-use-bicep-defaults"></span>
@@ -275,7 +275,7 @@ When unset, they use the template defaults shown below.
 | Variable | Template default | Description |
 | --- | --- | --- |
 | `NETWORK_ISOLATION` | `false` | Set `true` explicitly for private production. Public endpoints are only for approved evaluations without sensitive data. Jumpbox, Bastion and firewall also depend on component flags. See [Network design](network-isolation.md). |
-| `AZURE_AI_FOUNDRY_LOCATION` | Deployment region | Region for the Microsoft Foundry account. |
+| `AZURE_AI_FOUNDRY_LOCATION` | Empty | Not a separate region. The Microsoft Foundry account uses `AZURE_LOCATION`. Leave it empty or set it to the `AZURE_LOCATION` value. A different value fails. |
 | `AZURE_COSMOS_LOCATION` | Deployment region | Region for Agent Application Cosmos DB. |
 | `USE_UAI` | `false` | Uses user-assigned managed identities instead of system-assigned identities. |
 | `ENABLE_AGENTIC_RETRIEVAL` | `false` | Enables the template's agentic retrieval resource configuration. This is separate from the Agent Application setting `RETRIEVAL_BACKEND`. |
@@ -287,24 +287,24 @@ When unset, they use the template defaults shown below.
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `AZURE_PRINCIPAL_TYPE` | `User`; inferred during Terraform caller detection | Type of `AZURE_PRINCIPAL_ID`: `User` or `ServicePrincipal`. Explicit service identities use `ServicePrincipal`. |
+| `AZURE_PRINCIPAL_TYPE` | `User`. Inferred during Terraform caller detection | Type of `AZURE_PRINCIPAL_ID`: `User` or `ServicePrincipal`. Explicit service identities use `ServicePrincipal`. |
 | `DEPLOYMENT_MODE` | `standalone` | Declares deployment intent for tags and preflight. `ailz-integrated` does not automatically attach a hub or override component flags. Supply the hub, routing, resource reuse and DNS inputs explicitly. |
-| `POLICY_MANAGED_PRIVATE_DNS` | `false` | Delegates private DNS zone groups/records to Azure Policy. Use instead of BYO private DNS zone IDs; agree policy coverage, VNet links and readiness with the DNS owner. |
-| `RESOURCE_NAMING_MODE` | `caf` | Uses Cloud Adoption Framework prefixes and naming tokens. See [Resource naming](resource-naming.md). |
+| `POLICY_MANAGED_PRIVATE_DNS` | `false` | Delegates private DNS zone groups/records to Azure Policy. Use instead of BYO private DNS zone IDs. Agree policy coverage, VNet links and readiness with the DNS owner. |
+| `RESOURCE_NAMING_MODE` | `caf` | `caf` uses Cloud Adoption Framework prefixes and naming tokens. `legacy` keeps the older names built from a resource token. See [Resource naming](resource-naming.md). |
 | `APP_RUNTIME_CONFIGURATION_MODE` | `appConfig` | Selects runtime delivery, not deployment discovery. See [runtime configuration mode](#runtime-configuration-mode). |
-| `DEPLOY_COSMOS_DB` | `false` without a required consumer; selected automatically when required | Generic application Cosmos can also be explicitly selected without MCP or the orchestrator. Foundry backing storage is separate. |
+| `DEPLOY_COSMOS_DB` | `false` without a required consumer. Selected automatically when required | Generic application Cosmos can also be explicitly selected without MCP or the orchestrator. Foundry backing storage is separate. |
 | `ENABLE_COSMOS_ANALYTICAL_STORAGE` | `false` | Enables the Agent Application Cosmos DB analytical store. |
 | `AZURE_SEARCH_LOCATION` | Empty | Region for both the Agent Application Search service and the separate Foundry Agent Service Search service. Leave empty to use `AZURE_LOCATION`. |
 | `AZURE_SPEECH_LOCATION` | Empty | Region for Azure AI Speech. Leave empty to use the deployment region. |
 | `AZURE_PE_LOCATION` | Empty | Region for private endpoints. Leave empty to use the deployment region. |
-| `AZURE_PE_RESOURCE_GROUP_NAME` | Empty | Explicit private endpoint group override (`privateEndpointResourceGroupName`) takes precedence. When empty, `USE_EXISTING_VNET=true` with `SIDE_BY_SIDE=false` uses the existing VNet's group; otherwise uses the resolved network group (`AZURE_NETWORK_RESOURCE_GROUP`). New Foundry-root environments initialize a separate network group; existing single-group environments retain their mapping. |
+| `AZURE_PE_RESOURCE_GROUP_NAME` | Empty | Explicit private endpoint group override (`privateEndpointResourceGroupName`) takes precedence. When empty, `USE_EXISTING_VNET=true` with `SIDE_BY_SIDE=false` uses the existing VNet's group. Otherwise it uses the resolved network group (`AZURE_NETWORK_RESOURCE_GROUP`). New Foundry-root environments initialize a separate network group. Existing single-group environments retain their mapping. |
 | `EXISTING_APPLICATION_INSIGHTS_CONNECTION_STRING` | None | Sends telemetry to an Application Insights resource you already have. |
 
 Supported `EXISTING_*` inputs select reuse, subject to each resource's conditions.
 They are listed in [Network and security](#network-and-security).
 Foundry backing-service reuse uses the
 [native parameters below](#foundry-backing-resources).
-A supported resource ID selects reuse; naming and deployment flags control
+A supported resource ID selects reuse. Naming and deployment flags control
 resource creation.
 
 #### Runtime configuration mode
@@ -336,7 +336,7 @@ runtime mode in place.
 The default [application layout](application.md#default-deployment)
 does not create application Cosmos DB resources or their dedicated identity.
 Foundry backing storage is independent. Native Hosted execution uses Foundry
-persistence; durable Container Apps execution uses Durable Task Scheduler
+persistence. Durable Container Apps execution uses Durable Task Scheduler
 (DTS). Neither uses application Cosmos as a duplicate execution checkpoint
 store.
 
@@ -348,7 +348,7 @@ The UI consumes
 `DATABASE_ACCOUNT_NAME`, `DATABASE_NAME` and `NATIVE_UI_METADATA_CONTAINER`
 (default `native-ui-metadata`, partition key `/principal_id`, owner `tid:oid`), with its grant
 assigned only to the frontend. Existing `COSMOS_DB_ENDPOINT` and
-`COSMOS_DB_ACCOUNT_RESOURCE_ID` outputs remain conditional; no separate native
+`COSMOS_DB_ACCOUNT_RESOURCE_ID` outputs remain conditional. No separate native
 endpoint key is introduced.
 
 The explicitly selected NL2SQL toolset uses the same application
@@ -382,13 +382,13 @@ Custom Cosmos capabilities can declare the dependency directly.
 Enabling Cosmos alone does not deploy MCP or enable vector search.
 
 Normal application Cosmos is serverless. NL2SQL selects vector capability and
-its catalog policies; a retained catalog preserves them.
+its catalog policies. A retained catalog preserves them.
 Custom applications may explicitly select generic vector capability with
 `COSMOS_VECTOR_SEARCH_ENABLED` without injecting the reference catalog.
 Generic Cosmos by itself does not enable vector search.
 
-Direct foundation-template deployments also default `deployCosmosDb` to `false`;
-set it to `true` when application storage is needed. For an existing deployment,
+Direct foundation-template deployments also default `deployCosmosDb` to `false`.
+Set it to `true` when application storage is needed. For an existing deployment,
 review the provision preview and retain the account until its consumers and
 data-retention requirements have been reviewed.
 
@@ -396,19 +396,19 @@ data-retention requirements have been reviewed.
 
 `DEPLOY_POSTGRESQL=false` is the strict default-off selector for both providers.
 Fresh custom ACA deployments explicitly supply administrator OID/name/type.
-Defaults: version16, Burstable/Standard_B1ms, 32 GiB, backup7, HA Disabled,
-geo-backup/auto-grow false. Basic uses dedicated ACA NAT/restricted public PG;
-isolated uses Private Link/public PG disabled regardless of common allowlists.
+Defaults: version 16, Burstable/Standard_B1ms, 32 GiB, 7-day backup, HA Disabled,
+geo-backup/auto-grow false. Basic uses dedicated ACA NAT/restricted public PG.
+Isolated uses Private Link/public PG disabled regardless of common allowlists.
 Typed operator ranges and existing PG DNS IDs have no string aliases.
 [Optional PostgreSQL](postgresql.md) lists all inputs, validations, flat agent-lz
 keys, manual SQL grants and independent-lock recovery/removal. It does not
-select MCP/NL2SQL or replace Cosmos; retrofit/disable/mode replacement are blocked.
+select MCP/NL2SQL or replace Cosmos. Retrofit/disable/mode replacement are blocked.
 
 ### Agent App MCP Server selection
 
 | Variable | Default | Effect |
 | --- | --- | --- |
-| `DEPLOY_AGENT_APP_MCP` | `false` | Adds optional Agent App MCP Server compute and authentication only; does not select SQL or catalog/model/secret access. |
+| `DEPLOY_AGENT_APP_MCP` | `false` | Adds optional Agent App MCP Server compute and authentication only. Does not select SQL or catalog/model/secret access. |
 
 Set this selector before provision. It is independent of
 `ORCHESTRATION_HOST=hosted|container_apps` and
@@ -428,8 +428,8 @@ values fail closed. In the reference application, nonempty toolsets require
 server compute selection.
 `DEPLOY_AGENT_APP_MCP` is rejected for custom definitions before Azure calls.
 Custom applications may explicitly supply `MCP_TOOLSETS` as runtime
-configuration and declare their own compute, dependencies and permissions;
-this adds no automatic reference catalog or model resources.
+configuration and declare their own compute, dependencies and permissions.
+This adds no automatic reference catalog or model resources.
 Do not manually copy generated endpoint/authentication settings.
 
 Only when NL2SQL is selected, Bicep and Terraform create the dependency when absent or reuse the
@@ -442,7 +442,7 @@ The metadata vector policy uses `/embedding`, `float32`, cosine,
 `quantizedFlat` and the selected model dimensions (default `3072`).
 Model selection and dimensions must resolve before policies are provisioned.
 
-Existing catalog name/dimension changes are rejected in place; use an explicit
+Existing catalog name/dimension changes are rejected in place. Use an explicit
 migration/reindexing plan instead of changing settings on the existing catalog.
 
 Incompatible throughput or policies fail explicitly. The lifecycle does not
@@ -450,10 +450,10 @@ recreate accounts/containers, convert shared throughput or choose an unrelated
 external or Foundry backing account.
 
 The MCP receives catalog read, model
-access and only required secret grants; the importer has separately authorized
+access and only required secret grants. The importer has separately authorized
 catalog write access. SQL users and grants remain the SQL owner's responsibility.
 `MCP_SQL_SECRET_NAMES=[]` declares optional SQL password-secret names for
-secret-scoped MCP vault grants; do not place passwords in that list.
+secret-scoped MCP vault grants. Do not place passwords in that list.
 
 The deployment helper configures the Entra API registration/service principal
 and `MCP.Invoke` app role automatically, creating or reusing the registration
@@ -461,20 +461,20 @@ by the exact application object ID recorded in App Configuration.
 
 The deployer must have directory
 rights for registration and application-role assignments, separate from ARM
-permissions; there is no broad ARM-token authentication fallback.
+permissions. There is no broad ARM-token authentication fallback.
 
 An empty server retains mandatory tenant/audience/app-role/client restrictions
 but receives no NL2SQL catalog, model or secret grants.
 
 Selection does not enable `DEPLOY_SEARCH_SERVICE`, create Search indexes or
 grant Search access. Other retrieval consumers keep their independent Search
-requirements. Generated settings are published under `agent-lz`; see the
+requirements. Generated settings are published under `agent-lz`. See the
 [MCP contract](application-settings.md#agent-app-mcp-contract).
 
 Use the [MCP component guide](agent-app-mcp.md#select-and-deploy) for fresh and
 existing-installation steps. Toolsets are startup-only: changes require
 restart/redeployment. Setting `MCP_TOOLSETS=[]` stops NL2SQL
-registration and dependency initialization; it does not automatically revoke
+registration and dependency initialization. It does not automatically revoke
 old roles. Disabling server compute likewise does not delete catalog metadata.
 
 The retained `COSMOS_VECTOR_SEARCH_ENABLED` marker preserves vector capability.
@@ -493,7 +493,7 @@ safe cleanup.
 The boolean is persisted by pre-provision and published under label `agent-lz`.
 Existing environments retain their selection rather than silently adopting the
 fresh default. Custom definitions retain only their declared components and
-resource requirements; this reference selector does not add ingestion to them.
+resource requirements. This reference selector does not add ingestion to them.
 
 | Selection | Effect |
 | --- | --- |
@@ -574,7 +574,7 @@ disappearing from a mixed knowledge base. The functional source guides
 own those compatibility requirements.
 
 These optional identity inputs are nonsecret UUIDs. Explicit deployment
-environment values are published under `agent-lz`; omission invents no identity
+environment values are published under `agent-lz`. Omission invents no identity
 and an explicit empty value clears that setting.
 
 | Setting | Meaning |
@@ -615,12 +615,12 @@ Additional runtime destinations belong in the application's
 [`components[].egress`](build-your-own-app.md#runtime-egress-declarations),
 not a blanket network exception or App Configuration key.
 [Review the component plan](deploy-infra-only.md#review-component-egress)
-before provisioning; external firewall policies remain report-only.
+before provisioning. External firewall policies remain report-only.
 
 | Variable | Default | Description |
 | --- | --- | --- |
 | `DEPLOY_AZURE_FIREWALL` | `true` | Deploys Azure Firewall for egress control. |
-| `AZURE_FIREWALL_SKU` | `Basic` | Selects matching firewall and policy SKU. Basic is supported for isolated standalone deployments; select `Standard` explicitly when its capabilities are required. External hub firewalls retain their own SKU and ownership. |
+| `AZURE_FIREWALL_SKU` | `Basic` | Selects matching firewall and policy SKU. Basic is supported for isolated standalone deployments. Select `Standard` explicitly when its capabilities are required. External hub firewalls retain their own SKU and ownership. |
 | `ENABLE_FIREWALL_DNS_PROXY` | `false` | Requires an isolated local `Standard` firewall. Basic with proxy enabled is rejected. Does not modify VNet or VPN DNS settings. |
 | `DEPLOY_ACR_TASK_AGENT_POOL` | `true` | Deploys an Azure Container Registry agent pool inside the virtual network so images can be built without a local Docker host. The pool is created only when `NETWORK_ISOLATION=true`. |
 | `DEPLOY_JUMPBOX` | Same as `NETWORK_ISOLATION` | Deploys a Windows jumpbox virtual machine. |
@@ -645,14 +645,14 @@ Bastion tunneling is disabled by default.
 New isolated standalone deployments select `AZURE_FIREWALL_SKU=Basic`.
 Select `Standard` explicitly when DNS proxy, network-rule FQDN filtering or
 greater capacity is required. Basic supports application HTTP(S) FQDN rules
-and IP/service-tag network rules; assess its approximately 250 Mbps capacity
+and IP/service-tag network rules. Assess its approximately 250 Mbps capacity
 class against build, image-download and ingestion peaks.
 
 | Topology | Local firewall data subnet/IP | Local management subnet/IP | GatewaySubnet |
 | --- | --- | --- | --- |
 | Standalone Basic | Required | Required | Explicit reservation only |
 | Standalone Standard | Required | None | Explicit reservation only |
-| External hub, with or without gateway | No IP; data subnet only if explicitly reserved | None | Explicit local reservation only |
+| External hub, with or without gateway | No IP. Data subnet only if explicitly reserved | None | Explicit local reservation only |
 | Public/non-isolated | None | None | None |
 
 Both local SKUs use `AzureFirewallSubnet`. Basic additionally needs the
@@ -671,7 +671,7 @@ label alone does not configure egress or change hub resources.
 `ENABLE_FIREWALL_DNS_PROXY` defaults to `false` and maps to the Bicep boolean
 `enableFirewallDnsProxy` (also default `false`), which sets
 `dnsSettings.enableProxy` on a `Standard` firewall. Basic with proxy enabled
-is rejected; its policy omits DNS settings. It applies only when the
+is rejected. Its policy omits DNS settings. It applies only when the
 `deployAzureFirewall` and `networkIsolation` gates enable firewall deployment.
 
 It is intended for a topology that deliberately uses the firewall as its DNS
@@ -694,12 +694,12 @@ The global `DEPLOY_SUBNETS` switch defaults to `true`. Firewall data and
 management switches default to `null` (auto): data follows the local isolated
 firewall requirement, while management is used only by standalone Basic.
 
-`DEPLOY_GATEWAY_SUBNET` defaults to `false`; explicitly enable it to reserve a
+`DEPLOY_GATEWAY_SUBNET` defaults to `false`. Explicitly enable it to reserve a
 subnet for a separately configured local gateway. Other individual subnet
 switches default to `true`.
 
 Creation also requires network isolation and the
-global switch; management additionally requires an active standalone Basic
+global switch. Management additionally requires an active standalone Basic
 firewall, even when its creation switch is explicitly true.
 
 | Native root parameter | Environment input | Subnet purpose |
@@ -719,7 +719,7 @@ firewall, even when its creation switch is explicitly true.
 | `deployPowerPlatformSubnet` | `DEPLOY_POWER_PLATFORM_SUBNET` | Power Platform |
 | `deployAiGatewaySubnet` | `DEPLOY_AI_GATEWAY_SUBNET` | AI Gateway |
 
-A `false` creation flag means do not create/manage that subnet; it does **not**
+A `false` creation flag means do not create/manage that subnet. It does **not**
 disable its consumer. Every enabled consumer must have an existing, valid
 subnet in the selected VNet, or be explicitly disabled. No consumer is silently
 disabled or redirected to another subnet.
@@ -733,14 +733,14 @@ when application private endpoints are enabled.
 An isolated new VNet is still created when subnet creation is disabled, but
 configuration fails if an enabled workload requires a subnet that is absent.
 For an existing VNet, only selected subnets are created/updated, through
-serialized child deployments; its entire subnet collection is not replaced.
+serialized child deployments. Its entire subnet collection is not replaced.
 
-Managed BYO subnet writes require `deployNsgs=true`; opting out of a subnet's
+Managed BYO subnet writes require `deployNsgs=true`. Opting out of a subnet's
 creation does not remove its existing NSG association.
 
 Creation flags are not
 deletion commands or a guarantee of preserving every previously submitted
-subnet in a deployment-owned VNet; Azure can reject removal of occupied subnets.
+subnet in a deployment-owned VNet. Azure can reject removal of occupied subnets.
 
 `deployAiFoundrySubnet` controls the Foundry Agent Service subnet association,
 not subnet creation. Use `deployAgentSubnet` for creation ownership.
@@ -770,7 +770,7 @@ azd env set DEPLOY_SUBNETS true
 For **externally managed subnets**, use the same existing-VNet inputs but set
 `azd env set DEPLOY_SUBNETS false`. Confirm all required subnets already exist
 with the configured names, prefixes, delegations and NSG requirements.
-Then continue with the selected deployment guide; these inputs do not
+Then continue with the selected deployment guide. These inputs do not
 configure peering, DNS forwarding or runner connectivity.
 
 #### Default subnets
@@ -868,7 +868,7 @@ can be overridden using the [subnet inputs](configuration.md#subnet-creation-and
 Firewall data subnet creation defaults to the local firewall requirement.
 The management subnet is used only by a standalone Basic firewall.
 GatewaySubnet is opt-in. The table is an address plan, not an unconditional
-resource inventory; shared-hub services do not require these reservations
+resource inventory. Shared-hub services do not require these reservations
 in the spoke.
 
 With isolation off, no VNet or subnets are provisioned.
@@ -880,14 +880,14 @@ or associate a Power Platform environment. Those integrations need separate setu
 See the [application private endpoint subnet](#application-private-endpoint-subnet)
 for its consumers and required separation from Foundry/grounding endpoints.
 
-Keep the reserved name `GatewaySubnet`; do not attach an NSG, default-route
+Keep the reserved name `GatewaySubnet`. Do not attach an NSG, default-route
 UDR or delegation to it.
 
 AI Gateway uses APIM Standard v2/Premium v2 outbound
 VNet integration, with a subnet of `/27` or larger, delegated to
 `Microsoft.Web/serverFarms` and associated with an NSG. Preserve an outbound
-HTTPS path to Azure Key Vault. No reserved subnet name is required for APIM;
-do not place APIM private endpoints in its delegated integration subnet.
+HTTPS path to Azure Key Vault. No reserved subnet name is required for APIM.
+Do not place APIM private endpoints in its delegated integration subnet.
 
 The Power Platform `/24` is a capacity default, not a platform minimum.
 Size for environment demand: approximately 25–30 IPs per production
@@ -898,7 +898,7 @@ See [Power Platform subnet sizing](https://learn.microsoft.com/power-platform/ad
 
 Subnet name and prefix parameters can be overridden in root
 `main.parameters.json` or through the environment bindings below. Explicit
-operator values are preserved through composition; the allocation table lists
+operator values are preserved through composition. The allocation table lists
 defaults, not mandatory ranges. Reserved service names must retain their
 required spellings.
 
@@ -939,7 +939,7 @@ required spellings.
 | `aiGatewaySubnetPrefix` | `AZURE_AI_GATEWAY_SUBNET_PREFIX` |
 
 Set `vnetAddressPrefixes.value` as an explicit array in root
-`main.parameters.json` (default `["192.168.0.0/21"]`); there is no
+`main.parameters.json` (default `["192.168.0.0/21"]`). There is no
 `VNET_ADDRESS_PREFIXES` environment mapping. For example, merge this complete
 address plan into the root file's `parameters` object before first provision,
 if `10.20.0.0/21` is approved and does not overlap connected networks:
@@ -963,7 +963,7 @@ if `10.20.0.0/21` is approved and does not overlap connected networks:
 }
 ```
 
-A subnet override does not resize the VNet; a reused VNet's actual address
+A subnet override does not resize the VNet. A reused VNet's actual address
 space is authoritative. Names must be unique and required names/prefixes
 cannot be empty.
 
@@ -1021,7 +1021,7 @@ azd env set AZURE_APPLICATION_PE_SUBNET_PREFIX <approved-ipv4-subnet-cidr>
 ```
 
 The application subnet needs a distinct name and an aligned IPv4 CIDR of `/29`
-or shorter. Empty required names/prefixes fail explicitly; there is no shared
+or shorter. Empty required names/prefixes fail explicitly. There is no shared
 Foundry PE fallback. With `DEPLOY_APPLICATION_PE_SUBNET=false` or
 `DEPLOY_SUBNETS=false`, application endpoints still select this configured
 subnet. It must already exist and satisfy the enabled consumers' requirements.
@@ -1060,7 +1060,7 @@ Supported resource-ID inputs select reuse instead of creation:
 Existing private DNS zones, such as hub-owned zones, use
 `EXISTING_PRIVATE_DNS_ZONE_<ZONE>_RESOURCE_ID`, where `<ZONE>` is one of:
 
-`COGSVCS`, `OPENAI`, `AISERVICES`, `SEARCH`, `COSMOS`, `BLOB`, `KEYVAULT`, `APPCONFIG`, `CONTAINERAPPS`, `ACR`, `AZUREMONITOR`, `OMSOPSINSIGHTS`, `ODSOPSINSIGHTS`, `AZUREAUTOMATION`, `APPINSIGHTS`.
+`COGSVCS`, `OPENAI`, `AISERVICES`, `SEARCH`, `DURABLE_TASK`, `COSMOS`, `BLOB`, `KEYVAULT`, `APPCONFIG`, `CONTAINERAPPS`, `ACR`, `AZUREMONITOR`, `OMSOPSINSIGHTS`, `ODSOPSINSIGHTS`, `AZUREAUTOMATION`, `APPINSIGHTS`.
 
 Their owner must provide the required VNet links or resolver forwarding
 separately from network peering. See the
@@ -1111,9 +1111,9 @@ SharePoint, SQL, MCP and other custom destinations need their own review.
 
 | Deployment | Behavior |
 | --- | --- |
-| `NETWORK_ISOLATION=false` | No component firewall reads or writes; declarations do not create a firewall |
+| `NETWORK_ISOLATION=false` | No component firewall reads or writes. Declarations do not create a firewall |
 | Isolated with a deployment-managed firewall | Reconciles only marked application rules in `AgentLzComponentEgress`, priority 400 |
-| Isolated with an external firewall | Reports required rules and components without egress declarations; never reads or mutates the external policy |
+| Isolated with an external firewall | Reports required rules and components without egress declarations. Never reads or mutates the external policy |
 
 For managed policies, the runner needs management-plane subnet reads and
 `Microsoft.Network/firewallPolicies/ruleCollectionGroups/read` and `write`
@@ -1124,7 +1124,7 @@ allowed.
 
 Shared destination/protocol/port tuples produce one rule, with sources and
 ownership combined across components. Removing one owner narrows sources where
-possible; the rule remains until its final declared owner disappears.
+possible. The rule remains until its final declared owner disappears.
 
 Enabled components without declarations retain their owned requirements.
 Other rules and collections, including unmarked entries inside
@@ -1161,15 +1161,15 @@ The application separates behavior from hosting and retrieval:
 | Canonical setting | Values or requirement |
 | --- | --- |
 | `APPLICATION_MODE` | `conversational` (default), `workflow` or `both` |
-| `ORCHESTRATION_HOST` | `hosted` (default) or `container_apps`; selects native execution host |
+| `ORCHESTRATION_HOST` | `hosted` (default) or `container_apps`. Selects the native execution host |
 | `HOSTED_AGENT_BASE_URL` | Actual Hosted conversational publication endpoint, when selected |
 | `HOSTED_WORKFLOW_BASE_URL` | Actual separate Hosted workflow publication endpoint, when selected |
 | `DURABLE_TASK_SCHEDULER_CONNECTION_STRING` | Official nonsecret managed-identity backend binding for the durable client/worker |
 
 The only public native deployment selectors are `ORCHESTRATION_HOST` and
-`APPLICATION_MODE`. Set them before provision; the UI is included automatically.
+`APPLICATION_MODE`. Set them before provision. The UI is included automatically.
 History, feedback and private attachments independently default to off.
-Hosted does not enable history; workflow or `both` always selects UI metadata.
+Hosted does not enable history. Workflow or `both` always selects UI metadata.
 
 Endpoint/binding rows are actual generated application contracts, not extra
 host choices. Do not construct scheduler endpoints or set internal host flags.
@@ -1177,12 +1177,12 @@ host choices. Do not construct scheduler endpoints or set internal host flags.
 Set `ENABLE_CHAT_HISTORY`, `ENABLE_USER_FEEDBACK` and
 `ENABLE_PRIVATE_ATTACHMENTS` with `azd env set` before provision, then deploy.
 The lifecycle selects their metadata dependencies and publishes the values
-under `agent-lz`; these are not new same-named Bicep or Terraform parameters.
+under `agent-lz`. These are not new same-named Bicep or Terraform parameters.
 Use [Enable a product feature](application-settings.md#enable-a-product-feature)
 for the ordered procedure and keep functional capability declarations
 [separate](#initialization-and-setting-order).
 
-On Hosted, select `APPLICATION_MODE=both`; the lifecycle prepares a
+On Hosted, select `APPLICATION_MODE=both`. The lifecycle prepares a
 conversational publication with derived process mode `conversational` and a
 separate workflow publication with derived process mode `workflow`, then
 passes both endpoints to the UI. These process inputs are not extra public
@@ -1193,7 +1193,7 @@ shared composition value. A common App Configuration store does not turn
 Hosted `both` into a single publication.
 
 If attachments are enabled, retain the shared/UI and conversational
-`ENABLE_PRIVATE_ATTACHMENTS=true`; only the workflow publication gets `false`.
+`ENABLE_PRIVATE_ATTACHMENTS=true`. Only the workflow publication gets `false`.
 Workflow-only composition rejects an enabled attachment flag.
 
 On Container Apps, use the official standalone Durable Extension worker and
@@ -1209,14 +1209,14 @@ one side only.
 
 MCP, Foundry IQ and Search are tools/capabilities, not application modes or
 competing strategy names. Graph, host, identity, persistence and publication
-changes require compatible deployment; functional parameters follow scoped
+changes require compatible deployment. Functional parameters follow scoped
 App Configuration refresh and per-run snapshots.
 See [Agent hosting](hosted-agents.md),
 [Workflows & human input](workflows.md) and
 [Application settings](application-settings.md).
 
-`ENABLE_CHAT_HISTORY` and `ENABLE_USER_FEEDBACK` default to `false`;
-workflow mode, `both` or enabled history, feedback or attachments declares UI metadata
+`ENABLE_CHAT_HISTORY` and `ENABLE_USER_FEEDBACK` default to `false`.
+Workflow mode, `both` or enabled history, feedback or attachments declares UI metadata
 storage directly.
 
 `DEPLOY_AGENT_APP_MCP=false` keeps the optional MCP server
@@ -1227,7 +1227,7 @@ identity, not the native execution host.
 
 Declare actual tool secret names through `NATIVE_TOOL_SECRET_NAMES` (default
 `[]`), a JSON array of names rather than values, and grant only the consuming
-component. This is a platform grant declaration; the native runtime does not
+component. This is a platform grant declaration. The native runtime does not
 consume `NATIVE_TOOL_SECRET_NAMES` as a secret-loading or tool-enabling setting.
 
 `ENABLE_PRIVATE_ATTACHMENTS=false` is the default. Enabling it selects
@@ -1237,8 +1237,8 @@ Admission allows at most three files, 64 KiB per file and 256 KiB for the
 serialized inline turn. See [Private attachments](conversations.md#private-attachments)
 for the MIME, encoding and owner contract.
 
-Native Search, Foundry IQ, MCP and multimodal registration default to off;
-the integrated MCP lifecycle coordinates registration when selected.
+Native Search, Foundry IQ, MCP and multimodal registration default to off.
+The integrated MCP lifecycle coordinates registration when selected.
 Configured infrastructure alone does not onboard SQL or populate its catalog.
 
 ### Container Apps workload profiles
@@ -1302,7 +1302,7 @@ Preflight skip flags are diagnostic controls, not a supported fix for quota,
 region, permission or network failures.
 
 An explicit `BUILD_MODE` takes precedence. When it is unset, component scripts
-first apply recognized `USE_DOCKER` values: `true`, `1` or `yes` select local;
+first apply recognized `USE_DOCKER` values: `true`, `1` or `yes` select local.
 `false`, `0` or `no` select ACR Tasks. Without either override, network
 isolation or a configured task pool selects ACR Tasks. Otherwise, usable Docker
 selects local and unavailable Docker selects ACR Tasks. Explicit `local`
@@ -1341,7 +1341,7 @@ commit's `resolved` URLs and download redirects determine its build needs.
 Additional dependencies are declared in
 `parameters.additionalAcrTaskBuildFqdns.value` in the root `main.parameters.json`.
 This is an explicit array, not an `azd` environment variable. Provisioning
-applies it; the connected runner needs the same reviewed parameter file to
+applies it. The connected runner needs the same reviewed parameter file to
 preserve the setting on later provisions.
 
 The Agent Application orchestrator frontend lockfile uses
@@ -1451,20 +1451,20 @@ through root `parameters.additionalAppConfigurationSettings.value`, using
 Declared labels, content types and literal values are preserved.
 
 Keep the exact reviewed declaration, including required private inputs, on
-every runner. A missing required declaration fails; outputs and Terraform state
+every runner. A missing required declaration fails. Outputs and Terraform state
 are not substitutes. The publisher's optional `--input <path>` selects that
 exact parameter document. Do not create per-key azd variables to transport it.
 
 Routing, identity and other authority-controlled conflicts are rejected.
-Unsupported runtime Key Vault-reference overrides fail explicitly; use the
+Unsupported runtime Key Vault-reference overrides fail explicitly. Use the
 declared secret consumer and provisioning owner for those references.
 
 ### Effective settings
 
 Change foundation-owned settings in their declared inputs and runtime-owned
-settings through their publisher; a missing-only default seed does not make
+settings through their publisher. A missing-only default seed does not make
 every key operator-owned. Custom application
-definitions validate settings but do not publish them; the application
+definitions validate settings but do not publish them. The application
 must publish its own runtime settings.
 
 An accepted write is not evidence that a running process loaded the value.

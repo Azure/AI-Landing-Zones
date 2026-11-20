@@ -128,9 +128,9 @@ from settings used by the separately available direct connector:
 | `TOOLBOX_ENDPOINT` | Native runtime: platform-derived project Toolbox endpoint, published under `agent-lz`, not an additional authentication selector. |
 | `KNOWLEDGE_BASE_CONNECTION_ID` | Provisioning: compatible project `RemoteTool` connection used to register the knowledge-base tool in the Toolbox. |
 | `RETRIEVAL_BACKEND` | Provisioning: `foundry_iq` selects knowledge-base setup. The direct connector also reads this selector; native tool composition does not. |
-| `RETRIEVAL_AUTH_MODE` | Platform-derived `native_search` contract in both profiles. Managed Toolbox integration, consent and source permissions establish downstream authorization. |
+| `RETRIEVAL_AUTH_MODE` | Platform-derived. `native_search` on the Hosted route in both auth modes, empty on the Container Apps host. Managed Toolbox integration, consent and source permissions establish downstream authorization. |
 | `KNOWLEDGE_BASE_ENDPOINT` | Direct connector: Search service root, such as `https://<service>.search.windows.net`, not a Foundry project or retrieve URL. |
-| `KNOWLEDGE_BASE_NAME` | Provisioning/direct connector: knowledge-base object name, not an index name. Native configuration also loads the name. |
+| `KNOWLEDGE_BASE_NAME` | Provisioning/direct connector: knowledge-base object name, not an index name. Native configuration does not load it. |
 | `FOUNDRY_IQ_KNOWLEDGE_SOURCE_NAME` | Primary registered source name. |
 | `FOUNDRY_IQ_PATTERN` and `FOUNDRY_IQ_KNOWLEDGE_SOURCE_KIND` | `azureBlob` for the default source, or matching `searchIndex` for an existing index. |
 | `FOUNDRY_IQ_API_VERSION` | The source and connector contract defaults to `2026-05-01-preview`. |
@@ -222,9 +222,11 @@ The UI reports managed `oauth_consent_request` outcomes as an explicit
 consent process and retry. It does not open returned consent links or
 automatically resume the failed request. Failed tool calls are not accepted
 as successful answers.
+
 In service mode, consent requests return `403 user_delegation_required`.
-Other retrieval failures return a safe `tool_failed` error with service-permission
-and OBO guidance, without automatically acquiring another credential.
+Other tool failures return a safe `502 tool_failed` error, without
+automatically acquiring another credential. In service mode, its message adds
+service-permission and OBO guidance.
 
 Native permission filtering is enabled for the application index's user,
 group and RBAC scope fields. Indexing must populate the appropriate metadata.

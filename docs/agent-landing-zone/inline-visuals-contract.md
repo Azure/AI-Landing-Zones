@@ -32,13 +32,16 @@ as compact JSON with label `agent-lz` and content type `text/plain`. Its shape i
 Use the [runbook's declaration](inline-visuals.md#step-1-enable-one-agent) in
 `main.parameters.json`; the declaration's `value` is a JSON string, not an
 additional `type` field. Empty `agents`, absent agent or `enabled: false` is off.
+Each agent entry requires `enabled` and accepts optional `guidance` and
+`rules`. A rule maps a typed source field to a `status` or `trend` indicator.
 
 ## Use the typed-source samples
 
-In the coordinated umbrella feature checkout,
+In the umbrella repository,
 `contracts/examples/inline-presentation/README.md` describes `source-fixture.json`,
 three valid/invalid fixture pairs and `text_only_adapter.py`. These are
-candidate source artifacts, not links to an already published release.
+synthetic candidate examples. They do not authorize a deployment opt-in or
+guarantee that the pinned release understands them.
 
 The synthetic source preserves March revenue as the decimal string **9.750**
 with unit **USD**, growth **-2.750**, and indicator **down** linked to the
@@ -75,8 +78,8 @@ continuation protocol.
 
 ## Validate the customer adapter
 
-Use the umbrella's existing local command with the matched candidate UI source
-on `PYTHONPATH`:
+From the umbrella repository root, run the existing local command with the
+matched UI `src` directory on `PYTHONPATH`:
 
 ```powershell
 python -m pytest -q tests/test_text_only_adapter.py tests/test_presentation_contracts.py

@@ -255,8 +255,8 @@ govern deployment.
 
 6. With the custom hosted example's answer logic, confirm the response echoes
    the intended `FOUNDRY_PROJECT_ENDPOINT` injected by the platform. A value of
-   `unknown` or `unavailable` indicates a missing project endpoint or broken
-   hosted invocation. Check the published agent version and logs before
+   `unknown` indicates a missing project endpoint. A failed request indicates
+   a broken hosted invocation. Check the published agent version and logs before
    proceeding. With your logic, verify actual application behavior and
    denied-access cases.
 
@@ -331,8 +331,10 @@ requirements, but a fresh definition with no declaration adds none. Removing a c
 removes its ownership, not another component's shared dependency.
 
 Review the exact source's fixed downloads and configured integrations when
-editing these declarations. The bundled UI declares `[]`; both orchestrator
-and ingestion declare the tiktoken asset host over HTTPS/443. A custom-only
+editing these declarations. The bundled UI declares `[]`. The orchestrator
+and ingestion declare the tiktoken asset host over HTTPS/443. The MCP server
+declares `login.microsoftonline.com` over HTTPS/443 to validate Entra access
+tokens. A custom-only
 definition's plan follows its own declared workloads, not implicit bundled ones.
 Follow [runtime egress review and reconciliation](configuration.md#outbound-access)
 before provisioning. Build registries and package feeds are configured

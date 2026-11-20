@@ -79,8 +79,8 @@ Lifecycle hooks stay in root `scripts/`, with infrastructure helpers in `scripts
 Commit your configuration and compatible component pins
 before queuing a pipeline. Do not commit credentials or local azd environments.
 
-The downloadable example initially deploys the **Agent Application** with
-`ORCHESTRATION_HOST=hosted`, `APPLICATION_MODE=conversational`, native Blob
+The downloadable example deploys the **Agent Application** with the default
+`ORCHESTRATION_HOST=hosted` and `APPLICATION_MODE=conversational`, native Blob
 ingestion and private endpoints. Set the same reviewed host, mode and ingestion
 selection across the three environments.
 The table lists deployment inputs placed in each stage's YAML `settings` map
@@ -478,14 +478,16 @@ If changing to CI artifacts, deploy from the downloaded validated tree
 and explicitly solve the Git metadata requirement for local custom sources.
 
 Cleanup runs even after failure. Its fixed path list removes `.azure` and `.logs`
-from the platform root, `hosted-agent/`, and the three manifest component sibling
-checkouts (`agent-app-ui`, `agent-app-orchestrator`, `agent-app-ingestion`).
+from the platform root, `hosted-agent/`, and the `agent-app-ui`,
+`agent-app-orchestrator` and `agent-app-ingestion` sibling checkouts.
+It does not cover the optional `agent-app-mcp` sibling, which deploy clones and
+copies `.azure` into when `DEPLOY_AGENT_APP_MCP=true`.
 It leaves their source files intact and removes the job-specific temporary Python
 environment, azd config and Git config.
 
 Update the explicit state-directory list
-when changing component names or adding a custom definition folder; do not replace
-it with recursive deletion of source/workspace roots.
+when changing component names, selecting MCP or adding a custom definition
+folder; do not replace it with recursive deletion of source/workspace roots.
 
 AzureCLI@2 owns its isolated
 Azure CLI authentication context. Abrupt agent loss can prevent cleanup:
@@ -504,8 +506,9 @@ Before promotion, record release evidence for the preceding environment:
 
 1. `azd env get-value AZURE_RESOURCE_GROUP` identifies the Foundry/root target.
    `AZURE_APP_RESOURCE_GROUP` identifies the application target and
-   `AZURE_NETWORK_RESOURCE_GROUP` the local network target; omitted overrides
-   use the Foundry/root group.
+   `AZURE_NETWORK_RESOURCE_GROUP` the local network target. In a new
+   environment, omitted overrides are saved as the root name plus `-app` and
+   `-network`.
    App Configuration has the expected platform outputs and effective settings
    under label `agent-lz`; the selected apps have real, healthy image revisions,
    not just provisioned placeholders. Record image digests and hosted routed version.

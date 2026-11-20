@@ -272,8 +272,9 @@ Private deployment prerequisites failed. Use a VPN/VNet-connected host; RUN_FROM
 ```
 
 **Diagnose:** With `NETWORK_ISOLATION=true`, the host cannot resolve or establish
-TLS to App Configuration, or to the Foundry project endpoint for hosted
-topologies. The gate allows up to 20 seconds per endpoint.
+TLS to App Configuration, to the Foundry project endpoint for hosted
+topologies, or to the Durable Task Scheduler endpoint for Container Apps
+hosting. The gate allows up to 20 seconds per endpoint.
 
 **Correct:** Move to the approved jumpbox, VPN or peered-VNet runner and inspect
 the [private connectivity path](troubleshooting.md#private-connectivity-checks).
@@ -692,8 +693,10 @@ retrying the failed stage.
 Private post-provision prerequisites failed. Connect through VPN/VNet and rerun postProvision; configuration has not started.
 ```
 
-**Diagnose:** Provisioning completed, but the runner cannot reach private App
-Configuration, so configuration has not started.
+**Diagnose:** Provisioning completed, but the runner cannot reach a private
+endpoint, so configuration has not started. The check covers App
+Configuration and each deployed Foundry project, Key Vault, Search, Blob
+Storage and Cosmos DB endpoint.
 
 **Correct:** Connect through an approved jumpbox, VPN or peered VNet. Follow
 [Complete a deferred post-provision](deploy-infra-only.md#complete-a-deferred-post-provision).
@@ -726,12 +729,14 @@ deferral before resuming application deployment.
 
 **Symptom:** A hook rejects the isolation value.
 
-**Diagnose:** The selected environment contains a value other than literal
-`true` or `false`.
+**Diagnose:** The selected environment contains a value that is neither a
+recognized true value (`true`, `1`, `t`, `yes`, `y`) nor a recognized false
+value (`false`, `0`, `f`, `no`, `n` or empty).
 
-**Correct:** Restore the value required by the intended network design, for
-example `azd env set NETWORK_ISOLATION true` for an isolated environment.
-Use `false` only when the intended network design is non-isolated.
+**Correct:** Set the literal value required by the intended network design,
+for example `azd env set NETWORK_ISOLATION true` for an isolated environment.
+Use `false` only when the intended network design is non-isolated. Other
+hooks and the provisioning parameter expect literal `true` or `false`.
 
 **Verify:** The effective value matches the intended network design and validation
 passes before any provisioning changes.

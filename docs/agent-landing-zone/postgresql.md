@@ -187,7 +187,7 @@ records. Nonsecret immutable creation intent is written before IaC. Corrupt or
 missing records are not adoption/deletion permission; restore the original record
 and reviewed context. Same-binding recovery preserves data.
 
-Post-provision creates/readbacks server-scoped CanNotDelete lock
+Post-provision creates and reads back the server-scoped CanNotDelete lock
 `agentlz-postgresql-data-protection` outside **both** foundation graphs and
 Terraform state before ready discovery. Failed/missing protection blocks
 publication; recover with the same context and corrected permissions. Never import

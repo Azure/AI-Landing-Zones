@@ -79,14 +79,21 @@ and review the resolved names before provisioning.
 
 Bicep's default workload token is the first six characters of
 `uniqueString(subscription().id, environmentName, location)`.
-CAF environment and region token overrides do not change that hash's inputs.
+Terraform's is the first six characters of a SHA-256 hash of the
+subscription ID, environment name and location.
+CAF environment and region token overrides do not change either hash's inputs.
 
 Tokens are lowercased. Region input has spaces removed and uses its first
-five characters when unmapped. Naming uses the deployment location, not
-individual service-location overrides.
+five characters when unmapped. Terraform also removes every character other
+than letters and digits from each token. The providers' region code tables
+differ. For example, `swedencentral` maps to `sdc` in Bicep and to `swc` in
+Terraform. Naming uses the deployment location, not individual
+service-location overrides.
 
-Storage and registry names omit hyphens. Generated names are truncated to
-service-specific lengths, which can remove distinguishing suffixes.
+Storage and registry names omit hyphens. Bicep truncates generated names to
+service-specific lengths and drops a trailing hyphen, which can remove
+distinguishing suffixes. Terraform shortens an overlong generated name and
+appends a six-character hash.
 Explicit names must already satisfy each service's rules: CAF truncation
 does not sanitize them. Azure's
 [naming rules and uniqueness scopes](https://learn.microsoft.com/azure/azure-resource-manager/management/resource-name-rules)

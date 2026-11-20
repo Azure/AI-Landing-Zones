@@ -75,8 +75,8 @@ The deployment guides provide the supported sequence and its checks.
 
 For **another application instead of the reference UI/orchestrator**, select
 [`AGENTLZ_APP_DEFINITION`](build-your-own-app.md#application-binding-and-selection)
-before provision. Its composition declares the names, tools and dependencies;
-the reusable foundation accepts generic compute, data, capability and role
+before provision. Its composition declares the names, tools and dependencies.
+The reusable foundation accepts generic compute, data, capability and role
 inputs. Custom-only applications do not inherit reference MCP, SQL or catalogs.
 
 <span id="choose-your-path"></span>

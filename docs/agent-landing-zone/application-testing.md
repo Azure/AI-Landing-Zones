@@ -169,7 +169,7 @@ checkout and enable the test before running the suite. In PowerShell:
 
 ```powershell
 git clone https://github.com/Azure/agent-app-orchestrator.git ..\agent-app-orchestrator-tests
-git -C ..\agent-app-orchestrator-tests checkout a2e60129fcb4ccb3c1a41989d2aeeef601c18331
+git -C ..\agent-app-orchestrator-tests checkout 72909db145ca41b954e18261d89e50318bed592a
 $env:INLINE_ORCH_TESTS = "1"
 $env:INLINE_ORCH_TEST_ROOT = (Resolve-Path ..\agent-app-orchestrator-tests).Path
 python -m venv .artifacts\orchestrator-test-env

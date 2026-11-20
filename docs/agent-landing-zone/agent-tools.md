@@ -199,7 +199,7 @@ Workflows. Its available NL2SQL toolset provides `nl2sql.list_sources()` and
 model/declared-secret access. Search and document ingestion remain independent.
 
 The operator still approves SQL destinations, read permissions and metadata.
-The server's NL2SQL implementation—not the orchestrator—owns SQL connectivity,
+The server's NL2SQL implementation, not the orchestrator, owns SQL connectivity,
 metadata retrieval and generated-query validation. Operators import approved
 metadata through the separate administrative importer.
 

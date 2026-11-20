@@ -2,7 +2,7 @@
 
 Foundry IQ provides the standard shared-source ingestion path.
 Private attachments and custom processing are separate capabilities.
-**Agent App Ingestion** is optional and disabled by default; it is not the
+**Agent App Ingestion** is optional and disabled by default. It is not the
 store for native execution state or UI/BFF product metadata.
 
 This page explains those boundaries. Deployment steps are in the
@@ -42,7 +42,7 @@ described in [Deployment settings](configuration.md#ingestion-application-select
 </div>
 
 Neither retrieval nor custom ingestion is required for every application.
-Choose only the paths your application uses; private attachments do not
+Choose only the paths your application uses. Private attachments do not
 select a shared source.
 
 <span id="choose-a-source-ingestion-path"></span>
@@ -74,7 +74,7 @@ describes the managed pipeline and service requirements.
    `FOUNDRY_IQ_PATTERN=azureBlob`,
    `FOUNDRY_IQ_STORAGE_CONTAINER_NAME` and optional
    `FOUNDRY_IQ_STORAGE_FOLDER_PATH`. These have explicit mappings in
-   `main.parameters.json`; keep `DEPLOY_INGESTION_CONTAINER_APP=false` for
+   `main.parameters.json`. Keep `DEPLOY_INGESTION_CONTAINER_APP=false` for
    this ingestion path. Follow [Foundry IQ setup](foundry-iq.md).
 2. Provision through the [deployment guide](deploy-full-stack.md).
    The source/storage owner must approve Search's ingestion access and any
@@ -91,7 +91,7 @@ describes the managed pipeline and service requirements.
    and deployment lifecycle, not only an application restart.
 
 Successful ingestion alone does not establish protected retrieval. The built-in
-native UI delegates for hosted invocation; it does not implement the direct
+native UI delegates for hosted invocation. It does not implement the direct
 connector's Search-token forwarding path. Native Foundry IQ uses a
 project-connection tool. Configure and verify source-compatible user
 authorization for that connection, or explicitly integrate trusted credential
@@ -142,7 +142,7 @@ selections in the accelerator.
 
 `ENABLE_PRIVATE_ATTACHMENTS` selects validated inline conversational input
 in `conversational` or `both`. Workflow attachments are unsupported.
-Hosted uses official file/image inputs; DTS uses native context messages/IDs.
+Hosted uses official file/image inputs. DTS uses native context messages/IDs.
 The path does **not** call Agent App Ingestion, mint Blob SAS, accept input
 URLs or publish the file into a corporate knowledge corpus.
 It selects UI owner mappings and descriptors, not storage of file bytes.
@@ -155,11 +155,11 @@ See [Private attachments](conversations.md#private-attachments) for exact limits
    Use [Enable a product feature](application-settings.md#enable-a-product-feature)
    for the canonical commands. Do not write only the runtime key in the portal.
 2. Run provision, then deploy. Composition selects the UI metadata container
-   and grants the UI identity access; it does not deploy ingestion for this
+   and grants the UI identity access. It does not deploy ingestion for this
    feature. Hosted `both` keeps attachments disabled on the workflow publication.
 3. **At runtime**, sign in, create a conversational session and send a small
    TXT attachment through its turn API or UI. Verify the answer and an owner-bound
-   descriptor; confirm that another user cannot access that session.
+   descriptor. Confirm that another user cannot access that session.
 4. Check the [file/turn limits](multimodality.md#private-attachment-boundary)
    and model behavior separately. Enabling this persisted feature in an
    already running UI requires compatible resources and redeployment, not
@@ -236,7 +236,7 @@ or identity grants. Retirement needs separate authorization.
     ```
 
     This is an array entry, not a complete parameter file. It suppresses
-    immediate indexing/purge only; review cron and log cleanup separately.
+    immediate indexing/purge only. Review cron and log cleanup separately.
     Follow [configuration ownership](configuration.md#configuration-ownership-and-declarations)
     for publishing declarations. Arbitrary `azd env set` names do not publish keys.
 
@@ -264,7 +264,7 @@ or identity grants. Retirement needs separate authorization.
    citations and allowed/denied-user retrieval before scheduling broader work.
    For **post-deploy** schedule edits, use
    [configure and apply schedules](ingestion-jobs.md#configure-and-apply-schedules).
-   Restart ingestion after endpoint/client or analysis-service changes; cache
+   Restart ingestion after endpoint/client or    analysis-service changes. Cache
    refresh does not replace existing module-level clients.
 
 `USE_DOCUMENT_INTELLIGENCE=false` selects Content Understanding by default.
