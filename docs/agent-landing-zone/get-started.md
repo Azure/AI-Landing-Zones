@@ -83,6 +83,8 @@ CLI login authenticates the operator; it does not grant application admission or
 
 Initialization creates and selects the local environment.
 It does not deploy Azure resources.
+The command uses the current validated release.
+To check which releases passed validation, see [Validated releases](validated-releases.md).
 
 4. Keep the trailing `.` in the initialization command.
 5. Do not add `--up` or create the same local environment again.

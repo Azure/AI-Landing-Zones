@@ -99,7 +99,7 @@ def check_lifecycle_navigation(page, base, screenshots):
         item.querySelector(":scope > .md-nav__link > .md-ellipsis").textContent.trim()
     )""")
     assert labels == [
-        "Overview", "Get started", "What's new", "Validated releases", "Plan", "Deploy",
+        "Overview", "Get started", "What's new", "Plan", "Deploy",
         "Operate", "Reference", "Agent Application",
     ], labels
     for name in ("Plan", "Deploy", "Operate", "Reference"):
@@ -108,7 +108,7 @@ def check_lifecycle_navigation(page, base, screenshots):
             actual = branch.locator(":scope > ul > li > a .md-ellipsis").all_text_contents()
             expected = {
                 "Plan": ["Deployment choices", "Design checklist", "Network design", "Sizing & cost planner"],
-                "Reference": ["Deployment settings", "Resource naming"],
+                "Reference": ["Deployment settings", "Resource naming", "Validated releases"],
             }[name]
             assert [label.strip() for label in actual] == expected, (name, actual)
         if name == "Deploy":
@@ -132,7 +132,7 @@ def check_lifecycle_navigation(page, base, screenshots):
 
     routes = (
         ("agent-landing-zone/get-started/", ("Agent Landing Zone",)),
-        ("agent-landing-zone/validated-releases/", ("Agent Landing Zone",)),
+        ("agent-landing-zone/validated-releases/", ("Agent Landing Zone", "Reference")),
         ("agent-landing-zone/planning/", ("Agent Landing Zone", "Plan")),
         ("agent-landing-zone/network-isolation/", ("Agent Landing Zone", "Plan")),
         ("architecture/design-checklist/", ("Agent Landing Zone", "Plan")),
