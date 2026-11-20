@@ -722,8 +722,18 @@ def run(base, screenshots):
                 expect(viewer.get_by_role("button", name="Close", exact=True)).to_be_focused()
                 page.wait_for_function("""() => {
                     const image = document.querySelector(".home-diagram-image");
-                    return image.complete && image.naturalWidth === 6400;
+                    return image.complete && image.naturalWidth > 0;
                 }""")
+                dimensions = trigger.locator("img").evaluate("""image => ({
+                    naturalWidth: image.naturalWidth, naturalHeight: image.naturalHeight,
+                    width: Number(image.getAttribute("width")), height: Number(image.getAttribute("height"))
+                })""")
+                assert dimensions["naturalWidth"] == dimensions["width"], (name, dimensions)
+                assert dimensions["naturalHeight"] == dimensions["height"], (name, dimensions)
+                assert enlarged.evaluate("""(image, dimensions) =>
+                    image.naturalWidth === dimensions.naturalWidth &&
+                    image.naturalHeight === dimensions.naturalHeight
+                """, dimensions), (name, dimensions)
                 assert enlarged.bounding_box()["width"] > trigger.bounding_box()["width"]
                 expect(viewer.get_by_role("link", name="Open original")).to_have_attribute(
                     "href", page.locator(f"#architecture-{name} img").evaluate("image => image.currentSrc || image.src"))
