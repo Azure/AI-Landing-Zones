@@ -99,8 +99,8 @@ def check_lifecycle_navigation(page, base, screenshots):
         item.querySelector(":scope > .md-nav__link > .md-ellipsis").textContent.trim()
     )""")
     assert labels == [
-        "Overview", "Get started", "What's new", "Plan", "Deploy", "Operate", "Reference",
-        "Agent Application",
+        "Overview", "Get started", "What's new", "Validated releases", "Plan", "Deploy",
+        "Operate", "Reference", "Agent Application",
     ], labels
     for name in ("Plan", "Deploy", "Operate", "Reference"):
         branch = expand_navigation_group(page, agent, name)
@@ -132,6 +132,7 @@ def check_lifecycle_navigation(page, base, screenshots):
 
     routes = (
         ("agent-landing-zone/get-started/", ("Agent Landing Zone",)),
+        ("agent-landing-zone/validated-releases/", ("Agent Landing Zone",)),
         ("agent-landing-zone/planning/", ("Agent Landing Zone", "Plan")),
         ("agent-landing-zone/network-isolation/", ("Agent Landing Zone", "Plan")),
         ("architecture/design-checklist/", ("Agent Landing Zone", "Plan")),
@@ -722,8 +723,18 @@ def run(base, screenshots):
                 expect(viewer.get_by_role("button", name="Close", exact=True)).to_be_focused()
                 page.wait_for_function("""() => {
                     const image = document.querySelector(".home-diagram-image");
-                    return image.complete && image.naturalWidth === 6400;
+                    return image.complete && image.naturalWidth > 0;
                 }""")
+                dimensions = trigger.locator("img").evaluate("""image => ({
+                    naturalWidth: image.naturalWidth, naturalHeight: image.naturalHeight,
+                    width: Number(image.getAttribute("width")), height: Number(image.getAttribute("height"))
+                })""")
+                assert dimensions["naturalWidth"] == dimensions["width"], (name, dimensions)
+                assert dimensions["naturalHeight"] == dimensions["height"], (name, dimensions)
+                assert enlarged.evaluate("""(image, dimensions) =>
+                    image.naturalWidth === dimensions.naturalWidth &&
+                    image.naturalHeight === dimensions.naturalHeight
+                """, dimensions), (name, dimensions)
                 assert enlarged.bounding_box()["width"] > trigger.bounding_box()["width"]
                 expect(viewer.get_by_role("link", name="Open original")).to_have_attribute(
                     "href", page.locator(f"#architecture-{name} img").evaluate("image => image.currentSrc || image.src"))
