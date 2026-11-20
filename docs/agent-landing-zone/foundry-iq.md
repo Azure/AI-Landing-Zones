@@ -222,6 +222,7 @@ The UI reports managed `oauth_consent_request` outcomes as an explicit
 consent process and retry. It does not open returned consent links or
 automatically resume the failed request. Failed tool calls are not accepted
 as successful answers.
+
 In service mode, consent requests return `403 user_delegation_required`.
 Other tool failures return a safe `502 tool_failed` error, without
 automatically acquiring another credential. In service mode, its message adds
