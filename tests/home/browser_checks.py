@@ -99,8 +99,8 @@ def check_lifecycle_navigation(page, base, screenshots):
         item.querySelector(":scope > .md-nav__link > .md-ellipsis").textContent.trim()
     )""")
     assert labels == [
-        "Overview", "Get started", "What's new", "Plan", "Deploy", "Operate", "Reference",
-        "Agent Application",
+        "Overview", "Get started", "What's new", "Validated releases", "Plan", "Deploy",
+        "Operate", "Reference", "Agent Application",
     ], labels
     for name in ("Plan", "Deploy", "Operate", "Reference"):
         branch = expand_navigation_group(page, agent, name)
@@ -132,6 +132,7 @@ def check_lifecycle_navigation(page, base, screenshots):
 
     routes = (
         ("agent-landing-zone/get-started/", ("Agent Landing Zone",)),
+        ("agent-landing-zone/validated-releases/", ("Agent Landing Zone",)),
         ("agent-landing-zone/planning/", ("Agent Landing Zone", "Plan")),
         ("agent-landing-zone/network-isolation/", ("Agent Landing Zone", "Plan")),
         ("architecture/design-checklist/", ("Agent Landing Zone", "Plan")),
