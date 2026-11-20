@@ -93,9 +93,9 @@ Resource selection and reuse depend on your implementation and settings. This re
 Combine many Agent Landing Zones as spokes for agents to an AI Gateway Landing Zone as hub for models. The gateway has its own deployment and connectivity requirements; Agent Landing Zone does not provision it automatically.
 
 <figure class="architecture-figure" markdown="1">
-![AI Gateway Landing Zone reference architecture](architecture/media/AI-Landing-Zones-APIM.png){ width=8025 height=8053 loading=lazy }
+![AI Gateway Landing Zone reference architecture](architecture/media/AI-Landing-Zones-APIM.png?v=70715646bdce){ width=6400 height=5874 loading=lazy }
 <figcaption markdown="block">
-[Enlarge the integrated gateway diagram](architecture/media/AI-Landing-Zones-APIM.png?v=431e467f6d75)
+[Enlarge the integrated gateway diagram](architecture/media/AI-Landing-Zones-APIM.png?v=70715646bdce)
 
 Resource selection and reuse depend on your implementation and settings. The Agent Landing Zone portion shows the default hosted application without application Cosmos DB or its private endpoint; Foundry Agent Service's separate backing resources are retained.
 </figcaption>
