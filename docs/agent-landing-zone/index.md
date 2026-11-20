@@ -92,10 +92,10 @@ inputs. Custom-only applications do not inherit reference MCP, SQL or catalogs.
 - **What does the template do?** Review the [deployment lifecycle](#how-the-template-works).
 - **What needs planning?** Review [resources, networking and deployment tools](planning.md),
   then use the [Design checklist](../architecture/design-checklist.md) for architecture
-  and security decisions.
+  and security&nbsp;decisions.
 - **How much capacity and budget are needed?** The
   [Sizing & cost planner](sizing-cost-planner.md) combines guidance, resource
-  choices and editable estimates.
+  choices and editable&nbsp;estimates.
 - **Do I only need Azure resources?** Deploy infra only
   [with&nbsp;Bicep](deploy-infra-only.md) or [with&nbsp;Terraform](deploy-terraform-infra-only.md).
 - **Want the reference application?** Use [Bicep](deploy-full-stack.md) or
