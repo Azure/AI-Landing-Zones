@@ -117,6 +117,8 @@ Resource selection and reuse depend on your implementation and settings. This re
 </figcaption>
 </figure>
 </div>
+
+<p class="architecture-source" markdown="span">[:octicons-download-16: Download the editable diagrams](architecture/media/AI-Landing-Zones-reference-architectures.drawio){ download }</p>
 </div>
 
 [Choose your deployment approach :octicons-arrow-right-24:](agent-landing-zone/planning.md){ .text-link }
