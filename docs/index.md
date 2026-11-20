@@ -93,7 +93,7 @@ Resource selection and reuse depend on your implementation and settings. This re
 Combine many Agent Landing Zones as spokes for agents to an AI Gateway Landing Zone as hub for models. The gateway has its own deployment and connectivity requirements; Agent Landing Zone does not provision it automatically.
 
 <figure class="architecture-figure" markdown="1">
-![AI Gateway Landing Zone reference architecture](architecture/media/AI-Landing-Zones-APIM.png?v=431e467f6d75){ width=6400 height=5867 loading=lazy }
+![AI Gateway Landing Zone reference architecture](architecture/media/AI-Landing-Zones-APIM.png?v=431e467f6d75){ width=8025 height=8053 loading=lazy }
 <figcaption markdown="block">
 [Enlarge the integrated gateway diagram](architecture/media/AI-Landing-Zones-APIM.png?v=431e467f6d75)
 
