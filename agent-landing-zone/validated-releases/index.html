@@ -467,10 +467,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#release-lifecycle" class="md-nav__link">
+  <a href="#how-a-release-reaches-latest" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Release lifecycle
+        How a release reaches Latest
       
     </span>
   </a>
@@ -478,10 +478,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#standard-scenario" class="md-nav__link">
+  <a href="#the-scenario-we-validate" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Standard scenario
+        The scenario we validate
       
     </span>
   </a>
@@ -489,10 +489,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-each-run-does" class="md-nav__link">
+  <a href="#what-happens-in-a-run" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What each run does
+        What happens in a run
       
     </span>
   </a>
@@ -500,10 +500,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#evidence" class="md-nav__link">
+  <a href="#the-evidence" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Evidence
+        The evidence
       
     </span>
   </a>
@@ -5594,10 +5594,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#release-lifecycle" class="md-nav__link">
+  <a href="#how-a-release-reaches-latest" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Release lifecycle
+        How a release reaches Latest
       
     </span>
   </a>
@@ -5605,10 +5605,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#standard-scenario" class="md-nav__link">
+  <a href="#the-scenario-we-validate" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Standard scenario
+        The scenario we validate
       
     </span>
   </a>
@@ -5616,10 +5616,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-each-run-does" class="md-nav__link">
+  <a href="#what-happens-in-a-run" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What each run does
+        What happens in a run
       
     </span>
   </a>
@@ -5627,10 +5627,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#evidence" class="md-nav__link">
+  <a href="#the-evidence" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Evidence
+        The evidence
       
     </span>
   </a>
@@ -5658,71 +5658,52 @@
 
 
 <h1 id="validated-releases">Validated releases</h1>
-<p>Every Agent Landing Zone release is deployed live in Azure with both Bicep and
-Terraform before it is offered for new deployments. The validated release is
-the <strong>Latest</strong> release on
+<p>Before we recommend a release for new deployments, we deploy it for real in
+Azure, end to end, with both Bicep and Terraform. Only a release that passes
+that run becomes <strong>Latest</strong> on
 <a href="https://github.com/Azure/agent-landing-zone/releases/latest">GitHub Releases</a>.
-Use it for new deployments.</p>
+If you are starting a new deployment, that is the one to use.</p>
 <div class="runbook-diagram">
 <div class="runbook-diagram__summary">
 <p><strong>A release becomes Latest only after a live, network-isolated deployment
-passes with both providers.</strong> The workflow publishes the evidence and promotes
-the release. No release is promoted by hand.</p>
+passes with both Bicep and Terraform.</strong> The evidence is attached to the
+release, and the promotion is automatic.</p>
 </div>
 <p><a aria-label="Open full-size release validation diagram" class="runbook-diagram__image" href="../../media/runbooks/validated-releases.svg?v=3f1a9c2e7b40"><img alt="A release is published as a pre-release after the offline checks pass. It is then deployed live with Bicep and then Terraform. When both pass, the evidence is attached and the release is promoted to Latest." src="../../media/runbooks/validated-releases.svg?v=3f1a9c2e7b40" /></a></p>
 <p><a class="runbook-diagram__open" href="../../media/runbooks/validated-releases.svg?v=3f1a9c2e7b40">Open full-size diagram</a></p>
 </div>
 <h2 id="what-validated-means">What validated means</h2>
-<p>A validated release meets every condition below:</p>
-<ul>
-<li><strong>Both providers.</strong> The same release deploys successfully with Bicep and with
-  Terraform. They are co-maintained implementations of the same platform.</li>
-<li><strong>Network isolated.</strong> The landing zone runs with <code>NETWORK_ISOLATION=true</code>, so
-  the data plane is reached only through private endpoints.</li>
-<li><strong>Documented commands.</strong> The run uses the same <code>azd</code> commands an operator
-  runs from the deployment guides. No landing zone resource is created or
-patched by hand.</li>
-<li><strong>Working agent.</strong> Deployment ends with an agent smoke test that invokes the
-  deployed agent and checks its response.</li>
-<li><strong>Fresh environment.</strong> Each run creates a new landing zone from scratch.</li>
-<li><strong>Public evidence.</strong> The commands, step results and transcript are attached to
-  the release.</li>
-</ul>
-<h2 id="release-lifecycle">Release lifecycle</h2>
-<table>
-<thead>
-<tr>
-<th>Stage</th>
-<th>What happens</th>
-<th>Gate</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Pre-release</td>
-<td>The release is tagged and published as a pre-release.</td>
-<td>Offline checks pass in CI</td>
-</tr>
-<tr>
-<td>Live validation</td>
-<td>The release validation workflow deploys it with Bicep, then with Terraform.</td>
-<td>Both providers pass</td>
-</tr>
-<tr>
-<td>Latest</td>
-<td>The workflow attaches the evidence and promotes the release. It is deployed again every day at 09:00 UTC.</td>
-<td>A failed revalidation opens an issue</td>
-</tr>
-</tbody>
-</table>
-<p>The offline checks run on Linux and Windows. They cover Bicep build and lint,
-Terraform <code>fmt</code>, <code>validate</code> and <code>test</code>, and the deployment and lifecycle hook
-contract tests.</p>
-<p>If either provider fails, the release stays a pre-release. The fix ships in a
-new patch release, which goes through the same validation. The providers run
-one after the other because both connect to the same shared hub network.</p>
-<h2 id="standard-scenario">Standard scenario</h2>
-<p>Both providers are validated with the same <code>azd</code> settings:</p>
+<p>Passing CI is a good start, but it does not prove that a landing zone actually
+comes up in a real subscription. That is why every release also goes through a
+live deployment that looks as close as possible to what you would run
+yourself.</p>
+<p>Each run creates a brand-new, network-isolated landing zone, where the data
+plane is reachable only through private endpoints. It uses the same <code>azd</code>
+commands the deployment guides ask you to run, and nothing in the landing zone
+is created or patched by hand. The run only counts once the deployed agent
+answers a smoke test.</p>
+<p>We do this twice, once with Bicep and once with Terraform. They are two
+implementations of the same platform, so a release is validated only when
+both pass. Everything the run did is attached to the release, so you can check
+it yourself.</p>
+<h2 id="how-a-release-reaches-latest">How a release reaches Latest</h2>
+<p>Every release starts as a pre-release. It is tagged and published once the
+offline checks pass in CI. Those checks run on Linux and Windows and cover
+Bicep build and lint, Terraform <code>fmt</code>, <code>validate</code> and <code>test</code>, and the contract
+tests for the deployment and lifecycle hooks.</p>
+<p>Next, the release validation workflow deploys it live, first with Bicep and
+then with Terraform. The two runs go one after the other because both connect
+to the same shared hub network.</p>
+<p>When both pass, the workflow attaches the evidence and promotes the release to
+Latest. Nobody promotes a release by hand. If either provider fails, the
+release stays a pre-release, and the fix ships in a new patch release that
+goes through the same process.</p>
+<p>Validation does not stop at promotion. The Latest release is deployed again
+every day at 09:00 UTC, which catches problems introduced by changes on the
+Azure side. If a daily run fails, the workflow opens an issue.</p>
+<h2 id="the-scenario-we-validate">The scenario we validate</h2>
+<p>Every release is validated with the same settings, so results can be compared
+from one release to the next.</p>
 <table>
 <thead>
 <tr>
@@ -5765,45 +5746,36 @@ one after the other because both connect to the same shared hub network.</p>
 </tr>
 </tbody>
 </table>
-<p>Every other parameter keeps its default. Instead of the landing zone jumpbox,
-the workflow runs from a VNet-connected host that is peered with the landing
-zone, as described in <a href="../network-isolation/">Network design</a>.</p>
-<p>Other combinations are supported as documented, but only this scenario is
-validated live for every release.</p>
-<h2 id="what-each-run-does">What each run does</h2>
-<p>Each provider run follows the operator flow from the deployment guides:</p>
-<ol>
-<li>Clones the release tag. For Terraform, selects the Terraform provider in
-   <code>azure.yaml</code>.</li>
-<li>Creates a new <code>azd</code> environment with the standard scenario.</li>
-<li>Runs <code>azd provision</code>. Transient Azure errors are retried up to two times.</li>
-<li>Connects the landing zone to the VNet-connected host and waits for private
-   DNS to propagate.</li>
-<li>Runs the post-provision configuration from inside the network.</li>
-<li>Runs <code>azd deploy</code>. Its pre-deploy check verifies private network access and
-   runs the agent smoke test.</li>
-<li>Records the deployed resources and tears the environment down.</li>
-</ol>
-<p>Teardown does not affect the result. A daily cleanup removes anything a run
-leaves behind.</p>
-<h2 id="evidence">Evidence</h2>
-<p>Each validated release carries its evidence:</p>
-<ul>
-<li>One line per provider under <strong>Validation</strong> in the release notes, linking the
-  workflow run.</li>
-<li>A <code>validation-&lt;tag&gt;-&lt;provider&gt;-&lt;run&gt;.md</code> release asset per provider.</li>
-</ul>
-<p>The evidence report contains:</p>
-<ul>
-<li>The result, region and timing of the run.</li>
-<li>Every step with its exit code and duration. Each step is marked as an
-  operator command or as a harness step, which prepares the runner and is not
-  part of the operator flow.</li>
-<li>The exact operator commands, so you can repeat the deployment.</li>
-<li>The full transcript.</li>
-</ul>
+<p>Everything else keeps its default. Instead of the landing zone jumpbox, the
+run uses a VNet-connected host that is peered with the landing zone, as
+described in <a href="../network-isolation/">Network design</a>.</p>
+<p>The other combinations described in this documentation are supported, but
+this is the one we deploy live for every release.</p>
+<h2 id="what-happens-in-a-run">What happens in a run</h2>
+<p>Each provider run follows the same path an operator would. It clones the
+release tag, switches <code>azure.yaml</code> to the Terraform provider when needed,
+creates a fresh <code>azd</code> environment with the scenario above and runs
+<code>azd provision</code>. Transient Azure errors are retried up to two times.</p>
+<p>Once the infrastructure is up, the run connects the landing zone to the
+validation host, waits for private DNS to propagate and runs the
+post-provision configuration from inside the network. It then runs
+<code>azd deploy</code>, whose pre-deploy check confirms private network access and runs
+the agent smoke test.</p>
+<p>Finally, the run records what was deployed and tears the environment down.
+Teardown does not affect the result, and a daily cleanup removes anything a
+run leaves behind.</p>
+<h2 id="the-evidence">The evidence</h2>
+<p>You can find the evidence for each validated release in two places. The
+<strong>Validation</strong> section of the release notes has one line per provider that
+links to the workflow run. Each provider also attaches a
+<code>validation-&lt;tag&gt;-&lt;provider&gt;-&lt;run&gt;.md</code> report to the release.</p>
+<p>The report shows exactly what happened, so you can repeat it. It includes the
+result, region and timing, every step with its exit code and duration, and the
+exact operator commands. Steps that only prepare the runner are marked as
+harness steps, so you can tell them apart from what an operator runs. The full
+transcript is at the end.</p>
 <p>Subscription, tenant and identity identifiers, and environment names, are
-redacted before the evidence is published.</p>
+redacted before anything is published.</p>
 
 
 
