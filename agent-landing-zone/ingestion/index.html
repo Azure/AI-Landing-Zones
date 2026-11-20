@@ -5810,7 +5810,7 @@
 <h1 id="ingestion-and-private-input-boundaries">Ingestion and private-input boundaries</h1>
 <p>Foundry IQ provides the standard shared-source ingestion path.
 Private attachments and custom processing are separate capabilities.
-<strong>Agent App Ingestion</strong> is optional and disabled by default; it is not the
+<strong>Agent App Ingestion</strong> is optional and disabled by default. It is not the
 store for native execution state or UI/BFF product metadata.</p>
 <p>This page explains those boundaries. Deployment steps are in the
 <a href="../deploy-full-stack/">full-stack deployment guide</a>. Source and index inputs are
@@ -5841,7 +5841,7 @@ described in <a href="../configuration/#ingestion-application-selection">Deploym
 <p><a class="runbook-diagram__open" href="../../media/runbooks/ingestion.svg?v=c710fad05408">Open full-size diagram</a></p>
 </div>
 <p>Neither retrieval nor custom ingestion is required for every application.
-Choose only the paths your application uses; private attachments do not
+Choose only the paths your application uses. Private attachments do not
 select a shared source.</p>
 <p><span id="choose-a-source-ingestion-path"></span></p>
 <h2 id="1-standard-ingestion-with-foundry-iq">1. Standard ingestion with Foundry IQ</h2>
@@ -5867,7 +5867,7 @@ describes the managed pipeline and service requirements.</p>
    <code>FOUNDRY_IQ_PATTERN=azureBlob</code>,
    <code>FOUNDRY_IQ_STORAGE_CONTAINER_NAME</code> and optional
    <code>FOUNDRY_IQ_STORAGE_FOLDER_PATH</code>. These have explicit mappings in
-   <code>main.parameters.json</code>; keep <code>DEPLOY_INGESTION_CONTAINER_APP=false</code> for
+   <code>main.parameters.json</code>. Keep <code>DEPLOY_INGESTION_CONTAINER_APP=false</code> for
    this ingestion path. Follow <a href="../foundry-iq/">Foundry IQ setup</a>.</li>
 <li>Provision through the <a href="../deploy-full-stack/">deployment guide</a>.
    The source/storage owner must approve Search's ingestion access and any
@@ -5884,7 +5884,7 @@ describes the managed pipeline and service requirements.</p>
    and deployment lifecycle, not only an application restart.</li>
 </ol>
 <p>Successful ingestion alone does not establish protected retrieval. The built-in
-native UI delegates for hosted invocation; it does not implement the direct
+native UI delegates for hosted invocation. It does not implement the direct
 connector's Search-token forwarding path. Native Foundry IQ uses a
 project-connection tool. Configure and verify source-compatible user
 authorization for that connection, or explicitly integrate trusted credential
@@ -5940,7 +5940,7 @@ selections in the accelerator.</p>
 <h2 id="2-private-conversational-attachments">2. Private conversational attachments</h2>
 <p><code>ENABLE_PRIVATE_ATTACHMENTS</code> selects validated inline conversational input
 in <code>conversational</code> or <code>both</code>. Workflow attachments are unsupported.
-Hosted uses official file/image inputs; DTS uses native context messages/IDs.
+Hosted uses official file/image inputs. DTS uses native context messages/IDs.
 The path does <strong>not</strong> call Agent App Ingestion, mint Blob SAS, accept input
 URLs or publish the file into a corporate knowledge corpus.
 It selects UI owner mappings and descriptors, not storage of file bytes.
@@ -5952,11 +5952,11 @@ See <a href="../conversations/#private-attachments">Private attachments</a> for 
    Use <a href="../application-settings/#enable-a-product-feature">Enable a product feature</a>
    for the canonical commands. Do not write only the runtime key in the portal.</li>
 <li>Run provision, then deploy. Composition selects the UI metadata container
-   and grants the UI identity access; it does not deploy ingestion for this
+   and grants the UI identity access. It does not deploy ingestion for this
    feature. Hosted <code>both</code> keeps attachments disabled on the workflow publication.</li>
 <li><strong>At runtime</strong>, sign in, create a conversational session and send a small
    TXT attachment through its turn API or UI. Verify the answer and an owner-bound
-   descriptor; confirm that another user cannot access that session.</li>
+   descriptor. Confirm that another user cannot access that session.</li>
 <li>Check the <a href="../multimodality/#private-attachment-boundary">file/turn limits</a>
    and model behavior separately. Enabling this persisted feature in an
    already running UI requires compatible resources and redeployment, not
@@ -6021,7 +6021,7 @@ or identity grants. Retirement needs separate authorization.</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">"name"</span><span class="p">:</span><span class="s2">"RUN_JOBS_ON_STARTUP"</span><span class="p">,</span><span class="nt">"value"</span><span class="p">:</span><span class="s2">"false"</span><span class="p">,</span><span class="nt">"label"</span><span class="p">:</span><span class="s2">"agent-lz"</span><span class="p">}</span>
 </code></pre></div>
 <p>This is an array entry, not a complete parameter file. It suppresses
-  immediate indexing/purge only; review cron and log cleanup separately.
+  immediate indexing/purge only. Review cron and log cleanup separately.
   Follow <a href="../configuration/#configuration-ownership-and-declarations">configuration ownership</a>
   for publishing declarations. Arbitrary <code>azd env set</code> names do not publish keys.</p>
 </li>
@@ -6053,7 +6053,7 @@ or identity grants. Retirement needs separate authorization.</p>
    citations and allowed/denied-user retrieval before scheduling broader work.
    For <strong>post-deploy</strong> schedule edits, use
    <a href="../ingestion-jobs/#configure-and-apply-schedules">configure and apply schedules</a>.
-   Restart ingestion after endpoint/client or analysis-service changes; cache
+   Restart ingestion after endpoint/client or    analysis-service changes. Cache
    refresh does not replace existing module-level clients.</p>
 </li>
 </ol>

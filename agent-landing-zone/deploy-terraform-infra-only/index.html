@@ -6047,8 +6047,9 @@ a different subscription, also set:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>TF_STATE_SUBSCRIPTION_ID<span class="w"> </span>&lt;state-subscription-id&gt;
 </code></pre></div>
 <p>The state key is <code>agent-landing-zone/${AZURE_ENV_NAME}.tfstate</code>, giving each
-environment its own blob. azd renders <code>infra/terraform/provider.conf.json</code>
-from these settings, including the canonical <code>ARM_ENVIRONMENT</code>.
+environment its own blob. azd renders the <code>infra/terraform/provider.conf.json</code>
+template from these settings into <code>.azure/&lt;environment-name&gt;/infra/terraform/</code>,
+including the canonical <code>ARM_ENVIRONMENT</code>, and passes it to <code>terraform init</code>.
 Confirm the cloud, account, container and environment name
 before provisioning; keep <code>.azure/</code> metadata private. See the official
 <a href="https://learn.microsoft.com/azure/developer/azure-developer-cli/use-terraform-for-azd#local-vs-remote-state">remote-state guidance</a>

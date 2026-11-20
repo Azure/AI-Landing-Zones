@@ -5891,7 +5891,8 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_INGESTION_CONTAINER_APP<span class="w"> </span><span class="nb">false</span>
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>BUILD_MODE<span class="w"> </span>acr-task
 </code></pre></div>
-<p>For the private registry path, also select its build pool before provision:</p>
+<p>The private registry path uses the ACR Tasks build pool, which is selected by
+default. Keep it selected before provision:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_ACR_TASK_AGENT_POOL<span class="w"> </span><span class="nb">true</span>
 </code></pre></div>
 <p>Keep the environment's bound application and build choices during recovery.

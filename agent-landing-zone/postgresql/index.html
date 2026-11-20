@@ -5970,7 +5970,7 @@ hooks never execute SQL bootstrap.</p>
 records. Nonsecret immutable creation intent is written before IaC. Corrupt or
 missing records are not adoption/deletion permission; restore the original record
 and reviewed context. Same-binding recovery preserves data.</p>
-<p>Post-provision creates/readbacks server-scoped CanNotDelete lock
+<p>Post-provision creates and reads back the server-scoped CanNotDelete lock
 <code>agentlz-postgresql-data-protection</code> outside <strong>both</strong> foundation graphs and
 Terraform state before ready discovery. Failed/missing protection blocks
 publication; recover with the same context and corrected permissions. Never import

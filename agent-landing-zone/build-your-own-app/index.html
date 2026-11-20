@@ -6444,8 +6444,8 @@ azd<span class="w"> </span>hooks<span class="w"> </span>run<span class="w"> </sp
 <li>
 <p>With the custom hosted example's answer logic, confirm the response echoes
    the intended <code>FOUNDRY_PROJECT_ENDPOINT</code> injected by the platform. A value of
-   <code>unknown</code> or <code>unavailable</code> indicates a missing project endpoint or broken
-   hosted invocation. Check the published agent version and logs before
+   <code>unknown</code> indicates a missing project endpoint. A failed request indicates
+   a broken hosted invocation. Check the published agent version and logs before
    proceeding. With your logic, verify actual application behavior and
    denied-access cases.</p>
 </li>
@@ -6504,8 +6504,10 @@ remains valid: an enabled component retains its previously owned
 requirements, but a fresh definition with no declaration adds none. Removing a component
 removes its ownership, not another component's shared dependency.</p>
 <p>Review the exact source's fixed downloads and configured integrations when
-editing these declarations. The bundled UI declares <code>[]</code>; both orchestrator
-and ingestion declare the tiktoken asset host over HTTPS/443. A custom-only
+editing these declarations. The bundled UI declares <code>[]</code>. The orchestrator
+and ingestion declare the tiktoken asset host over HTTPS/443. The MCP server
+declares <code>login.microsoftonline.com</code> over HTTPS/443 to validate Entra access
+tokens. A custom-only
 definition's plan follows its own declared workloads, not implicit bundled ones.
 Follow <a href="../configuration/#outbound-access">runtime egress review and reconciliation</a>
 before provisioning. Build registries and package feeds are configured

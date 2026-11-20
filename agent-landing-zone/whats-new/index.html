@@ -5628,6 +5628,10 @@ see <a href="../validated-releases/">Validated releases</a>.</p>
 </thead>
 <tbody>
 <tr>
+<td><a href="https://github.com/Azure/agent-landing-zone/releases/tag/v7.5.16">v7.5.16</a></td>
+<td>Patch releases v7.5.1 to v7.5.16 fix Bicep and Terraform provisioning, network-isolated deployments and post-provision verification. Live release validation now deploys both providers before a release becomes Latest. v7.5.16 pins UI v3.7.1 and orchestrator v7.2.1.</td>
+</tr>
+<tr>
 <td><a href="https://github.com/Azure/agent-landing-zone/releases/tag/v7.5.0">v7.5.0</a></td>
 <td>External AI Gateway mode without local Foundry models (<code>DEPLOY_MODEL_DEPLOYMENTS=false</code>) in <a href="../configuration/">configuration</a>. Opt-in scheduled trace-evaluation RBAC (<code>GRANT_PROJECT_TRACE_EVALUATION_READER</code>) with ABAC-scoped protected content access in <a href="../operations/">operations</a>, plus dynamic Container Apps workload profile resolution across Bicep and Terraform for <a href="../build-your-own-app/">custom applications</a> and <a href="../hosted-agents/">hosted</a> deployments.</td>
 </tr>
@@ -5641,7 +5645,7 @@ see <a href="../validated-releases/">Validated releases</a>.</p>
 </tr>
 <tr>
 <td><a href="https://github.com/Azure/agent-landing-zone/releases/tag/v7.2.0">v7.2.0</a></td>
-<td>Optional Entra-only <a href="../postgresql/">PostgreSQL</a> for fresh custom-application deployments in Bicep and Terraform. Basic uses restricted public access through dedicated NAT; isolation uses Private Link. SQL grants are manual, with independent data-protection locks and guarded recovery/removal.</td>
+<td>Optional Entra-only <a href="../postgresql/">PostgreSQL</a> for fresh custom-application deployments in Bicep and Terraform. Basic uses restricted public access through dedicated NAT. Isolation uses Private Link. SQL grants are manual, with independent data-protection locks and guarded recovery/removal.</td>
 </tr>
 <tr>
 <td><a href="https://github.com/Azure/agent-landing-zone/releases/tag/v7.1.0">v7.1.0</a></td>
@@ -5684,7 +5688,7 @@ see <a href="../validated-releases/">Validated releases</a>.</p>
 </tr>
 <tr>
 <td><a href="https://github.com/Azure/agent-landing-zone/releases/tag/v5.3.0">v5.3.0</a></td>
-<td>Added 12 default subnets for isolated deployments, including Power Platform and AI Gateway.</td>
+<td>Isolated deployments create all 12 architecture subnets by default, adding dedicated Power Platform and AI Gateway subnets.</td>
 </tr>
 <tr>
 <td><span id="simpler-hosted-deployment"></span><a href="https://github.com/Azure/agent-landing-zone/releases/tag/v5.2.0">v5.2.0</a></td>

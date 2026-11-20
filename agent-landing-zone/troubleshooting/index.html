@@ -7104,8 +7104,9 @@ separately with the intended identities. Keep isolation and TLS verification.</p
 <div class="highlight"><pre><span></span><code>Private deployment prerequisites failed. Use a VPN/VNet-connected host; RUN_FROM_JUMPBOX is not a connectivity bypass.
 </code></pre></div>
 <p><strong>Diagnose:</strong> With <code>NETWORK_ISOLATION=true</code>, the host cannot resolve or establish
-TLS to App Configuration, or to the Foundry project endpoint for hosted
-topologies. The gate allows up to 20 seconds per endpoint.</p>
+TLS to App Configuration, to the Foundry project endpoint for hosted
+topologies, or to the Durable Task Scheduler endpoint for Container Apps
+hosting. The gate allows up to 20 seconds per endpoint.</p>
 <p><strong>Correct:</strong> Move to the approved jumpbox, VPN or peered-VNet runner and inspect
 the <a href="./#private-connectivity-checks">private connectivity path</a>.
 The <code>RUN_FROM_JUMPBOX</code> input requests a connectivity check from that host.</p>
@@ -7412,8 +7413,10 @@ retrying the failed stage.</p>
 <p><strong>Symptom:</strong></p>
 <div class="highlight"><pre><span></span><code>Private post-provision prerequisites failed. Connect through VPN/VNet and rerun postProvision; configuration has not started.
 </code></pre></div>
-<p><strong>Diagnose:</strong> Provisioning completed, but the runner cannot reach private App
-Configuration, so configuration has not started.</p>
+<p><strong>Diagnose:</strong> Provisioning completed, but the runner cannot reach a private
+endpoint, so configuration has not started. The check covers App
+Configuration and each deployed Foundry project, Key Vault, Search, Blob
+Storage and Cosmos DB endpoint.</p>
 <p><strong>Correct:</strong> Connect through an approved jumpbox, VPN or peered VNet. Follow
 <a href="../deploy-infra-only/#complete-a-deferred-post-provision">Complete a deferred post-provision</a>.</p>
 <p><strong>Verify:</strong> Complete the configuration hook from the connected host before
@@ -7434,11 +7437,13 @@ checking from the runner's existing network path.</p>
 deferral before resuming application deployment.</p>
 <h4 id="network_isolation-is-not-a-boolean"><code>NETWORK_ISOLATION</code> is not a boolean</h4>
 <p><strong>Symptom:</strong> A hook rejects the isolation value.</p>
-<p><strong>Diagnose:</strong> The selected environment contains a value other than literal
-<code>true</code> or <code>false</code>.</p>
-<p><strong>Correct:</strong> Restore the value required by the intended network design, for
-example <code>azd env set NETWORK_ISOLATION true</code> for an isolated environment.
-Use <code>false</code> only when the intended network design is non-isolated.</p>
+<p><strong>Diagnose:</strong> The selected environment contains a value that is neither a
+recognized true value (<code>true</code>, <code>1</code>, <code>t</code>, <code>yes</code>, <code>y</code>) nor a recognized false
+value (<code>false</code>, <code>0</code>, <code>f</code>, <code>no</code>, <code>n</code> or empty).</p>
+<p><strong>Correct:</strong> Set the literal value required by the intended network design,
+for example <code>azd env set NETWORK_ISOLATION true</code> for an isolated environment.
+Use <code>false</code> only when the intended network design is non-isolated. Other
+hooks and the provisioning parameter expect literal <code>true</code> or <code>false</code>.</p>
 <p><strong>Verify:</strong> The effective value matches the intended network design and validation
 passes before any provisioning changes.</p>
 <h4 id="provisioning-fails-in-azure">Provisioning fails in Azure</h4>

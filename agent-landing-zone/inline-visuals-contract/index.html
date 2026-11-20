@@ -5681,12 +5681,15 @@ as compact JSON with label <code>agent-lz</code> and content type <code>text/pla
 </code></pre></div>
 <p>Use the <a href="../inline-visuals/#step-1-enable-one-agent">runbook's declaration</a> in
 <code>main.parameters.json</code>; the declaration's <code>value</code> is a JSON string, not an
-additional <code>type</code> field. Empty <code>agents</code>, absent agent or <code>enabled: false</code> is off.</p>
+additional <code>type</code> field. Empty <code>agents</code>, absent agent or <code>enabled: false</code> is off.
+Each agent entry requires <code>enabled</code> and accepts optional <code>guidance</code> and
+<code>rules</code>. A rule maps a typed source field to a <code>status</code> or <code>trend</code> indicator.</p>
 <h2 id="use-the-typed-source-samples">Use the typed-source samples</h2>
-<p>In the coordinated umbrella feature checkout,
+<p>In the umbrella repository,
 <code>contracts/examples/inline-presentation/README.md</code> describes <code>source-fixture.json</code>,
 three valid/invalid fixture pairs and <code>text_only_adapter.py</code>. These are
-candidate source artifacts, not links to an already published release.</p>
+synthetic candidate examples. They do not authorize a deployment opt-in or
+guarantee that the pinned release understands them.</p>
 <p>The synthetic source preserves March revenue as the decimal string <strong>9.750</strong>
 with unit <strong>USD</strong>, growth <strong>-2.750</strong>, and indicator <strong>down</strong> linked to the
 <code>revenue-trend</code> rule and source growth field. Numeric values, units, result IDs,
@@ -5716,8 +5719,8 @@ component payloads from the envelope. Suggestions and row actions send ordinary
 new user messages through existing authorization; they do not create a second
 continuation protocol.</p>
 <h2 id="validate-the-customer-adapter">Validate the customer adapter</h2>
-<p>Use the umbrella's existing local command with the matched candidate UI source
-on <code>PYTHONPATH</code>:</p>
+<p>From the umbrella repository root, run the existing local command with the
+matched UI <code>src</code> directory on <code>PYTHONPATH</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="n">python</span> <span class="n">-m</span> <span class="n">pytest</span> <span class="n">-q</span> <span class="n">tests</span><span class="p">/</span><span class="n">test_text_only_adapter</span><span class="p">.</span><span class="n">py</span> <span class="n">tests</span><span class="p">/</span><span class="n">test_presentation_contracts</span><span class="p">.</span><span class="n">py</span>
 </code></pre></div>
 <p>Keep matched readers when disabling new visual generation. These local reader

@@ -6078,7 +6078,7 @@ Workflows. Its available NL2SQL toolset provides <code>nl2sql.list_sources()</co
 <code>MCP_TOOLSETS=["nl2sql"]</code> selects the application Cosmos catalog and
 model/declared-secret access. Search and document ingestion remain independent.</p>
 <p>The operator still approves SQL destinations, read permissions and metadata.
-The server's NL2SQL implementation—not the orchestrator—owns SQL connectivity,
+The server's NL2SQL implementation, not the orchestrator, owns SQL connectivity,
 metadata retrieval and generated-query validation. Operators import approved
 metadata through the separate administrative importer.</p>
 <p>The configured read-only principal queries the application's approved dataset,

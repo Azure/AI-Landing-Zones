@@ -5777,7 +5777,7 @@ schedule setup.</p>
 <li>
 <p><strong>After deployment</strong>, an administrator can use <code>PUT /api/config</code> for the
    allowlisted cron keys. The ingestion workload needs App Configuration
-   write permission for this action; the caller's Admin role is not that
+   write permission for this action. The caller's Admin role is not that
    data-plane grant. For example, the following sets weekly SharePoint indexing:</p>
 <div class="highlight"><pre><span></span><code><span class="err">PUT /api/config</span>
 <span class="err">Content-Type: application/json</span>
@@ -5834,7 +5834,7 @@ have that same unconditional gate.</p>
 <p>Restrict access to the administrative
 surface through the deployment's network and access controls rather than
 exposing it publicly. Administrative route mounting is resolved by ingestion
-at startup; do not infer availability from the native orchestrator's host.
+at startup. Do not infer availability from the native orchestrator's host.
 Jobs can run even when the administrative routes are absent.</p>
 <p><a href="../operations/">Administration</a> describes the dashboard and mode-specific
 availability. <a href="../application-auth/">Application authentication</a> covers access.

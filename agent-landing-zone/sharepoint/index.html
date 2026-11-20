@@ -6049,7 +6049,7 @@ host/mode entries:</p>
 <span class="p">]</span>
 </code></pre></div>
 <p>These are source-setup settings, not same-named environment switches.
-The enabled flag defaults to <code>false</code>; the source/site bindings default to
+The enabled flag defaults to <code>false</code>. The source/site bindings default to
 empty. The identity inputs below have an explicit deployment environment
 publication path:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>SHAREPOINT_INDEXED_APPLICATION_ID<span class="w"> </span><span class="s2">"&lt;ingestion-app-client-id&gt;"</span>
@@ -6216,7 +6216,7 @@ modification-time-only filter for the scheduled ACL refresh.</p>
 <p>The <code>driveItem</code> response supplies the file name, MIME type and
 <code>parentReference.driveId</code>. The connector resolves this relationship to download
 and chunk the file. A generic list instead contributes structured field text
-and, when selected and available, its attachments.</p>
+only. The connector does not index generic-list attachments.</p>
 <p>For generic-list permissions, the connector uses the Graph <strong>beta</strong> endpoint:</p>
 <div class="highlight"><pre><span></span><code><span class="err">GET https://graph.microsoft.com/beta/sites/{siteId}/lists/{listId}/items/{itemId}/permissions</span>
 </code></pre></div>
@@ -6370,8 +6370,7 @@ and satisfy the existing container's partition-key definition.</p>
 <span class="w">        </span><span class="s2">"Title"</span><span class="p">,</span>
 <span class="w">        </span><span class="s2">"Code_x0020_Name"</span><span class="p">,</span>
 <span class="w">        </span><span class="s2">"Product_x0020_Line"</span><span class="p">,</span>
-<span class="w">        </span><span class="s2">"Modified"</span><span class="p">,</span>
-<span class="w">        </span><span class="s2">"Attachments"</span>
+<span class="w">        </span><span class="s2">"Modified"</span>
 <span class="w">      </span><span class="p">],</span>
 <span class="w">      </span><span class="nt">"excludeFields"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
 <span class="w">    </span><span class="p">}</span>
@@ -6402,7 +6401,7 @@ mean "index the whole site."</p>
 </tr>
 <tr>
 <td><code>includeFields</code></td>
-<td>Internal column names for generic-list text. Omitted or empty means all returned fields. Keep <code>Title</code> and <code>Modified</code>, and include <code>Attachments</code> when classic-list attachments are needed. Modification detection uses the item's <code>lastModifiedDateTime</code>, with <code>fields.Modified</code> as fallback.</td>
+<td>Internal column names for generic-list text. Omitted or empty means all returned fields. Keep <code>Title</code> and <code>Modified</code>. Modification detection uses the item's <code>lastModifiedDateTime</code>, with <code>fields.Modified</code> as fallback.</td>
 </tr>
 <tr>
 <td><code>excludeFields</code></td>
@@ -6509,8 +6508,8 @@ Search cleanup when needed.</p>
    deployment. For protected retrieval, retain native permission filtering
    with the user/group ACL field annotations and establish the source-compatible
    user authorization described in <a href="../foundry-iq/#user-authorization-boundaries">Foundry IQ</a>.
-   The native application still needs its compatible MCP project connection;
-   the direct connector instead needs explicit token/invocation wiring.
+   The native application still needs its compatible MCP project connection.
+   The direct connector instead needs explicit token/invocation wiring.
    Source registration does not ingest content or turn ACL arrays into
    enforced authorization by itself.</li>
 <li>Run the allowed/denied-user checks below, including a permission-only

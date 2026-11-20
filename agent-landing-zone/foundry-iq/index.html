@@ -5979,7 +5979,7 @@ from settings used by the separately available direct connector:</p>
 </tr>
 <tr>
 <td><code>RETRIEVAL_AUTH_MODE</code></td>
-<td>Platform-derived <code>native_search</code> contract in both profiles. Managed Toolbox integration, consent and source permissions establish downstream authorization.</td>
+<td>Platform-derived. <code>native_search</code> on the Hosted route in both auth modes, empty on the Container Apps host. Managed Toolbox integration, consent and source permissions establish downstream authorization.</td>
 </tr>
 <tr>
 <td><code>KNOWLEDGE_BASE_ENDPOINT</code></td>
@@ -5987,7 +5987,7 @@ from settings used by the separately available direct connector:</p>
 </tr>
 <tr>
 <td><code>KNOWLEDGE_BASE_NAME</code></td>
-<td>Provisioning/direct connector: knowledge-base object name, not an index name. Native configuration also loads the name.</td>
+<td>Provisioning/direct connector: knowledge-base object name, not an index name. Native configuration does not load it.</td>
 </tr>
 <tr>
 <td><code>FOUNDRY_IQ_KNOWLEDGE_SOURCE_NAME</code></td>
@@ -6072,10 +6072,11 @@ user delegation must fail explicitly. See <a href="../application-auth/">Sign-in
 <code>401 consent_required</code>, with instructions to complete the approved Foundry
 consent process and retry. It does not open returned consent links or
 automatically resume the failed request. Failed tool calls are not accepted
-as successful answers.
-In service mode, consent requests return <code>403 user_delegation_required</code>.
-Other retrieval failures return a safe <code>tool_failed</code> error with service-permission
-and OBO guidance, without automatically acquiring another credential.</p>
+as successful answers.</p>
+<p>In service mode, consent requests return <code>403 user_delegation_required</code>.
+Other tool failures return a safe <code>502 tool_failed</code> error, without
+automatically acquiring another credential. In service mode, its message adds
+service-permission and OBO guidance.</p>
 <p>Native permission filtering is enabled for the application index's user,
 group and RBAC scope fields. Indexing must populate the appropriate metadata.
 Turning on filtering cannot reconstruct missing ACLs. Conversation uploads

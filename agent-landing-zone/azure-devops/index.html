@@ -6049,8 +6049,8 @@ Bicep is under <code>infra/bicep/</code>; Terraform stays under <code>infra/terr
 Lifecycle hooks stay in root <code>scripts/</code>, with infrastructure helpers in <code>scripts/infra/</code>.
 Commit your configuration and compatible component pins
 before queuing a pipeline. Do not commit credentials or local azd environments.</p>
-<p>The downloadable example initially deploys the <strong>Agent Application</strong> with
-<code>ORCHESTRATION_HOST=hosted</code>, <code>APPLICATION_MODE=conversational</code>, native Blob
+<p>The downloadable example deploys the <strong>Agent Application</strong> with the default
+<code>ORCHESTRATION_HOST=hosted</code> and <code>APPLICATION_MODE=conversational</code>, native Blob
 ingestion and private endpoints. Set the same reviewed host, mode and ingestion
 selection across the three environments.
 The table lists deployment inputs placed in each stage's YAML <code>settings</code> map
@@ -6448,13 +6448,15 @@ artifact.</p>
 <p>If changing to CI artifacts, deploy from the downloaded validated tree
 and explicitly solve the Git metadata requirement for local custom sources.</p>
 <p>Cleanup runs even after failure. Its fixed path list removes <code>.azure</code> and <code>.logs</code>
-from the platform root, <code>hosted-agent/</code>, and the three manifest component sibling
-checkouts (<code>agent-app-ui</code>, <code>agent-app-orchestrator</code>, <code>agent-app-ingestion</code>).
+from the platform root, <code>hosted-agent/</code>, and the <code>agent-app-ui</code>,
+<code>agent-app-orchestrator</code> and <code>agent-app-ingestion</code> sibling checkouts.
+It does not cover the optional <code>agent-app-mcp</code> sibling, which deploy clones and
+copies <code>.azure</code> into when <code>DEPLOY_AGENT_APP_MCP=true</code>.
 It leaves their source files intact and removes the job-specific temporary Python
 environment, azd config and Git config.</p>
 <p>Update the explicit state-directory list
-when changing component names or adding a custom definition folder; do not replace
-it with recursive deletion of source/workspace roots.</p>
+when changing component names, selecting MCP or adding a custom definition
+folder; do not replace it with recursive deletion of source/workspace roots.</p>
 <p>AzureCLI@2 owns its isolated
 Azure CLI authentication context. Abrupt agent loss can prevent cleanup:
 reimage ephemeral agents or securely clean their disks before reuse.</p>
@@ -6468,8 +6470,9 @@ the run being approved.</p>
 <ol>
 <li><code>azd env get-value AZURE_RESOURCE_GROUP</code> identifies the Foundry/root target.
    <code>AZURE_APP_RESOURCE_GROUP</code> identifies the application target and
-   <code>AZURE_NETWORK_RESOURCE_GROUP</code> the local network target; omitted overrides
-   use the Foundry/root group.
+   <code>AZURE_NETWORK_RESOURCE_GROUP</code> the local network target. In a new
+   environment, omitted overrides are saved as the root name plus <code>-app</code> and
+   <code>-network</code>.
    App Configuration has the expected platform outputs and effective settings
    under label <code>agent-lz</code>; the selected apps have real, healthy image revisions,
    not just provisioned placeholders. Record image digests and hosted routed version.</li>

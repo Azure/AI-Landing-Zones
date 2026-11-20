@@ -5927,9 +5927,11 @@ spoke's <code>ALLOW_GATEWAY_TRANSIT</code> flag to true to share a hub-owned gat
 For an existing VNet (<code>USE_EXISTING_VNET=true</code> with
 <code>EXISTING_VNET_RESOURCE_ID</code>), have the network owner configure both peering
 directions separately.</p>
-<p>Preserve approved egress routing through
+<p>With <code>DEPLOYMENT_MODE=ailz-integrated</code> and isolation, provisioning rejects the
+default local Basic firewall. Either set <code>AZURE_FIREWALL_SKU=Standard</code>, or set
+<code>DEPLOY_AZURE_FIREWALL=false</code> and select exactly one approved egress path:
 <code>HUB_INTEGRATION_EGRESS_NEXT_HOP_IP</code> or
-<code>HUB_INTEGRATION_EXISTING_ROUTE_TABLE_RESOURCE_ID</code> where required. These do
+<code>HUB_INTEGRATION_EXISTING_ROUTE_TABLE_RESOURCE_ID</code>. These do
 not configure P2S client routes or authentication. Use the
 <a href="../configuration/#existing-resources">reuse reference</a> for other reuse inputs.</p>
 <p>For a fresh VPN-only deployment, you may explicitly set <code>DEPLOY_JUMPBOX=false</code>
@@ -6068,7 +6070,9 @@ do not replace application endpoints with IP addresses or <code>privatelink</cod
 <p>The lifecycle prerequisite check rejects public or mixed DNS answers and checks
 TCP/TLS reachability: App Configuration only when the selected runtime requires it,
 the Foundry project additionally before hosted deployment, and ACR before hosted
-image builds. Test the remaining service hosts individually.
+image builds. Post-provision also probes the bound Foundry project, Key Vault,
+Search, Blob storage and Cosmos DB endpoints that are present. Test the
+remaining service hosts individually.
 Store-free selection removes the implicit store probe, not the required
 Foundry, registry, scheduler, workload-egress or connected-runner checks.</p>
 <h3 id="after-validation-deploy-or-develop">After validation: deploy or develop</h3>
@@ -6091,8 +6095,9 @@ Foundry, registry, scheduler, workload-egress or connected-runner checks.</p>
 <p>Configure service RBAC and document permissions separately from network access.
 Preserve application authentication, OBO and source access-control lists.
 For hosted-agent authoring, verify the runner's <strong>Foundry User</strong> role on the
-exact project and account read access as described in
-<a href="../network-isolation/">Network design</a>. Do not grant Owner to solve a
+exact project and account read access as described in the
+<a href="../deploy-full-stack/#prepare-azure-access">full-stack prerequisites</a>.
+Do not grant Owner to solve a
 data-plane denial.</p>
 <p><span id="recover-or-disconnect"></span></p>
 <h3 id="troubleshooting">Troubleshooting</h3>
