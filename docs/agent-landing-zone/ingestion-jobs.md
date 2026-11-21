@@ -168,7 +168,9 @@ replacement behavior does not change the purge limitations described above.
 
 Long parent identifiers can have historical chunk IDs generated with SHA-1
 rather than the current SHA-256 suffix when the sanitized identifier exceeds
-128 characters. Existing IDs do not change automatically. Blob content can
+128 characters. Existing IDs do not change automatically.
+
+Blob content can
 retain old IDs until replacement; SharePoint's lookup by the current ID can
 cause an item to be indexed again. Earlier incomplete parent cleanup can leave
 old and new chunks together. Check the actual indexed chunks for affected
@@ -177,7 +179,9 @@ parents rather than assuming a successful upgrade or job migrated them.
 Before reindexing or repairing affected content, retain a usable backup of the
 source and relevant configuration, identify the target index, source and
 parents, and arrange a controlled window without overlapping index or purge
-jobs. Review errors and blocked files, and assess existing chunks by parent
+jobs.
+
+Review errors and blocked files, and assess existing chunks by parent
 before any reingestion or return to an earlier ID algorithm. Use an approved,
 parent-scoped recovery and reingestion process, preserving access controls.
 Verify all affected chunks, citations and access permissions before restoring
