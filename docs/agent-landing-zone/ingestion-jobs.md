@@ -177,12 +177,16 @@ parents rather than assuming a successful upgrade or job migrated them.
 Before reindexing or repairing affected content, retain a usable backup of the
 source and relevant configuration, identify the target index, source and
 parents, and arrange a controlled window without overlapping index or purge
-jobs. Review errors and blocked files, then use an approved, scoped recovery
-and reingestion process. Verify all affected chunks, citations and access
-permissions before restoring service. Do not treat image rollback as a data
-repair: it does not remove duplicates or restore deleted chunks. Prefer an
-approved forward correction when possible; retained citations to previous
-chunk IDs may need refreshing.
+jobs. Review errors and blocked files, and assess existing chunks by parent
+before any reingestion or return to an earlier ID algorithm. Use an approved,
+parent-scoped recovery and reingestion process, preserving access controls.
+Verify all affected chunks, citations and access permissions before restoring
+service; retained citations to previous chunk IDs may need refreshing.
+
+Prefer an approved forward correction when possible. Rolling back the image
+does not remove duplicates or restore deleted chunks, and an older image can
+reintroduce incomplete parent cleanup or produce different chunk IDs.
+Do not assume a downgrade is a safe data recovery procedure.
 
 The image purger reads `AZURE_SEARCH_INDEX_NAME` (default `ragindex`) and
 `STORAGE_CONTAINER_IMAGES` (default `documents-images`). These are not aliases
