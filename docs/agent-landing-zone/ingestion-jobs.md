@@ -157,6 +157,33 @@ target with unrelated Blob corpora and assume the prefix limits both sides.
 Blob scans and parent deletions are bounded by time and paging limits, so
 verify every affected chunk rather than relying only on summary counts.
 
+### Parent replacement and identifier migration
+
+When Blob or SharePoint content is replaced, the indexer removes existing
+chunks for the parent before writing the replacement. This is not an atomic
+swap. Parent cleanup reads the first page repeatedly and checks deletion
+results; it fails if deletion does not make progress or a safety limit is
+reached. Inspect per-file errors and verify the index before retrying. This
+replacement behavior does not change the purge limitations described above.
+
+Long parent identifiers can have historical chunk IDs generated with SHA-1
+rather than the current SHA-256 suffix when the sanitized identifier exceeds
+128 characters. Existing IDs do not change automatically. Blob content can
+retain old IDs until replacement; SharePoint's lookup by the current ID can
+cause an item to be indexed again. Earlier incomplete parent cleanup can leave
+old and new chunks together. Check the actual indexed chunks for affected
+parents rather than assuming a successful upgrade or job migrated them.
+
+Before reindexing or repairing affected content, retain a usable backup of the
+source and relevant configuration, identify the target index, source and
+parents, and arrange a controlled window without overlapping index or purge
+jobs. Review errors and blocked files, then use an approved, scoped recovery
+and reingestion process. Verify all affected chunks, citations and access
+permissions before restoring service. Do not treat image rollback as a data
+repair: it does not remove duplicates or restore deleted chunks. Prefer an
+approved forward correction when possible; retained citations to previous
+chunk IDs may need refreshing.
+
 The image purger reads `AZURE_SEARCH_INDEX_NAME` (default `ragindex`) and
 `STORAGE_CONTAINER_IMAGES` (default `documents-images`). These are not aliases
 for the custom indexer's `SEARCH_RAG_INDEX_NAME` and
