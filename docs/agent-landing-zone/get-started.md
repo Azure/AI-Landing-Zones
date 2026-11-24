@@ -78,7 +78,7 @@ CLI login authenticates the operator; it does not grant application admission or
     $PSNativeCommandUseErrorActionPreference = $true
     New-Item -ItemType Directory agent-landing-zone
     Set-Location agent-landing-zone
-    azd init --template Azure/agent-landing-zone --branch v7.5.16 --environment <environment-name> .
+    azd init --template Azure/agent-landing-zone --branch v7.5.19 --environment <environment-name> .
     ```
 
 Initialization creates and selects the local environment.
