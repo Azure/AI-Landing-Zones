@@ -43,10 +43,61 @@
     return { turns, calls, input: calls * s.inputTokens, output: calls * s.outputTokens };
   }
 
+  const regionName = id => catalog?.regions?.[id]?.name || id;
+
   function records(service, s = state) {
-    const data = catalog.data[s.region]?.[service];
-    if (!data) throw new MissingPrice(`No ${service} catalog for ${s.region}.`);
+    const data = catalog.data[s.region]?.[service] || catalog.global?.[service];
+    if (!data?.items?.length) throw new MissingPrice(`No ${service} price is published for ${regionName(s.region)}.`);
     return data.items;
+  }
+
+  // Expand the compact catalog (shared field list + value tuples) into the records used by the calculations.
+  function hydrate(raw) {
+    if (!Array.isArray(raw.fields)) return raw;
+    const expand = (items, region) => (items || []).map(item => Array.isArray(item) ? {
+      ...Object.fromEntries(raw.fields.map((field, index) => [field, item[index]])),
+      armRegionName: region, type: "Consumption", currencyCode: "USD"
+    } : item);
+    for (const [region, services] of Object.entries(raw.data)) {
+      for (const [service, entry] of Object.entries(services)) {
+        entry.items = expand(entry.items, region);
+        entry.query ||= raw.queries?.[service];
+      }
+    }
+    for (const [service, entry] of Object.entries(raw.global || {})) {
+      entry.items = expand(entry.items, entry.armRegionName);
+      entry.query ||= raw.queries?.[service];
+    }
+    if (raw.modelDiscovery && !Array.isArray(raw.modelDiscovery.items)) {
+      raw.modelDiscovery.items = Object.entries(raw.modelDiscovery.items || {})
+        .flatMap(([region, items]) => expand(items, region));
+    }
+    return raw;
+  }
+
+  function staleSources(region) {
+    const entries = [...Object.entries(catalog.data[region] || {}), ...Object.entries(catalog.global || {}),
+      ["model discovery", catalog.modelDiscovery || {}],
+      ...Object.entries(catalog.publishedPrices || {}).filter(([, entry]) => entry.prices?.[region])];
+    return entries.filter(([, entry]) => entry.stale)
+      .map(([name, entry]) => `${name} (captured ${String(entry.retrievedAt).slice(0, 10)})`);
+  }
+
+  function regionNote(rows) {
+    const unavailable = rows.filter(row => row.amount === null && row.priceUnavailable);
+    const stale = staleSources(state.region);
+    const parts = [];
+    if (unavailable.length) parts.push(`No published price was found in ${regionName(state.region)} for: ${unavailable.map(row => row.name).join(", ")}. These resources are shown as not priced and are excluded, so the total is incomplete.`);
+    if (stale.length) parts.push(`Some prices could not be refreshed and reuse the last validated capture: ${stale.join(", ")}.`);
+    return parts.join(" ");
+  }
+
+  function regionOptions() {
+    const geographies = {};
+    for (const [id, meta] of Object.entries(catalog.regions)) (geographies[meta.geography] ||= []).push([id, meta.name]);
+    return Object.keys(geographies).sort((a, b) => a.localeCompare(b)).map(geography =>
+      `<optgroup label="${escape(geography)}">${geographies[geography].sort((a, b) => a[1].localeCompare(b[1]))
+        .map(([id, name]) => `<option value="${escape(id)}">${escape(name)}</option>`).join("")}</optgroup>`).join("");
   }
 
   function find(service, sku, meter, unit, tier = 0, s = state, product, billingRegion = s.region) {
@@ -83,15 +134,22 @@
 
   function referenceFor(region) {
     const skus = firewallSkus(region);
-    if (!skus.length) throw new MissingPrice("No supported regional standalone Firewall price.");
-    return { ...defaults, region, firewall: skus.includes(defaults.firewall) ? defaults.firewall : skus[0] };
+    // Without any standalone price the shipped SKU is kept and the row is shown as not priced.
+    return { ...defaults, region, firewall: !skus.length || skus.includes(defaults.firewall) ? defaults.firewall : skus[0] };
+  }
+
+  function firewallNote(region) {
+    const skus = firewallSkus(region);
+    if (skus.includes("Basic")) return "Shipped SKU: Basic when a local firewall is created.";
+    if (!skus.length) return `No standalone Firewall deployment and data-processing price is published for ${regionName(region)}. This row is not priced and is excluded from the total.`;
+    return `No standalone Basic price is published for ${regionName(region)}. ${skus[0]} is the regional cost reference, not the shipped Basic default. Change the IaC SKU before deploying this scenario.`;
   }
 
   function publishedPrice(key, column, s = state) {
     const source = catalog.publishedPrices?.[key];
     const value = source?.prices?.[s.region]?.[column];
     if (source?.sourceType !== "OfficialPricingPage" || !Number.isFinite(value) || value <= 0) {
-      throw new MissingPrice(`The official published ${key}/${column} price is missing for ${s.region}.`);
+      throw new MissingPrice(`The official published ${key}/${column} price is missing for ${regionName(s.region)}.`);
     }
     return {
       retailPrice: value, sourceType: source.sourceType, sourceUrl: source.sourceUrl,
@@ -116,7 +174,7 @@
       return { ...resource, lines, amount: lines.reduce((sum, line) => sum + line.amount, 0) };
     } catch (error) {
       if (!(error instanceof MissingPrice)) throw error;
-      return { ...resource, lines: [], amount: resource.optional && !resource.included ? 0 : null, issue: error.message };
+      return { ...resource, lines: [], amount: resource.optional && !resource.included ? 0 : null, issue: error.message, priceUnavailable: true };
     }
   }
 
@@ -131,7 +189,7 @@
       sizing: "<strong>Size quota for peak token and request rates.</strong> Monthly tokens estimate spend, not throughput. Model choice also needs quality and tool-use evaluation.",
       signal: "Concurrency alone cannot prove quota sufficiency.",
       quantity: `${number(d.input / 1e6)}M input<br>${number(d.output / 1e6)}M output / month`,
-      detail: "The default is gpt-5-nano, version 2025-08-07, GlobalStandard, capacity 100. Its input/output rates are captured from Microsoft's exact GPT-5-nano Global pricing row, not substituted from another model. The same published Global rates apply in both offered regions. The alternative gpt-4.1-nano uses Global Retail API meters as a what-if, not a deployment recommendation. Two calls per turn and token volumes are hypothetical. Output tokens must include billable reasoning tokens. No cache-hit discount is assumed. The separate embedding row prices recurring ingestion. Retries, evaluations and extra tools need additional entered usage.",
+      detail: "The default is gpt-5-nano, version 2025-08-07, GlobalStandard, capacity 100. Its input/output rates are captured from Microsoft's exact GPT-5-nano Global pricing row, not substituted from another model. The published Global rate shown for the selected region is used. Where that row has no rate for a region, the model cost is shown as not priced. The alternative gpt-4.1-nano uses Global Retail API meters as a what-if, not a deployment recommendation. Two calls per turn and token volumes are hypothetical. Output tokens must include billable reasoning tokens. No cache-hit discount is assumed. The separate embedding row prices recurring ingestion. Retries, evaluations and extra tools need additional entered usage.",
       parameter: "main.parameters.json: modelDeploymentList"
     }, () => {
       if (s.model === defaults.model) return [
@@ -261,15 +319,13 @@
     const firewall = {
       id: "firewall", group: "networking", name: "Azure Firewall", tag: "Isolated standalone",
       description: "Controls outbound network traffic in an isolated standalone deployment.",
-      setting: select("firewall", firewallSkus(s.region), "Firewall SKU") +
-        `<span class="setting-hint">${firewallSkus(s.region).includes("Basic") ?
-          "Shipped SKU: Basic when a local firewall is created." :
-          "No standalone Basic price is published for this region. Standard is the regional cost reference, not the shipped Basic default. Change the IaC SKU before deploying this scenario."}</span>`,
+      setting: select("firewall", firewallSkus(s.region).length ? firewallSkus(s.region) : [s.firewall], "Firewall SKU") +
+        `<span class="setting-hint">${escape(firewallNote(s.region))}</span>`,
       sizing: "<strong>Choose required security features first.</strong> Then validate peak throughput and connections. Monthly processed GB estimates usage charges, not throughput.",
       signal: s.firewall === "Basic" ? "Basic is not interchangeable with Standard DNS proxy or advanced features." : "Additional capacity-unit charges are not included.",
       quantity: input("firewallGB", "Processed GB / month", 0, 1000000) +
         `<span class="setting-hint">${number(s.hours)} allocated hours / month</span>`,
-      detail: "Network isolation and a local firewall remain part of this standalone reference. Basic is a firewall SKU, not a non-isolated deployment mode. Only standalone regional SKUs with exact deployment and data-processing prices are offered. Sweden Central's published Basic secured-virtual-hub rate is not borrowed for this VNet topology. Where standalone Basic pricing is absent, the regional comparison explicitly uses Standard, which needs an AZURE_FIREWALL_SKU IaC change. Basic has management networking prerequisites. Public IP allocation and entered log ingestion are priced in separate rows. Extra Standard/Premium capacity units and transfer require additional assumptions.",
+      detail: `Network isolation and a local firewall remain part of this standalone reference. Basic is a firewall SKU, not a non-isolated deployment mode. Only standalone regional SKUs with exact deployment and data-processing prices are offered. ${firewallSkus(s.region).length ? `${regionName(s.region)} publishes standalone ${firewallSkus(s.region).join(", ")} prices.` : `${regionName(s.region)} publishes no standalone Firewall price.`} A published Basic secured-virtual-hub rate is not borrowed for this VNet topology. Where standalone Basic pricing is absent, the regional comparison explicitly uses Standard, which needs an AZURE_FIREWALL_SKU IaC change. Basic has management networking prerequisites. Public IP allocation and entered log ingestion are priced in separate rows. Extra Standard/Premium capacity units and transfer require additional assumptions.`,
       parameter: "main.parameters.json: AZURE_FIREWALL_SKU; infra/bicep/main.bicep: _localFirewall"
     };
     rows.push(priced(firewall, () => [
@@ -427,6 +483,7 @@
     }
     const price = row.disabled ? '<span class="excluded">Not allocated</span>' :
       row.quoteRequired ? '<span class="setting-hint">Enter the monthly unit price for your plan.</span>' :
+      row.priceUnavailable && row.amount === null ? `<span class="unpriced">Not priced in ${escape(regionName(state.region))}</span>` :
       row.issue ? '<span class="unpriced">Price to confirm</span>' :
       row.billingNote ? `<span class="setting-hint">${escape(row.billingNote)}</span>` :
       row.lines.map(line => `<span class="price-unit">${rate(line.meter.retailPrice)}<small>${escape(line.meter.meterName)}<br>/ ${escape(line.meter.unitOfMeasure)}</small></span>`).join("");
@@ -454,7 +511,7 @@
       "The initial 200 runtime-hours", "Resizing needs",
       "Availability requirements", "The separate embedding row includes", "Document bytes",
       "The example assumes continuous", "Service availability",
-      "Sweden Central's", "Basic has management",
+      "A published Basic secured-virtual-hub", "Basic has management",
       "When included, cost", "The Standard Regional", "Dedicated subnet default:",
       "Setting quantity back", "Base allocation =", "Standard v2 private ingress",
       "Private endpoints/DNS,", "Compare tiers using",
@@ -515,7 +572,13 @@
       return `<div><dt>${name}</dt><dd>${escape(groupSummary(selected))}<small>Reference ${escape(groupSummary(baseline))} / delta ${escape(signedMoney(delta))}</small></dd></div>`;
     }).join("");
     const count = rows.filter(row => row.lines.length > 0 && !row.operatorEstimate).length;
-    byId("coverage-count").textContent = `${count} resources have publicly sourced prices, including optional resources at quantity 0. ${rows.filter(r => r.operatorEstimate).length} use sourced plan estimates. All included costs have a price. See the scope for additional usage assumptions.`;
+    const unpriced = rows.filter(row => row.amount === null && row.priceUnavailable);
+    byId("coverage-count").textContent = `${count} resources have publicly sourced prices, including optional resources at quantity 0. ${rows.filter(r => r.operatorEstimate).length} use sourced plan estimates. ${unpriced.length ?
+      `${unpriced.length} included resource${unpriced.length === 1 ? " has" : "s have"} no published price in ${regionName(state.region)}: ${unpriced.map(row => row.name).join(", ")}. The total is incomplete.` :
+      "All included costs have a price."} See the scope for additional usage assumptions.`;
+    const note = regionNote(rows);
+    byId("region-pricing-note").textContent = note;
+    byId("region-pricing-note").hidden = !note;
     byId("configuration-status").textContent = window.scenarios.changes(state, referenceState).length ?
       "Edited scenario" : "Starting configuration";
     renderDecisions();
@@ -529,7 +592,7 @@
 
   function meterCapturedAt(meter) {
     if (meter.sourceType === "OfficialPricingPage") return meter.retrievedAt;
-    const sets = [catalog.modelDiscovery, ...Object.values(catalog.data[state.region] || {})];
+    const sets = [catalog.modelDiscovery, ...Object.values(catalog.data[state.region] || {}), ...Object.values(catalog.global || {})];
     return sets.find(set => set?.items.some(item => item.meterId === meter.meterId &&
       item.armRegionName === meter.armRegionName))?.retrievedAt || catalog.retrievedAt;
   }
@@ -544,7 +607,10 @@
       ((state.modelInputRate === 0 && state.modelOutputRate === 0) || (state.modelInputRate > 0 && state.modelOutputRate > 0)));
     byId("quote-status").textContent = "Estimates need a source/date note. Model pricing needs both positive input and output rates. Incomplete estimates are not applied, and missing prices are not assumed free.";
     byId("live-total").textContent = money(sum.total);
-    byId("live-scope").textContent = "Selected resources and entered usage";
+    const unpriced = rows.filter(row => row.amount === null && row.priceUnavailable).length;
+    byId("live-scope").textContent = unpriced ?
+      `Incomplete: ${unpriced} resource${unpriced === 1 ? " is" : "s are"} not priced in ${regionName(state.region)}` :
+      "Selected resources and entered usage";
     const costChanges = rows.map(row => ({ row, delta: row.amount - referenceRows.find(r => r.id === row.id).amount }))
       .filter(change => Math.abs(change.delta) > .000001).sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
     byId("cost-change-summary").hidden = costChanges.length === 0;
@@ -663,15 +729,28 @@
     return url;
   }
 
+  // A scenario that names a region absent from the current catalog falls back to the default region.
+  function knownRegion(payload) {
+    const region = payload?.state?.region;
+    if (typeof region !== "string" || Object.hasOwn(catalog.regions, region)) return "";
+    payload.state.region = defaults.region;
+    if (payload.state.firewall !== undefined && !firewallSkus(defaults.region).includes(payload.state.firewall)) {
+      payload.state.firewall = referenceFor(defaults.region).firewall;
+    }
+    return ` Region ${region.slice(0, 40)} is not in the current price catalog, so ${regionName(defaults.region)} is used instead.`;
+  }
+
   function restoreLink() {
     const params = new URLSearchParams(location.search);
     if (!params.has("scenario")) return;
     try {
       const raw = params.get("scenario");
       if (params.getAll("scenario").length !== 1 || raw.length > 20000) throw new Error("Scenario link is duplicated or too large.");
-      const candidate = checkedState(JSON.parse(raw));
+      const payload = JSON.parse(raw);
+      const fallback = knownRegion(payload);
+      const candidate = checkedState(payload);
       state = candidate;
-      notify("Shared scenario restored. Public prices are recalculated from this page's current catalog, not frozen by the link.");
+      notify(`Shared scenario restored. Public prices are recalculated from this page's current catalog, not frozen by the link.${fallback}`);
     } catch (error) {
       console.warn("Scenario link rejected", error);
       notify(`Scenario rejected: ${error.message} The reference is shown instead, not the requested scenario.`, true);
@@ -709,8 +788,10 @@
       differences: window.scenarios.changes(state, referenceState),
       deploymentHandoff: window.scenarios.handoff(state, referenceState),
       priceCatalog: { retrievedAt: catalog.retrievedAt, source: catalog.source,
-        services: Object.fromEntries(Object.entries(catalog.data[state.region]).map(([name, entry]) =>
-          [name, { retrievedAt: entry.retrievedAt || catalog.retrievedAt, query: entry.query }])),
+        region: { id: state.region, name: regionName(state.region), unavailable: catalog.regions[state.region]?.unavailable || [] },
+        services: Object.fromEntries([...Object.entries(catalog.data[state.region] || {}), ...Object.entries(catalog.global || {})]
+          .map(([name, entry]) => [name, { retrievedAt: entry.retrievedAt || catalog.retrievedAt, query: entry.query,
+            ...(entry.stale ? { stale: true } : {}) }])),
         modelDiscovery: { retrievedAt: catalog.modelDiscovery.retrievedAt || catalog.retrievedAt, query: catalog.modelDiscovery.query } },
       outstandingActiveCosts: latest.rows.filter(r => r.amount === null).map(r => ({ id: r.id, name: r.name, reason: r.issue })),
       exclusions: ["Discounts, taxes and credits", "Unmapped model, build, license and integration prices unless explicitly supplied",
@@ -817,7 +898,9 @@
         const raw = localStorage.getItem(window.scenarios.storageKey);
         if (raw === null) throw new Error("No saved scenario on this device.");
         if (raw.length > 20000) throw new Error("Saved scenario is too large.");
-        const candidate = checkedState(JSON.parse(raw));
+        const payload = JSON.parse(raw);
+        const fallback = knownRegion(payload);
+        const candidate = checkedState(payload);
         const url = new URL(location.href);
         url.search = "";
         url.searchParams.set("scenario", JSON.stringify(window.scenarios.pack(candidate, defaults)));
@@ -825,7 +908,7 @@
         history.replaceState(null, "", url);
         state = candidate;
         render();
-        notify("Saved scenario restored. Prices use the current catalog. The URL now preserves this configuration on reload.");
+        notify(`Saved scenario restored. Prices use the current catalog. The URL now preserves this configuration on reload.${fallback}`);
       } catch (error) {
         console.warn("Scenario restore failed", error);
         notify(`Could not load the saved scenario: ${error.message} Your current scenario is unchanged.`, true);
@@ -888,9 +971,12 @@
         modelTPM: 0, modelRPM: 0, testedHostedConcurrency: 0, hostedBenchmarkKey: "" });
       notify("Region/model changed. Operator quotes, assigned quotas and hosted benchmark were cleared. Region changes also reset plan-priced options to quantity 0. Reconfirm prices and scope for this target.");
     }
-    if (field === "region" && !firewallSkus(value).includes(candidate.firewall)) {
+    if (field === "region" && !firewallSkus(value).length) {
       candidate.firewall = referenceFor(value).firewall;
-      notify(`Region changed. No standalone ${state.firewall} price is published here, so Firewall is explicitly set to ${candidate.firewall}. This differs from the shipped Basic default and requires an IaC change. Plan-priced options and target-specific evidence were reset.`);
+      notify(`Region changed to ${regionName(value)}. No standalone Firewall price is published there, so Firewall is shown as not priced and excluded from the total. Plan-priced options and target-specific evidence were reset.`);
+    } else if (field === "region" && !firewallSkus(value).includes(candidate.firewall)) {
+      candidate.firewall = referenceFor(value).firewall;
+      notify(`Region changed to ${regionName(value)}. No standalone ${state.firewall} price is published there, so Firewall is explicitly set to ${candidate.firewall}. This differs from the shipped Basic default and requires an IaC change. Plan-priced options and target-specific evidence were reset.`);
     }
     if (["region", "searchSku", "searchReplicas", "searchPartitions", "searchServices"].includes(field) && state[field] !== value) {
       candidate.testedSearchQPS = 0;
@@ -916,7 +1002,7 @@
 
   function checkedState(payload) {
     const next = window.scenarios.validate(payload, defaults, catalog.regions);
-    const missing = resources(next).filter(row => row.amount === null);
+    const missing = resources(next).filter(row => row.amount === null && !row.priceUnavailable);
     if (missing.length) throw new Error(`Complete the pricing inputs before including: ${missing.map(row => row.name).join(", ")}. ` +
       missing.map(row => row.issue).filter(Boolean).join(" "));
     return next;
@@ -929,7 +1015,12 @@
     if (catalog.currency !== "USD" || !catalog.retrievedAt || !catalog.data || !catalog.regions) {
       throw new Error("Price snapshot has an unexpected shape.");
     }
-    byId("region").innerHTML = Object.entries(catalog.regions).map(([id, label]) => `<option value="${escape(id)}">${escape(label)}</option>`).join("");
+    hydrate(catalog);
+    for (const [id, meta] of Object.entries(catalog.regions)) {
+      if (typeof meta === "string") catalog.regions[id] = { name: meta, geography: "Other" };
+    }
+    if (!catalog.regions[defaults.region]) throw new Error(`The price snapshot has no ${defaults.region} default region.`);
+    byId("region").innerHTML = regionOptions();
     const timestamp = new Date(catalog.retrievedAt);
     if (!Number.isFinite(timestamp.getTime())) throw new Error("The snapshot retrieval date is invalid.");
     byId("price-date").textContent = `Prices retrieved ${timestamp.toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" })} UTC`;
