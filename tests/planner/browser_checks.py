@@ -1,6 +1,7 @@
 """Check the real built MkDocs page, not a standalone planner fixture."""
 
 import argparse
+import copy
 import functools
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import json
@@ -216,6 +217,8 @@ def run(base, candidate=None):
             Object.fromEntries(architecture.deploymentOptions.map(o=>[o.field,0])))).total===0);
           assert("Five provisioned Cosmos offers and separate backup/storage are included",
             p.snapshot.rows.find(r=>r.id==="backing-cosmos").lines.map(l=>l.quantity).join(",")==="36500,10,10");
+          const complete=["eastus2","swedencentral"];
+          for(const region of complete)assert(region+" is offered",!!p.catalog.regions[region]);
           for(const region of Object.keys(p.catalog.regions)){
             for(const override of [{},...["Basic","Standard S1","Standard S2"].map(searchSku=>({searchSku})),
               ...p.firewallSkus(region).map(firewall=>({firewall})),
@@ -226,11 +229,13 @@ def run(base, candidate=None):
               {model:"gpt-4.1-nano"},{backingCosmosMode:"autoscale"},
               {backingBackupMode:"periodic"},{backingBackupMode:"continuous7"}]){
               const rows=p.calculate({...p.referenceFor(region),...override});
-              assert(region+" complete "+JSON.stringify(override),rows.every(r=>r.amount!==null));
-              assert(region+" finite prices "+JSON.stringify(override),rows.every(r=>Number.isFinite(r.amount)&&r.amount>=0));
+              if(complete.includes(region))assert(region+" complete "+JSON.stringify(override),rows.every(r=>r.amount!==null));
+              else assert(region+" missing prices are marked unavailable "+JSON.stringify(override),
+                rows.every(r=>r.amount!==null||r.priceUnavailable));
+              assert(region+" finite prices "+JSON.stringify(override),rows.every(r=>r.amount===null||(Number.isFinite(r.amount)&&r.amount>=0)));
             }
-            assert(region+" uses an explicit priced Firewall reference",
-              p.firewallSkus(region).includes(p.referenceFor(region).firewall));
+            assert(region+" uses an explicit priced Firewall reference",p.firewallSkus(region).length?
+              p.firewallSkus(region).includes(p.referenceFor(region).firewall):p.referenceFor(region).firewall==="Basic");
           }
           for(const [field,sku,id] of [
             ["searchPartitions","Standard S1","search"],["backingPartitions","Standard S1","backing-search"],
@@ -480,7 +485,36 @@ def run(base, candidate=None):
         assert page.evaluate("planner.state.firewall") == page.evaluate("planner.referenceFor('swedencentral').firewall")
         if not page.evaluate("planner.firewallSkus('swedencentral').includes('Basic')"):
             assert page.locator("#scenario-message").inner_text().find("explicitly set to Standard") >= 0
+            assert "No standalone Basic price is published for Sweden Central" in page.evaluate(
+                "planner.snapshot.rows.find(r=>r.id==='firewall').setting")
         page.locator("#reset").click()
+        assert "Shipped SKU: Basic" in page.evaluate("planner.snapshot.rows.find(r=>r.id==='firewall').setting")
+        selector = page.evaluate("""() => {
+          const groups=[...document.querySelectorAll('#region optgroup')].map(g=>g.label);
+          const names=[...document.querySelectorAll('#region optgroup')].map(g=>[...g.querySelectorAll('option')].map(o=>o.textContent));
+          return {groups,names,value:document.querySelector('#region').value,
+            options:document.querySelectorAll('#region option').length,regions:Object.keys(planner.catalog.regions).length,
+            grouped:[...document.querySelectorAll('#region option')].every(o=>o.parentElement.tagName==='OPTGROUP'&&
+              o.parentElement.label===planner.catalog.regions[o.value].geography)};
+        }""")
+        assert selector["value"] == "eastus2"
+        assert selector["options"] == selector["regions"] > 2 and selector["grouped"]
+        assert selector["groups"] == sorted(selector["groups"], key=str.lower), selector["groups"]
+        assert all(names == sorted(names, key=str.lower) for names in selector["names"])
+        assert page.locator("#region-pricing-note").is_hidden()
+        partial_region = page.evaluate("""() => Object.keys(planner.catalog.regions).find(region=>
+          planner.calculate(planner.referenceFor(region)).some(r=>r.amount===null&&r.priceUnavailable))""")
+        if partial_region:
+            set_field(page, "region", partial_region)
+            missing = page.evaluate("planner.snapshot.rows.filter(r=>r.amount===null).map(r=>r.name)")
+            assert missing and page.evaluate("planner.snapshot.rows.filter(r=>r.amount===null).every(r=>r.priceUnavailable)")
+            assert "the total is incomplete" in page.locator("#region-pricing-note").inner_text()
+            assert "Incomplete" in page.locator("#live-scope").inner_text()
+            assert "The total is incomplete" in page.locator("#coverage-count").text_content()
+            assert page.locator("#capabilities .unpriced", has_text="Not priced in").count() == len(missing)
+            assert abs(page.evaluate("planner.snapshot.sum.total") - page.evaluate(
+                "planner.snapshot.rows.reduce((sum,r)=>sum+(r.amount||0),0)")) < 1e-8
+            page.locator("#reset").click()
         set_field(page, "appGateway", 1)
         assert page.evaluate("planner.snapshot.rows.find(r=>r.id==='gateway-ip').amount") > 0
         edit_resource_field(page, "vpnGatewaysPriceSource", "Covered agreement, public reference and date")
@@ -599,6 +633,69 @@ def run(base, candidate=None):
         ready(stale)
         assert stale.locator("#stale-warning").is_visible()
         assert stale.evaluate("planner.snapshot.sum.total") > 0
+        synthetic = json.loads(original_catalog)
+        base_region = copy.deepcopy(synthetic["data"]["eastus2"])
+        no_basic = copy.deepcopy(base_region)
+        no_basic["firewall"]["items"] = [item for item in no_basic["firewall"]["items"] if item[0] != "Basic"]
+        del no_basic["hosted"]
+        no_basic["registry"].update(stale=True, retrievedAt="2025-01-01T00:00:00+00:00")
+        no_firewall = copy.deepcopy(base_region)
+        del no_firewall["firewall"]
+        synthetic["data"].update(testpartial=no_basic, testnofirewall=no_firewall)
+        synthetic["regions"].update(
+            testpartial={"name": "Test Partial", "geography": "Zz Test", "unavailable": ["hosted", "gpt-5-nano"]},
+            testnofirewall={"name": "Test No Firewall", "geography": "Zz Test", "unavailable": ["firewall"]})
+        synthetic["modelDiscovery"]["items"]["testpartial"] = synthetic["modelDiscovery"]["items"]["eastus2"]
+        synthetic["publishedPrices"]["acrDedicatedPool"]["prices"]["testpartial"] = \
+            synthetic["publishedPrices"]["acrDedicatedPool"]["prices"]["eastus2"]
+        for region in ("testpartial", "testnofirewall"):
+            synthetic["publishedPrices"]["gpt-5-nano"]["prices"].pop(region, None)
+        synthetic["publishedPrices"]["gpt-5-nano"]["prices"]["testnofirewall"] = \
+            synthetic["publishedPrices"]["gpt-5-nano"]["prices"]["eastus2"]
+        synthetic["modelDiscovery"]["items"]["testnofirewall"] = synthetic["modelDiscovery"]["items"]["eastus2"]
+        synthetic["publishedPrices"]["acrDedicatedPool"]["prices"]["testnofirewall"] = \
+            synthetic["publishedPrices"]["acrDedicatedPool"]["prices"]["eastus2"]
+        partial = context.new_page()
+        partial.route("**/data/planner/prices.json", lambda route: route.fulfill(
+            status=200, content_type="application/json", body=json.dumps(synthetic)))
+        partial.goto(base + PATH)
+        ready(partial)
+        assert partial.locator('#region optgroup[label="Zz Test"] option').count() == 2
+        assert partial.locator("#region optgroup").last.get_attribute("label") == "Zz Test"
+        set_field(partial, "region", "testpartial")
+        assert partial.evaluate("planner.state.firewall") == "Standard"
+        assert "explicitly set to Standard" in partial.locator("#scenario-message").inner_text()
+        assert "No standalone Basic price is published for Test Partial. Standard is the regional cost reference" in \
+            partial.evaluate("planner.snapshot.rows.find(r=>r.id==='firewall').setting")
+        unpriced = partial.evaluate("planner.snapshot.rows.filter(r=>r.amount===null).map(r=>r.id).sort()")
+        assert unpriced == ["hosted", "model"], unpriced
+        assert partial.evaluate("planner.snapshot.rows.filter(r=>r.amount===null).every(r=>r.priceUnavailable)")
+        note = partial.locator("#region-pricing-note")
+        assert note.is_visible() and "the total is incomplete" in note.inner_text()
+        assert "registry (captured 2025-01-01)" in note.inner_text()
+        assert partial.locator("#entry-hosted .unpriced", has_text="Not priced in Test Partial").count() == 1
+        assert "Incomplete: 2 resources are not priced in Test Partial" == partial.locator("#live-scope").inner_text()
+        partial_report = partial.evaluate("planner.exportReport()")
+        assert partial_report["priceCatalog"]["services"]["registry"]["stale"] is True
+        assert partial_report["priceCatalog"]["region"]["unavailable"] == ["hosted", "gpt-5-nano"]
+        set_field(partial, "region", "testnofirewall")
+        assert "No standalone Firewall price is published there" in partial.locator("#scenario-message").inner_text()
+        assert partial.evaluate("planner.snapshot.rows.filter(r=>r.amount===null).map(r=>r.id)") == ["firewall"]
+        assert "This row is not priced" in partial.evaluate("planner.snapshot.rows.find(r=>r.id==='firewall').setting")
+        partial.close()
+        fallback = context.new_page()
+        fallback.goto(base + PATH + "?scenario=" + json.dumps({"version": 2, "state": {"region": "atlantis", "users": 20}}))
+        ready(fallback)
+        assert fallback.evaluate("planner.state.region") == "eastus2"
+        assert fallback.evaluate("planner.state.users") == 20
+        assert "Region atlantis is not in the current price catalog, so East US 2 is used instead" in \
+            fallback.locator("#scenario-message").inner_text()
+        fallback.evaluate("localStorage.setItem(scenarios.storageKey,JSON.stringify({version:2,state:{region:'atlantis',users:30}}))")
+        fallback.locator("#estimate > summary").click()
+        fallback.locator("#load-scenario").click()
+        assert fallback.evaluate("planner.state.users") == 30 and fallback.evaluate("planner.state.region") == "eastus2"
+        assert "is not in the current price catalog" in fallback.locator("#scenario-message").inner_text()
+        fallback.close()
         malformed = context.new_page()
         malformed.route("**/data/planner/prices.json", lambda route: route.fulfill(
             status=200, content_type="application/json", body='{"currency":"USD"}'))

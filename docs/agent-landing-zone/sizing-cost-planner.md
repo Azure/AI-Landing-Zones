@@ -16,6 +16,7 @@ hide:
       <button type="button" class="secondary" id="reset">Reset to defaults</button>
     </div>
     <div id="stale-warning" class="warning" hidden></div>
+    <p id="region-pricing-note" class="warning" role="status" hidden></p>
     <div id="scenario-message" class="notice" role="status" hidden></div>
     <div class="live-summary" aria-label="Live scenario summary">
       <div class="current-total"><span class="live-label">Estimated monthly cost &middot; USD</span><strong id="live-total" aria-live="polite" aria-atomic="true"></strong><small id="live-scope"></small></div>
@@ -86,7 +87,7 @@ hide:
         <p>The separate embedding cost row retains its existing regional price meter as a budgeting proxy, not a verified Global Standard quote. Confirm the applicable price before deployment. The pinned source links below remain historical reference inputs, not evidence of the current embedding deployment type.</p>
         <h3 id="search-capacity">Search capacity</h3>
         <p>Application Search and Foundry backing Search are separate services, each initially S1 with one replica and one partition. Partitions address index/vector footprint and growth. Replicas address retrieval/indexing load and availability. One replica is not a high-availability design. Validate limits for the service's region and creation date. Private native ingestion also needs approved, ready shared private links, not just more Search capacity.</p>
-        <p>Standard S1/S2 supports 1, 2, 3, 4, 6 or 12 partitions, up to 12 replicas and at most 36 search units. New Basic services in the offered regions support 1, 2 or 3 partitions, up to 3 replicas and at most 9 search units. The controls and saved/shared scenario validation enforce these <a href="https://learn.microsoft.com/azure/search/search-capacity-planning#partition-and-replica-combinations" target="_blank" rel="noopener">documented combinations</a>. Other capacity, availability and workload checks still apply.</p>
+        <p>Standard S1/S2 supports 1, 2, 3, 4, 6 or 12 partitions, up to 12 replicas and at most 36 search units. New Basic services support 1, 2 or 3 partitions, up to 3 replicas and at most 9 search units. The controls and saved/shared scenario validation enforce these <a href="https://learn.microsoft.com/azure/search/search-capacity-planning#partition-and-replica-combinations" target="_blank" rel="noopener">documented combinations</a>. Other capacity, availability and workload checks still apply.</p>
         <p>Search SKU and counts are infrastructure literals, not root environment scaling flags. Persist changes in reviewed Bicep/Terraform source. Portal-only changes can be reset by provisioning. <code>aiSearchResourceId</code> reuses Foundry's backing service, not Application Search.</p>
         <h3 id="application-hosting">Host the components separately</h3>
         <p>The hosted orchestrator starts at 2 CPU / 4 GiB. Its child <code>hosted-agent/azure.yaml</code> declares literal sizes: changing provisioning environment variables alone does not resize it. Review the child definition and deployment metadata, then deploy a compatible agent version.</p>
@@ -168,7 +169,7 @@ hide:
       <div class="provenance"><span id="price-date"></span><span>USD &middot; Snapshot, not a live quote</span></div>
       <div class="coverage-grid">
         <div><h3>Public rates and sourced estimates</h3><p>The catalog combines <a href="https://prices.azure.com/api/retail/prices">Azure Retail Prices API</a> records with automatically captured official pricing-page rows, not a live quote. The <a href="https://azure.microsoft.com/en-us/pricing/details/azure-openai/"><code>gpt-5-nano</code> Global token rates</a> and <a href="https://azure.microsoft.com/en-us/pricing/details/container-registry/">dedicated ACR S1 allocation rate</a> come from exact published HTML rows, recorded with source and capture date separately from API meters. Resource details identify each source and billing unit. Operator-entered amounts are labelled separately.</p>
-        <p>Automated daily refresh is scheduled for 00:00 UTC. GitHub Actions can delay scheduled runs. API and official pricing-page requests use a 90-second timeout and up to four attempts for timeouts, interrupted connections and transient HTTP errors. Retries wait 10, 20 and 30 seconds, or respect a numeric Retry-After header up to 120 seconds.</p>
+        <p>Automated daily refresh is scheduled for 00:00 UTC. GitHub Actions can delay scheduled runs. The collector discovers every public region that has Retail API prices and appears on the official pricing pages, using one broad query per service across all regions. API and official pricing-page requests use a 90-second timeout and up to six attempts for timeouts, interrupted connections, HTTP 408, 429 and 5xx errors. Retries back off exponentially (10, 20, 40, 80 and 120 seconds, with up to 25% jitter), or respect a numeric Retry-After header up to 120 seconds. If a source still fails, the last validated prices for that source are reused and shown with their original capture date. The refresh fails without publishing only when the East US 2 default cannot be priced or most sources fail.</p>
         <p>Only a validated catalog is published. If collection still fails, or exact-row parsing or validation fails, the last validated catalog remains in use. Check the displayed snapshot date and any stale-data warning before relying on an estimate.</p>
         <p>730 hours is an editable monthly convention, not a deployment default. Daily meters use hours &divide; 24. Dedicated ACR pool allocation is billed even without active builds. Hosted allocation hours are a separate billing hypothesis, not a concurrency guarantee.</p></div>
         <div><h3>Budget for your selected scope</h3><p>The inventory includes Foundry backing dependencies, application services, management networking and optional integrations. Structural configuration and shared compute must not be billed twice. Quantity zero means an option is not allocated in this scenario, not that it is free when enabled.</p>
@@ -184,8 +185,9 @@ hide:
         <p>The fresh Foundry backing Cosmos DB account uses provisioned throughput. Its budget example assumes five manual 1,000-RU/s offers (5,000 RU/s total), 10 GB of transactional data plus indexes, a separate 10 GB of <code>Continuous30Days</code> backup and one non-zone-redundant region. This is a $296.50/month hypothesis at the captured rates, not a declaration of deployed offers. The Foundry runtime owns the actual offers.</p>
         <p>The backup selector is also a billing hypothesis: pinned Bicep AVM inherits <code>Continuous30Days</code>, while Terraform omits the backup policy and receives the API's periodic default. Selecting a backup hypothesis here does not change either provider or establish deployed parity.</p>
         <h3 id="standalone-firewall-selection">Standalone firewall selection</h3>
-        <p>East US 2 starts with the shipped Basic Firewall choice. Include allocation, processed data, its separate management public IP and subnet, diagnostics and transfer. Choose security features before price. Standard DNS proxy is not a Basic capability.</p>
-        <p>For Sweden Central, no VNet Basic rate was found in the Retail API or official Basic pricing row, so Standard is the regional reference. A secured-vHub price is not substituted. Deploying that reference needs a reviewed IaC change.</p>
+        <p>Regions with a standalone VNet Basic Firewall rate, such as East US 2, start with the shipped Basic Firewall choice. Include allocation, processed data, its separate management public IP and subnet, diagnostics and transfer. Choose security features before price. Standard DNS proxy is not a Basic capability.</p>
+        <p>Where no VNet Basic rate is published in the Retail API, such as Sweden Central, the cheapest published standalone SKU (usually Standard) is the regional reference and the page explains this for the selected region. A secured-vHub price is not substituted. Deploying that reference needs a reviewed IaC change. Regions with no standalone Firewall price show the row as not priced.</p>
+        <p>Every region with published prices is offered. Some services, models or official pricing rows are not published in every region. Those resources are shown as not priced in that region and excluded from the total, which is then marked incomplete. Confirm availability and price before choosing such a region.</p>
       </details>
       <span id="check-the-agent-specific-cost-drivers"></span><h3 id="agent-specific-cost-drivers">Keep the scope explicit</h3>
       <p>Hosted compute, frontend compute, two Search services, backing data services and private management networking are separate costs. Count shared Container Apps nodes and workspace-based Application Insights ingestion only once. An omitted new resource can require a compatible existing service or a different feature selection, not a free replacement. DNS zones, disks, registry images and other retained allocations do not necessarily disappear with their consumers.</p>
@@ -201,10 +203,10 @@ hide:
   </div>
 </div>
 
-<script src="../../javascripts/planner/inventory.js?v=4" defer></script>
+<script src="../../javascripts/planner/inventory.js?v=5" defer></script>
 <script src="../../javascripts/planner/guidance.js" defer></script>
-<script src="../../javascripts/planner/scenario.js?v=3" defer></script>
-<script src="../../javascripts/planner/planner.js?v=6" defer></script>
+<script src="../../javascripts/planner/scenario.js?v=4" defer></script>
+<script src="../../javascripts/planner/planner.js?v=7" defer></script>
 
 ## Optional PostgreSQL costs outside this planner
 
