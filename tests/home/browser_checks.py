@@ -107,7 +107,8 @@ def check_lifecycle_navigation(page, base, screenshots):
         if name in ("Plan", "Reference"):
             actual = branch.locator(":scope > ul > li > a .md-ellipsis").all_text_contents()
             expected = {
-                "Plan": ["Deployment choices", "Design checklist", "Network design", "Sizing & cost planner"],
+                "Plan": ["Deployment choices", "Design checklist", "Network design",
+                         "Sizing & cost planner", "Regional considerations"],
                 "Reference": ["Deployment settings", "Resource naming", "Validated releases"],
             }[name]
             assert [label.strip() for label in actual] == expected, (name, actual)
@@ -134,6 +135,7 @@ def check_lifecycle_navigation(page, base, screenshots):
         ("agent-landing-zone/get-started/", ("Agent Landing Zone",)),
         ("agent-landing-zone/validated-releases/", ("Agent Landing Zone", "Reference")),
         ("agent-landing-zone/planning/", ("Agent Landing Zone", "Plan")),
+        ("bicep/regional-considerations/", ("Agent Landing Zone", "Plan")),
         ("agent-landing-zone/network-isolation/", ("Agent Landing Zone", "Plan")),
         ("architecture/design-checklist/", ("Agent Landing Zone", "Plan")),
         ("agent-landing-zone/configuration/", ("Agent Landing Zone", "Reference")),
