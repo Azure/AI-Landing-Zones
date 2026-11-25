@@ -54,6 +54,7 @@ nav:
           - "Design checklist": architecture/design-checklist.md
           - "Network design": agent-landing-zone/network-isolation.md
           - "Sizing & cost planner": agent-landing-zone/sizing-cost-planner.md
+          - "Regional considerations": bicep/regional-considerations.md
       - Deploy:
           - Bicep:
               - "Deploy infra only": agent-landing-zone/deploy-infra-only.md
