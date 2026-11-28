@@ -661,7 +661,8 @@ cleanup effects, [Administration](operations.md) for route availability, and
 
 Use [Monitoring & audit](application-monitoring.md) for run correlation and
 document events. A completed run does not replace checking the indexed content
-and its permissions.
+and its permissions. For long parent identifiers and recovery from incomplete
+replacement, see [parent replacement and identifier migration](ingestion-jobs.md#parent-replacement-and-identifier-migration).
 
 ### Permission synchronization
 
